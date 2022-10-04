@@ -1,0 +1,28 @@
+{
+  "name": "cds4types",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "rm -rf ./__tests__/files/output/* && jest"
+  },
+  "author": "Daniel O'Grady",
+  "license": "ISC",
+  "dependencies": {
+    "@sap/cds": "^6"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^28.1.0",
+    "typescript": "^4.6.4"
+  },
+  "jest": {
+    "testRegex": "/__tests__/.*.test.js",
+    "testPathIgnorePatterns": [
+      "./__tests__/files/"
+    ],
+    "globalSetup": "./__tests__/setup.js"
+  }
+}
