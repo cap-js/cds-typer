@@ -28,6 +28,7 @@ const hint = () => console.log('Missing or invalid parameter(s). Call with --hel
 
 const help = () =>
     console.log(
+        '[SYNOPSIS]\n' +
         'Call with at least one positional parameter pointing to the (root) CDS file you want to compile.\n' +
             'Additionaly, you can use the following parameters:\n' +
             Object.entries(flags)
@@ -57,7 +58,7 @@ const main = async (args) => {
     if (args.named.jsConfigPath && !args.named.jsConfigPath.endsWith('jsconfig.json')) {
         args.named.jsConfigPath = path.join(args.named.jsConfigPath, 'jsconfig.json')
     }
-    compileFromFile(args.positional[0], {
+    compileFromFile(args.positional, {
         rootDirectory: args.named.rootDir,
         logLevel: Levels[ll],
         jsConfigPath: args.named.jsConfigPath,
