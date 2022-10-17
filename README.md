@@ -2,10 +2,59 @@
 
 ## About this project
 
-Generates `.ts` files for a CDS model to use with intellisense.
+Generates `.ts` files for a CDS model to receive code completion in VS Code.
+
+
+## Requirements and Setup
+
+Clone the repository and install the dependencies running `npm i` from the project's root directory.
 
 
 ### Usage
+The type generator is currently meant as a standalone tool and can be installed and used independently of other CDS environments (sans its dependency to the cds compiler).
+
+#### Quickstart
+Assuming you have the following CDS project structure:
+
+```
+/home/
+↳ mybookshop/
+  ↳ db/
+    ↳ schema.cds
+  ↳ srv/
+    ↳ service.js
+```
+
+a typical workflow to generate types for your CDS project could look something like this:
+
+```sh
+git clone https://this/repo cds-js-type-generator
+cd cds-js-type-generator
+npm i
+node ./index.js \
+  --rootDir /home/mybookshop/@types \
+  --jsConfigPath /home/mybookshop \
+  /home/mybookshop/srv/schema.cds
+```
+
+You would then end up with a `jsconfig.json` file in the project's root and a directory `@types`, which contains your entities and their accompanying types in a directory structure. The directory structure directly reflects the namespaces you have defined your entities in. They have to be imported in any JavaScript-based service handlers you want to have type support in and can replace calls to `cds.entities(...)`:
+
+```js
+// srv/service.js
+const { Books } = require('my.bookshop')
+
+```
+
+becomes
+
+```js
+// srv/service.js
+
+const { Books } = require('../@types/mybookshop')
+```
+
+From that point on you should receive code completion from the type system for `Books`.
+
 #### CLI
 _cds-typer_ comes with rudimentary CLI support and a few command line options:
 
@@ -39,11 +88,13 @@ CRITICAL
 NONE
 ```
 
-The utility expects a path to a `.cds` file as positional parameter which serves as entry point to the model in question, e.g.:
+The utility expects (at least) one path to a `.cds` file as positional parameter which serves as entry point to the model in question, e.g.:
 
 ```sh
 cds-typer ./path/to/my/model/model.cds --rootDir /tmp/
 ```
+
+Note that you can also pass multiple paths or `"*"` as glob pattern (with quotes to circumvent expansion by the shell). This passes the pattern on to the compiler where the [regular resolve strategy](https://cap.cloud.sap/docs/node.js/cds-compile?q=compiler#cds-resolve) is used.
 
 #### Programmatically
 The main API for using _cds-typer_ within another project is contained in [`compile.js`](https://github.tools.sap/cap/cds-typer/blob/master/lib/compile.js), specifically:
@@ -106,7 +157,7 @@ console.log(types.sap.cap.bookshop.Books) // a class
 becomes
 
 ```js
-const { Books } = require('./cds-typer/sap/cap/bookshop') 
+const { Books } = require('./cds-typer/sap/cap/bookshop')
 
 console.log(Books) // the same class
 ```
@@ -124,13 +175,6 @@ _cds-typer_ tries to keep its dependency footprint as small as possible. Librari
 
 
 
-
-
-
-
-## Requirements and Setup
-
-Clone the repository and install the dependencies running `npm i` from the project's root directory.
 
 ## Support, Feedback, Contributing
 
