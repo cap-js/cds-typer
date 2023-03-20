@@ -7,6 +7,7 @@ Generates `.ts` files for a CDS model to receive code completion in VS Code.
 
 ## Requirements and Setup
 
+### Building the Project Yourself
 Clone the repository and install the dependencies running `npm i` from the project's root directory.
 
 
@@ -133,14 +134,15 @@ entity Mice {}
 entity SomeList {}
 ```
 
+results in
+
 ```ts
-class Mouse {}
-class Mice extends Array<Mouse> {}
+class Mouse { … }
+class Mice extends Array<Mouse> { … }
 
-class SomeList {}
-class SomeListList extends Array<SomeList> {}
+class SomeList { … }
+class SomeListList extends Array<SomeList> { … }
 ```
-
 
 ### Relation to _cds2types_
 This project is inspired by the existing [_cds2types_](https://github.com/mrbandler/cds2types), but differs in a few aspects:

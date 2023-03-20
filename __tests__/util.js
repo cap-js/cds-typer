@@ -1,8 +1,8 @@
+/* eslint-disable no-console */
 const fs = require('fs')
 const path = require('path')
 const { Logger } = require('../lib/logging')
 const { fail } = require('assert')
-const ts = require('typescript')
 
 /**
  * Hackish. When having code as string, we can either:
@@ -61,8 +61,8 @@ const toExactlyHave = (module, props) => {
 
 const validateDTSTypes = (base, ignores = {}) => {
     ignores = Object.assign({ js: [], ts: [] }, ignores)
-    const jsPath = `${base}.js`
-    const dtsPath = `${base}.d.ts`
+    const jsPath = path.normalize(`${base}.js`)
+    const dtsPath = path.normalize(`${base}.d.ts`)
 
     if (!fs.existsSync(jsPath)) {
         fail(`implementation file ${jsPath} missing.`)
@@ -150,7 +150,7 @@ class TSParser {
             const [prop, type] = line.split(':').map((part) => part.trim())
             if (type) {
                 // type can be undefined, e.g. for "static readonly fq = 'foo';"
-                props[prop] = type
+                props[prop.replace('?', '').trim()] = type  // remove optional annotation
                     .replace(';', '')
                     .split(/[&|]/)
                     .map((p) => p.trim())
@@ -209,7 +209,7 @@ class TSParser {
             }
 
             // look at line
-            if ((match = line.match(/(?:export )?class (\w+)( extends [\.\w<>]+)?\s+\{/)) != null) {
+            if ((match = line.match(/(?:export )?class (\w+)( extends [.\w<>]+)?\s+\{/)) != null) {
                 currentNamespace.classes[match[1]] = this._parseClassBody(lines)
                 // quirk: as parseClassBody will consume all lines up until and
                 // including the next "}", we have to manually decrease the number

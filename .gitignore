@@ -1,7 +1,7 @@
 coverage
 .vscode
-__tests__/files/output
-__tests__/files/cloud-cap-samples
+__tests__/**/output
+__tests__/**/cloud-cap-samples
 .DS_Store
 
 # Logs

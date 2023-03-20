@@ -2,11 +2,11 @@ import { Path, SourceFile} from './file'
 import { Logger } from './logging';
 
 // mock
-interface CSON {
-    definitions?: { [key: string]: EntityCSON }
+interface CSN {
+    definitions?: { [key: string]: EntityCSN }
 }
 
-interface EntityCSON {
+interface EntityCSN {
     cardinality?: {
         max?: '*' | number
     }
@@ -18,7 +18,7 @@ interface TypeResolveInfo {
     isForeignKeyReference: boolean,
     type: string, 
     path?: Path,
-    cson?: CSON,
+    csn?: CSN,
     
     /**
      * When nested inline types require additional imports. E.g.:
@@ -33,10 +33,20 @@ interface TypeResolveInfo {
 }
 
 interface CompileParameters {
-    rootDirectory: String,
+    outDirectory: string,
+    cdsRoot: string,
     logLevel: number,
     jsConfigPath?: string
 }
+
+interface VisitorOptions {
+    // if set to true, _all_ properties are generated as optional ?:.
+    // This is the standard CAP behaviour, where any property could not be available/ not yet be constructed
+    // at any point
+    propertiesOptional: boolean
+}
+
+type VisitorParameters = { logger?: Logger, options?: VisitorOptions }
 
 /**
  * Compiles a .cds file to Typescript types.
@@ -46,11 +56,11 @@ interface CompileParameters {
 export function compileFromFile(inputFile: string, parameters: CompileParameters): Promise<string[]>;
 
 /**
- * Compiles a CSON object to Typescript types.
- * @param cson CSON
+ * Compiles a CSN object to Typescript types.
+ * @param csn CSN
  * @param parameters path to root directory for all generated files, min log level
  */
-export function compileFromCSON(cson: CSON, parameters: CompileParameters): Promise<string[]>;
+export function compileFromCSN(csn: CSN, parameters: CompileParameters): Promise<string[]>;
 
 /**
  * Writes the accompanying jsconfig.json file to the specified paths.
@@ -62,9 +72,9 @@ export function writeJsConfig(file: string, logger: Logger);
 
 export class Visitor {
     /**
-     * @param cson root CSON
+     * @param csn root CSN
      */
-    constructor(cson: CSON, params: {logger?: Logger});
+    constructor(csn: CSN, params: VisitorParameters);
 
     /**
      * Determines the file corresponding to the namespace.
@@ -84,39 +94,39 @@ export class Visitor {
     private untangle(fq: string): [Path, string];
 
     /**
-     * Visits all definitions within the CSON definitions.
+     * Visits all definitions within the CSN definitions.
      */
     private visitDefinitions(): void;
 
     /**
-     * Visits a single entity from the CSON's definition field.
+     * Visits a single entity from the CSN's definition field.
      * Will call _printEntity or _printAction based on the entity's kind.
      * @param name name of the entity, fully qualified as is used in the definition field.
-     * @param entity CSON data belonging to the entity to perform lookups in.
+     * @param entity CSN data belonging to the entity to perform lookups in.
      */
-    private visitEntity(name: string, entity: CSON): void;
-    private _printEntity(name: string, entity: CSON): void;
-    private _printAction(name: string, action: CSON): void;
-    private _printType(name: string, type: CSON): void;
-    private _printAspect(name: string, aspect: CSON): void;
+    private visitEntity(name: string, entity: CSN): void;
+    private _printEntity(name: string, entity: CSN): void;
+    private _printAction(name: string, action: CSN): void;
+    private _printType(name: string, type: CSN): void;
+    private _printAspect(name: string, aspect: CSN): void;
 
     /**
      * Visits a single element in an entity.
      * @param name name of the element
-     * @param element CSON data belonging to the the element.
+     * @param element CSN data belonging to the the element.
      * @param file the namespace file the surrounding entity is being printed into.
      * @param buffer buffer to add the definition to. If no buffer is passed, the passed file's class buffer is used instead.
      */
-    public visitElement(name: string, element: CSON, file: SourceFile, buffer?: Buffer): void;
+    public visitElement(name: string, element: CSN, file: SourceFile, buffer?: Buffer): void;
 
     /**
-     * Attempts to retrieve the max cardinality of a CSON for an entity.
-     * @param element cson of entity to retrieve cardinality for
+     * Attempts to retrieve the max cardinality of a CSN for an entity.
+     * @param element csn of entity to retrieve cardinality for
      * @returns max cardinality of the element. 
      * If no cardinality is attached to the element, cardinality is 1.
      * If it is set to '*', result is Infinity.
      */
-    private getMaxCardinality(element: EntityCSON): number;
+    private getMaxCardinality(element: EntityCSN): number;
 
     /**
      * Convenience method to shave off the namespace of a fully qualified path.
@@ -156,11 +166,11 @@ export class Visitor {
      * - the const AXtended which represents the entity A with all of its aspects mixed in (this const is not exported)
      * - the type A to use for external typing and is derived from AXtended.
      * @param name the name of the entity
-     * @param element the pointer into the CSON to extract the elements from
+     * @param element the pointer into the CSN to extract the elements from
      * @param buffer the buffer to write the resulting definitions into
      * @param cleanName the clean name to use. If not passed, it is derived from the passed name instead.
      */
-    private _aspectify(name: string, element: CSON, buffer: Buffer, cleanName?: string);
+    private _aspectify(name: string, element: CSN, buffer: Buffer, cleanName?: string);
 
     /**
      * Convenient API to consume resolveType.
@@ -177,28 +187,28 @@ export class Visitor {
      * 2. resolve any singular/ plural issues and association/ composition around it
      * 3. return a properly prefixed name to use within model2.d.ts, e.g. "m1.Foo"
      * 
-     * @param element the CSON element to resolve the type for.
+     * @param element the CSN element to resolve the type for.
      * @param file source file for context.
      * @returns name of the resolved type
      */
-    private resolveAndRequire(element: CSON, file: SourceFile): string; 
+    private resolveAndRequire(element: CSN, file: SourceFile): string; 
 
     /**
      * Resolves an element's type to either a builtin or a user defined type. 
      * Enriched with additional information for improved printout (see return type).
-     * @param element the CSON element to resolve the type for.
+     * @param element the CSN element to resolve the type for.
      * @param file source file for context.
      * @returns description of the resolved type
      */
-    private resolveType(element: CSON, file: SourceFile): TypeResolveInfo;
+    private resolveType(element: CSN, file: SourceFile): TypeResolveInfo;
 
     /**
      * Resolves the fully qualified name of an entity to its parent entity.
-     * _resolveParent(a.b.c.D) -> CSON {a.b.c}
+     * _resolveParent(a.b.c.D) -> CSN {a.b.c}
      * @param name fully qualified name of the entity to resolve the parent of.
-     * @returns the resolved parent CSON.
+     * @returns the resolved parent CSN.
      */
-    private _resolveParent(name: String): CSON;
+    private _resolveParent(name: String): CSN;
 
     /**
      * Attempts to resolve a type that could reference another type.
@@ -231,7 +241,7 @@ export class Visitor {
     /**
      * Attempts to resolve a string to a type.
      * String is supposed to refer to either a builtin type
-     * or any type defined in CSON.
+     * or any type defined in CSN.
      * @param t fully qualified type, like cds.String, or a.b.c.d.Foo
      * @param into optional dictionary to fill by reference, see resolveType()
      * @returns see resolveType()

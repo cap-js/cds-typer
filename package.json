@@ -1,13 +1,35 @@
 {
-  "name": "cds4types",
-  "version": "1.0.0",
-  "description": "",
+  "name": "@sap/cds-dts-generator",
+  "version": "0.1.2",
+  "description": "Generates .ts files for a CDS model to receive code completion in VS Code",
   "main": "index.js",
+  "homepage": "https://cap.cloud.sap/",
+  "keywords": [
+    "CAP",
+    "CDS",
+    "CLI"
+  ],
+  "author": "SAP SE (https://www.sap.com)",
+  "license": "SEE LICENSE IN LICENSE",
   "scripts": {
-    "test": "rm -rf ./__tests__/files/output/* && jest"
+    "test:unit": "jest --projects __tests__/unit.jest.config.js",
+    "test:integration": "jest --projects __tests__/int.jest.config.js",
+    "test:all": "jest",
+    "test": "npm run test:unit",
+    "lint": "eslint",
+    "cli": "node lib/cli.js"
   },
-  "author": "Daniel O'Grady",
-  "license": "ISC",
+  "files": [
+    "lib/",
+    "CHANGELOG.md",
+    "index.js",
+    "LICENSE",
+    "README.md"
+  ],
+  "types": "index.d.ts",
+  "bin": {
+    "cds-typer": "./lib/cli.js"
+  },
   "dependencies": {
     "@sap/cds": "^6"
   },
@@ -15,14 +37,13 @@
     "eslint": "^8.15.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "jest": "^28.1.0",
+    "jest": "^29",
     "typescript": "^4.6.4"
   },
   "jest": {
-    "testRegex": "/__tests__/.*.test.js",
-    "testPathIgnorePatterns": [
-      "./__tests__/files/"
-    ],
-    "globalSetup": "./__tests__/setup.js"
+    "projects": [
+      "__tests__/unit.jest.config.js",
+      "__tests__/int.jest.config.js"
+    ]
   }
 }
