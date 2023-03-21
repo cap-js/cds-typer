@@ -7,7 +7,7 @@ jobs:
   test:
     strategy:
       matrix:
-        platform: [macos-latest]
+        platform: [ macos-latest, ubuntu-latest, windows-latest ]
     runs-on: ${{ matrix.platform }}
     steps:
     - uses: actions/checkout@v3
