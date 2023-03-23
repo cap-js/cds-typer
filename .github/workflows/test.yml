@@ -1,0 +1,28 @@
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+  
+jobs:
+  test:
+    strategy:
+      matrix:
+        version: [16, '18.10']
+        platform: [ macos-latest, ubuntu-latest, windows-latest ]
+    runs-on: ${{ matrix.platform }}
+    
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+          node-version: ${{ matrix.version }}
+        
+    - name: Run Unit Tests
+      run: |
+        npm install
+        npm run test
+        
+    - name: Run Integration Tests
+      run: |
+        npm install
+        npm run test:integration
