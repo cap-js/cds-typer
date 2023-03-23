@@ -1,6 +1,7 @@
 type KVs = [string, string][]
 type Namespace = {[key: string]: Buffer}
 type ActionParams = [string, string][]
+type AsDirectoryParams = {relative: string | undefined, local: boolean, posix: boolean}
 
 /**
  * String buffer to conveniently append strings to.
@@ -63,9 +64,10 @@ export class Path {
      * Transfoms the Path into a directory path.
      * @param relative if defined, the path is constructed relative to this directory
      * @param local if set to true, './' is prefixed to the directory
-     * @returns directory 'a.b.c'.asDirectory() -> 'a/b/c'
+     * @param posix if set to true, all slashes will be forward slashes on every OS. Useful for require/ import
+     * @returns directory 'a.b.c'.asDirectory() -> 'a/b/c' (or a\b\c when on Windows without passing posix = true)
      */
-    asDirectory(relative: string | undefined, local: boolean): string;
+    asDirectory(params: AsDirectoryParams): string;
 
     /**
      * Transforms the Path into a namespace qualifier.

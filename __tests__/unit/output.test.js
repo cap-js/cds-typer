@@ -22,7 +22,7 @@ describe('Compilation', () => {
     test('bookshoplet', async () => {
         const paths = await cds2ts
             .compileFromFile('./__tests__/unit/files/bookshoplet/model.cds', {
-                outDirectory: dir,
+                rootDirectory: dir,
             })
             // eslint-disable-next-line no-console
             .catch((err) => console.error(err))

@@ -1,6 +1,6 @@
 {
   "name": "@sap/cds-dts-generator",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Generates .ts files for a CDS model to receive code completion in VS Code",
   "main": "index.js",
   "homepage": "https://cap.cloud.sap/",
