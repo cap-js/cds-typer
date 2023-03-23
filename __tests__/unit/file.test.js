@@ -1,5 +1,6 @@
 'use strict'
 
+const path = require('path')
 const { Buffer, Path, SourceFile } = require('../../lib/file')
 
 describe('Buffer', () => {
@@ -57,12 +58,14 @@ describe('Path', () => {
     test('asDirectory', () => {
         let p = new Path(['a', 'b', 'c'])
         expect(p.asDirectory()).toBe('./a/b/c')
-        expect(p.asDirectory('a/b')).toBe('./c')
-        expect(p.asDirectory('a/b/c/d/e')).toBe('./../..')
-        expect(p.asDirectory('a/b/x/y')).toBe('./../../c')
-        expect(p.asDirectory(undefined, false)).toBe('a/b/c')
+        expect(p.asDirectory({relative: 'a/b'})).toBe('./c')
+        expect(p.asDirectory({relative: 'a/b/c/d/e'})).toBe('./../..')
+        expect(p.asDirectory({relative: 'a/b/x/y'})).toBe('./../../c')
+        expect(p.asDirectory({local: false})).toBe('a/b/c')
+        expect(p.asDirectory({posix: false, local: false})).toBe(path.join('a','b','c'))
+        expect(p.asDirectory({posix: false})).toBe('.' + path.sep + path.join('a','b','c'))
         p = new Path([])
-        expect(p.asDirectory(undefined, false)).toBe('.')
+        expect(p.asDirectory({local: false})).toBe('.')
     })
 
     test('isCwd', () => {

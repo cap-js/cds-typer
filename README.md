@@ -7,6 +7,7 @@ Generates `.ts` files for a CDS model to receive code completion in VS Code.
 
 ## Requirements and Setup
 
+
 ### Building the Project Yourself
 Clone the repository and install the dependencies running `npm i` from the project's root directory.
 

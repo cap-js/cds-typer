@@ -33,8 +33,7 @@ interface TypeResolveInfo {
 }
 
 interface CompileParameters {
-    outDirectory: string,
-    cdsRoot: string,
+    rootDirectory: String,
     logLevel: number,
     jsConfigPath?: string
 }
