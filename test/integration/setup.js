@@ -1,8 +1,8 @@
 const fs = require('fs')
-
+const path = require('path')
 const execSync = require('child_process').execSync
 const repository = 'https://github.com/SAP-samples/cloud-cap-samples/'
-const directory = './__tests__/files/cloud-cap-samples'
+const directory = path.normalize('./test/integration/files/cloud-cap-samples')
 
 module.exports = () => {
     if (fs.existsSync(directory)) {

@@ -59,6 +59,24 @@ const toExactlyHave = (module, props) => {
     }
 }
 
+const toHavePropertyOfType = (clazz, property, types) => {
+    const prop = clazz[property]
+    
+    if (!prop) {
+        return {
+            message: () => `no property '${property}' in class '${clazz}'`,
+            pass: false
+        }
+    } 
+    if (prop.length !== types.length || !types.every(t => prop.includes(t))) {
+        return {
+            message: () => `actual type of property ${property} '${prop}' does not match expected type '${types}'`,
+            pass: false
+        }
+    }
+    return { message: () => '', pass: true }
+}
+
 const validateDTSTypes = (base, ignores = {}) => {
     ignores = Object.assign({ js: [], ts: [] }, ignores)
     const jsPath = path.normalize(`${base}.js`)
@@ -283,4 +301,5 @@ module.exports = {
     TSParser,
     resolveAliases,
     validateDTSTypes,
+    toHavePropertyOfType
 }

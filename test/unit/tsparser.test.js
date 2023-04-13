@@ -4,7 +4,7 @@ const { toExactlyHave, TSParser } = require('../util')
 
 expect.extend({ toExactlyHave })
 
-const getParsed = () => new TSParser().parse('./__tests__/unit/files/typescript/foo.d.ts')
+const getParsed = () => new TSParser().parse('./test/unit/files/typescript/foo.d.ts')
 
 describe('TSParser', () => {
     test('parse', () => {

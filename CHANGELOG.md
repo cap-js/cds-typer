@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 
 ## Version 0.1.2 - TBD
+- enable use of additional type libraries (HANA types available as first library)
+- provide proper JSDoc for all modules
 - export entity types for singular variants alongside plural types
 ## Version 0.1.1 - 2023-01-26
 - add TL;DR section to README
