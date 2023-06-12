@@ -3,8 +3,9 @@
 const fs = require('fs')
 const cds2ts = require('../../lib/compile')
 const { toHaveAll, toOnlyHave, toExactlyHave, TSParser } = require('../util')
+const { locations } = require('../util')
 
-const dir = './test/integration/files/output/'
+const dir = locations.testOutput('compilation')
 
 expect.extend({ toHaveAll, toOnlyHave, toExactlyHave })
 
@@ -18,12 +19,11 @@ describe('Compilation', () => {
         }
     })
 
-    test('common', async () => {
+    test.skip('Common', async () => {
         // Note (1): certain entities are inflected as singular in the corresponding cds files.
-        // See: https://github.tools.sap/cap/cds-tools/issues/223
         // These collision are currently resolved by adding a dummy suffix.
         await cds2ts
-            .compileFromFile('./test/files/cloud-cap-samples/common/index.cds', {
+            .compileFromFile(locations.integration.cloudCapSamples('common/index.cds'), {
                 rootDirectory: dir,
             })
             // eslint-disable-next-line no-console

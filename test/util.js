@@ -3,6 +3,33 @@ const fs = require('fs')
 const path = require('path')
 const { Logger } = require('../lib/logging')
 const { fail } = require('assert')
+const os = require('os')
+
+
+
+/**
+export type ClassBody = {
+    [key: string]: string[]
+}
+
+export interface Import {
+    imports: string;
+    from: string;
+    alias: string;
+}
+
+export interface TSParseResult {
+    classes: {[key: string]: ClassBody},
+    declarations: {[key: string]: string},
+    imports: Import[]
+}
+
+export class TSParser {
+    private _parseClassBody(lines: string[]): ClassBody
+    public parse(file: string): TSParseResult;
+}
+*/
+
 
 /**
  * Hackish. When having code as string, we can either:
@@ -293,6 +320,19 @@ const resolveAliases = (file, resolves) => {
     fs.writeFileSync(file, content, { encoding: 'utf-8' })
 }
 
+const locations = {
+    testOutput: (suffix) => path.normalize(`${os.tmpdir}/type-gen/test/output/${suffix}`),
+    unit: {
+        base: path.normalize('./test/unit/'),
+        files: (suffix) => path.normalize(`./test/unit/files/${suffix}`)
+    },
+    integration: {
+        base: path.normalize('./test/integration/'),
+        files: (suffix) => path.normalize(`./test/integration/files/${suffix}`),
+        cloudCapSamples: (suffix) => path.normalize(`./test/integration/files/cloud-cap-samples/${suffix}`),
+    }
+}
+
 module.exports = {
     loadModule,
     toHaveAll,
@@ -301,5 +341,6 @@ module.exports = {
     TSParser,
     resolveAliases,
     validateDTSTypes,
-    toHavePropertyOfType
+    toHavePropertyOfType,
+    locations
 }

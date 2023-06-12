@@ -5,37 +5,37 @@ const { Buffer, Path, SourceFile } = require('../../lib/file')
 
 describe('Buffer', () => {
     const buffer = new Buffer(' ')
-    test('no indent', () => expect(buffer.currentIndent).toBe(''))
-    test('one indent', () => {
+    test('No Indent', () => expect(buffer.currentIndent).toBe(''))
+    test('One Indent', () => {
         buffer.indent()
         expect(buffer.currentIndent).toBe(' ')
     })
-    test('two indent', () => {
+    test('Two Indent', () => {
         buffer.indent()
         expect(buffer.currentIndent).toBe('  ')
     })
-    test('one outdent', () => {
+    test('One Outdent', () => {
         buffer.outdent()
         expect(buffer.currentIndent).toBe(' ')
     })
-    test('two outdent', () => {
+    test('Two Outdent', () => {
         buffer.outdent()
         expect(buffer.currentIndent).toBe('')
     })
-    test('three outdent', () => {
+    test('Three Outdent', () => {
         expect(buffer.outdent).toThrow()
         expect(buffer.currentIndent).toBe('')
     })
 
-    test('add A', () => {
+    test('Add A', () => {
         buffer.add('A')
         expect(buffer.parts.length).toBe(1)
     })
-    test('add B', () => {
+    test('Add B', () => {
         buffer.add('B')
         expect(buffer.join('-')).toBe('A-B')
     })
-    test('clear', () => {
+    test('Clear', () => {
         buffer.clear()
         expect(buffer.parts.length).toBe(0)
         expect(buffer.join()).toBe('')

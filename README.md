@@ -20,11 +20,11 @@ Assuming you have the following CDS project structure:
 
 ```
 /home/
-↳ mybookshop/
-  ↳ db/
-    ↳ schema.cds
-  ↳ srv/
-    ↳ service.js
+├── mybookshop/
+│   ├── db/
+│   │   └── schema.cds
+│   ├── srv/
+│   │   └── service.js
 ```
 
 a typical workflow to generate types for your CDS project could look something like this:

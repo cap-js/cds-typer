@@ -1,6 +1,6 @@
 {
-  "name": "@sap/cds-dts-generator",
-  "version": "0.1.5",
+  "name": "@cap-js/cds-typer",
+  "version": "0.2.5",
   "description": "Generates .ts files for a CDS model to receive code completion in VS Code",
   "main": "index.js",
   "homepage": "https://cap.cloud.sap/",
@@ -21,6 +21,7 @@
   },
   "files": [
     "lib/",
+    "library",
     "CHANGELOG.md",
     "index.js",
     "LICENSE",
@@ -31,7 +32,7 @@
     "cds-typer": "./lib/cli.js"
   },
   "dependencies": {
-    "@sap/cds": "^6"
+    "@sap/cds": ">=6"
   },
   "devDependencies": {
     "eslint": "^8.15.0",
