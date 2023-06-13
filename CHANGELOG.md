@@ -5,10 +5,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 
+## Version 0.2.5-beta.1 - 2023-06-13
 
+### Changed
 
-
-## Version 0.2.5 - TBD
+- Bump version
 
 ## Version 0.2.4 - 2023-06-12
 - Enable use of annotated singular/ plural names in associations/ compositions
