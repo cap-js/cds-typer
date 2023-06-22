@@ -321,7 +321,11 @@ const resolveAliases = (file, resolves) => {
 }
 
 const locations = {
-    testOutput: (suffix) => path.normalize(`${os.tmpdir}/type-gen/test/output/${suffix}`),
+    testOutput: (suffix) => {
+        const dir = path.normalize(`${os.tmpdir}/type-gen/test/output/${suffix}`)
+        console.log(`preparing test output directory: ${dir}`)
+        return dir
+    },
     unit: {
         base: path.normalize('./test/unit/'),
         files: (suffix) => path.normalize(`./test/unit/files/${suffix}`)

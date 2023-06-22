@@ -6,11 +6,7 @@ Generates `.ts` files for a CDS model to receive code completion in VS Code.
 
 
 ## Requirements and Setup
-
-
-### Building the Project Yourself
-Clone the repository and install the dependencies running `npm i` from the project's root directory.
-
+This project is [available as `@cds-js/cds-typer`](https://www.npmjs.com/package/@cap-js/cds-typer) as NPM package.
 
 ### Usage
 The type generator is currently meant as a standalone tool and can be installed and used independently of other CDS environments (sans its dependency to the cds compiler).
@@ -30,11 +26,11 @@ Assuming you have the following CDS project structure:
 a typical workflow to generate types for your CDS project could look something like this:
 
 ```sh
-git clone https://this/repo cds-js-type-generator
-cd cds-js-type-generator
+git clone https://this/repo type-generator
+cd type-generator
 npm i
 node ./index.js \
-  --rootDir /home/mybookshop/@types \
+  --outputDirectory /home/mybookshop/@types \
   --jsConfigPath /home/mybookshop \
   /home/mybookshop/srv/schema.cds
 ```
@@ -61,7 +57,7 @@ From that point on you should receive code completion from the type system for `
 _cds-typer_ comes with rudimentary CLI support and a few command line options:
 
 - `--help`: prints all available parameters.
-- `--rootDir`: specifies the root directory where all generated files should be put. Defaults to the CWD.
+- `--outputDirectory`: specifies the root directory where all generated files should be put. Defaults to the CWD.
 - `--jsConfigPath`: specifies the path to the `jsconfig.json` file to generate. Usually your project's root directory. If specified, a config file is created that restricts the usage of types even further:
 
 ```js
@@ -93,7 +89,7 @@ NONE
 The utility expects (at least) one path to a `.cds` file as positional parameter which serves as entry point to the model in question, e.g.:
 
 ```sh
-cds-typer ./path/to/my/model/model.cds --rootDir /tmp/
+cds-typer ./path/to/my/model/model.cds --outputDirectory /tmp/
 ```
 
 Note that you can also pass multiple paths or `"*"` as glob pattern (with quotes to circumvent expansion by the shell). This passes the pattern on to the compiler where the [regular resolve strategy](https://cap.cloud.sap/docs/node.js/cds-compile?q=compiler#cds-resolve) is used.
@@ -181,7 +177,7 @@ _cds-typer_ tries to keep its dependency footprint as small as possible. Librari
 
 ## Support, Feedback, Contributing
 
-This project is open to feature requests/suggestions, bug reports etc. via [GitHub issues](https://github.com/SAP/cds-dts-generator/issues). Contribution and feedback are encouraged and always welcome. For more information about how to contribute, the project structure, as well as additional contribution information, see our [Contribution Guidelines](CONTRIBUTING.md).
+This project is open to feature requests/suggestions, bug reports etc. via [GitHub issues](https://github.com/cap-js/cds-typer/issues). Contribution and feedback are encouraged and always welcome. For more information about how to contribute, the project structure, as well as additional contribution information, see our [Contribution Guidelines](CONTRIBUTING.md).
 
 ## Code of Conduct
 

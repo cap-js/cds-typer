@@ -5,10 +5,18 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 
+## Version 0.2.5-beta.2 - TBD
+### Added
+- Support `function` definitions (apart from `action`s)
+### Changed
+- Bump version
+
+### Fixed
+- Properly import CDS `type` definitions when they are referenced elsewhere
+
 ## Version 0.2.5-beta.1 - 2023-06-13
 
 ### Changed
-
 - Bump version
 
 ## Version 0.2.4 - 2023-06-12

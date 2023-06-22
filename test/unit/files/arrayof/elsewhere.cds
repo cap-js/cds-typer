@@ -1,0 +1,2 @@
+namespace elsewhere;
+type ExternalType {}
