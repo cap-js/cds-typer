@@ -6,7 +6,7 @@ Generates `.ts` files for a CDS model to receive code completion in VS Code.
 
 
 ## Requirements and Setup
-This project is [available as `@cds-js/cds-typer`](https://www.npmjs.com/package/@cap-js/cds-typer) as NPM package.
+This project is [available as `@cap-js/cds-typer`](https://www.npmjs.com/package/@cap-js/cds-typer) as NPM package.
 
 ### Usage
 The type generator can either be used as a standalone tool, or as part of of the [CDS VSCode-Extension](https://www.npmjs.com/package/@sap/vscode-cds).
