@@ -45,6 +45,8 @@ const { Books } = require('../@types/mybookshop')
 
 From that point on you should receive code completion from the type system for `Books`.
 
+_Note:_ the above command generates types for the model contained within the mentioned `schema.cds` file. If you have multiple `.cds` files that are included via `using` statements by `schema.cds`, then those files will also be included in the type generation process. If you have `.cds` files that are _not_ in some way included in `schema.cds`, you have to explicitly pass those as positional argument as well, if you want types for them.
+
 _cds-typer_ comes with rudimentary CLI support and a few command line options:
 
 - `--help`: prints all available parameters.
