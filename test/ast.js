@@ -19,6 +19,7 @@ const kinds = {
     PropertyDeclaration: 'propertyDeclaration',
     Keyword: 'keyword',
     VariableStatement: 'variableStatement',
+    TypeAliasDeclaration: 'typeAliasDeclaration'
 }
 
 const keywords = {
@@ -64,6 +65,7 @@ const visitors = [
     [ts.isIdentifier, visitIdentifier],
     [ts.isImportClause, visitImportClause],
     [ts.isImportDeclaration, visitImportDeclaration],
+    [ts.isTypeAliasDeclaration, visitTypeAliasDeclaration],
     [ts.isPrefixUnaryExpression, visitPrefixUnaryExpression],
     [ts.isStatement, visitStatement],
     [n => [ts.SyntaxKind.TrueKeyword, ts.SyntaxKind.FalseKeyword].includes(n.kind), visitBooleanLiteral],
@@ -71,6 +73,19 @@ const visitors = [
     [isKeyword, resolveKeyword],
     [() => true, node => console.error(`unhandled node type: ${JSON.stringify(node, null, 2)}`)]
 ]
+
+/**
+ * @typedef {{name: string, type: any[]}} TypeAliasDeclaration
+ * @param node {ts.TypeAliasDeclaration}
+ * @returns {TypeAliasDeclaration}
+ */
+function visitTypeAliasDeclaration(node) {
+    return {
+        nodeType: kinds.TypeAliasDeclaration,
+        name: visit(node.name),
+        types: node.type.types.map(visit).map(t => t.literal)
+    }
+}
 
 /** @param node { {text: string} } */
 function visitNumericLiteral(node) {
@@ -268,6 +283,12 @@ class ASTWrapper {
     getTopLevelClassDeclarations() {
         return this.tree
             .filter(n => n.nodeType === kinds.ClassDeclaration)
+    }
+
+    /** @returns {TypeAliasDeclaration[]} */
+    getTypeAliasDeclarations() {
+        return this.tree
+            .filter(n => n.nodeType === kinds.TypeAliasDeclaration)
     }
 
     // /** @returns {ClassDeclaration[]} */
