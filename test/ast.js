@@ -83,7 +83,8 @@ function visitTypeAliasDeclaration(node) {
     return {
         nodeType: kinds.TypeAliasDeclaration,
         name: visit(node.name),
-        types: node.type.types.map(visit).map(t => t.literal)
+        // FIXME: sometimes also has .members
+        types: (node.type.types ?? []).map(visit).map(t => t.literal)
     }
 }
 
