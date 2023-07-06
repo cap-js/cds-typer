@@ -18,7 +18,8 @@ const kinds = {
     ImportDeclaration: 'importDeclaration',
     PropertyDeclaration: 'propertyDeclaration',
     Keyword: 'keyword',
-    VariableStatement: 'variableStatement'
+    VariableStatement: 'variableStatement',
+    TypeAliasDeclaration: 'typeAliasDeclaration'
 }
 
 const keywords = {
@@ -51,6 +52,7 @@ const visitors = [
     // order in some cases important. For example, 
     // ts.isStatement will be true for ImportDeclarations etc.
     // so it has to be added after more specific checks.
+    [ts.isObjectLiteralExpression, visitObjectLiteralExpression],
     [ts.isClassDeclaration, visitClassDeclaration],
     [ts.isFunctionDeclaration, visitFunctionDeclaration],
     [ts.isVariableStatement, visitVariableStatement],
@@ -63,10 +65,54 @@ const visitors = [
     [ts.isIdentifier, visitIdentifier],
     [ts.isImportClause, visitImportClause],
     [ts.isImportDeclaration, visitImportDeclaration],
+    [ts.isTypeAliasDeclaration, visitTypeAliasDeclaration],
+    [ts.isPrefixUnaryExpression, visitPrefixUnaryExpression],
     [ts.isStatement, visitStatement],
+    [n => [ts.SyntaxKind.TrueKeyword, ts.SyntaxKind.FalseKeyword].includes(n.kind), visitBooleanLiteral],
+    [n => n.kind === ts.SyntaxKind.NumericLiteral, visitNumericLiteral],
     [isKeyword, resolveKeyword],
     [() => true, node => console.error(`unhandled node type: ${JSON.stringify(node, null, 2)}`)]
 ]
+
+/**
+ * @typedef {{name: string, type: any[]}} TypeAliasDeclaration
+ * @param node {ts.TypeAliasDeclaration}
+ * @returns {TypeAliasDeclaration}
+ */
+function visitTypeAliasDeclaration(node) {
+    return {
+        nodeType: kinds.TypeAliasDeclaration,
+        name: visit(node.name),
+        // FIXME: sometimes also has .members
+        types: (node.type.types ?? []).map(visit).map(t => t.literal)
+    }
+}
+
+/** @param node { {text: string} } */
+function visitNumericLiteral(node) {
+    return Number(node.text)
+}
+
+/** @param node {ts.Token} */
+function visitBooleanLiteral(node) {
+    // the literals "true" and "false" are very non-descriptive,
+    // so we directly check for their kind to find them
+    if (node.kind === ts.SyntaxKind.TrueKeyword) return true
+    if (node.kind === ts.SyntaxKind.FalseKeyword) return false
+}
+
+/** @param node { {operator: number, operand: {}} } */
+function visitPrefixUnaryExpression(node) {
+    if (node.operator === ts.SyntaxKind.MinusToken) return -visit(node.operand)
+}
+
+/** @param node {ts.ObjectLiteralExpression} */
+function visitObjectLiteralExpression(node) {
+    return node.properties.reduce((o, {name, initializer}) => {
+        o[visit(name)] = visit(initializer)
+        return o
+    }, {})
+}
 
 /** @param node {ts.Identifier} */
 function visitIdentifier(node) {
@@ -238,6 +284,12 @@ class ASTWrapper {
     getTopLevelClassDeclarations() {
         return this.tree
             .filter(n => n.nodeType === kinds.ClassDeclaration)
+    }
+
+    /** @returns {TypeAliasDeclaration[]} */
+    getTypeAliasDeclarations() {
+        return this.tree
+            .filter(n => n.nodeType === kinds.TypeAliasDeclaration)
     }
 
     // /** @returns {ClassDeclaration[]} */
