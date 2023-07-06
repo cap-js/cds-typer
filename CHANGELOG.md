@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.3.1 - TBD
+## Version 0.4.1 - TBD
+
+## Version 0.4.0 - 2023-07-06
 ### Added
 - Support for enums when they are defined separately (not inline in the property type of an entity)
 
