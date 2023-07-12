@@ -17,7 +17,11 @@
     "test:all": "jest",
     "test": "npm run test:unit",
     "lint": "eslint",
-    "cli": "node lib/cli.js"
+    "cli": "node lib/cli.js",
+    "doc:prepare": "rm -rf ./doc && mkdir -p ./doc",
+    "doc:types": "./node_modules/.bin/jsdoc2md -f lib/*.js > ./doc/lib.md",
+    "doc:cli": "npm run cli -- --help > ./doc/cli.txt",
+    "doc:full": "npm run doc:prepare && npm run doc:types && npm run doc:cli"
   },
   "files": [
     "lib/",
@@ -39,6 +43,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^29",
+    "jsdoc-to-markdown": "^8.0.0",
     "typescript": ">=4.6.4"
   },
   "jest": {
