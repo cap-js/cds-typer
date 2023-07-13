@@ -24,7 +24,6 @@
     "doc:html": "npm run doc:typegen && ./node_modules/.bin/typedoc 'doc/types/**/*.d.ts' --entryPointStrategy expand --out doc/html --tsconfig doc/types/tsconfig.json",
     "doc:cli": "npm run cli -- --help > ./doc/cli.txt",
     "doc:full": "npm run doc:prepare && npm run doc:html && npm run doc:cli",
-    "doc:gh-pages": "npm run doc:full && cp -r doc/html/* ."
   },
   "files": [
     "lib/",
