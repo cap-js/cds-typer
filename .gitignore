@@ -1,5 +1,5 @@
 @types
-
+doc/
 coverage
 .vscode
 test/**/output
