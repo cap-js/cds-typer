@@ -1,0 +1,151 @@
+<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>@cap-js/cds-typer</title><meta name="description" content="Documentation for @cap-js/cds-typer"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/search.js" id="tsd-search-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container">
+<div class="table-cell" id="tsd-search" data-base=".">
+<div class="field"><label for="tsd-search-field" class="tsd-widget tsd-toolbar-icon search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M15.7824 13.833L12.6666 10.7177C12.5259 10.5771 12.3353 10.499 12.1353 10.499H11.6259C12.4884 9.39596 13.001 8.00859 13.001 6.49937C13.001 2.90909 10.0914 0 6.50048 0C2.90959 0 0 2.90909 0 6.49937C0 10.0896 2.90959 12.9987 6.50048 12.9987C8.00996 12.9987 9.39756 12.4863 10.5008 11.6239V12.1332C10.5008 12.3332 10.5789 12.5238 10.7195 12.6644L13.8354 15.7797C14.1292 16.0734 14.6042 16.0734 14.8948 15.7797L15.7793 14.8954C16.0731 14.6017 16.0731 14.1267 15.7824 13.833ZM6.50048 10.499C4.29094 10.499 2.50018 8.71165 2.50018 6.49937C2.50018 4.29021 4.28781 2.49976 6.50048 2.49976C8.71001 2.49976 10.5008 4.28708 10.5008 6.49937C10.5008 8.70852 8.71314 10.499 6.50048 10.499Z" fill="var(--color-text)"></path></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div>
+<div class="field">
+<div id="tsd-toolbar-links"></div></div>
+<ul class="results">
+<li class="state loading">Preparing search index...</li>
+<li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">@cap-js/cds-typer</a></div>
+<div class="table-cell" id="tsd-widgets"><a href="#" class="tsd-widget tsd-toolbar-icon menu no-caption" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="7" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="11" width="14" height="2" fill="var(--color-text)"></rect></svg></a></div></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<h2>@cap-js/cds-typer</h2></div>
+<div class="tsd-panel tsd-typography"><a id="md:cds-type-generator-for-javascript" class="tsd-anchor"></a><h1><a href="#md:cds-type-generator-for-javascript">CDS type generator for JavaScript</a></h1><p><a href="https://api.reuse.software/info/github.com/cap-js/cds-typer"><img src="https://api.reuse.software/badge/github.com/cap-js/cds-typer" alt="REUSE status"></a></p>
+<a id="md:about-this-project" class="tsd-anchor"></a><h2><a href="#md:about-this-project">About this project</a></h2><p>Generates <code>.ts</code> files for a CDS model to receive code completion in VS Code.</p>
+<a id="md:requirements-and-setup" class="tsd-anchor"></a><h2><a href="#md:requirements-and-setup">Requirements and Setup</a></h2><p>This project is <a href="https://www.npmjs.com/package/@cap-js/cds-typer">available as <code>@cap-js/cds-typer</code></a> as NPM package.</p>
+<a id="md:usage" class="tsd-anchor"></a><h3><a href="#md:usage">Usage</a></h3><p>The type generator can either be used as a standalone tool, or as part of of the <a href="https://www.npmjs.com/package/@sap/vscode-cds">CDS VSCode-Extension</a>.</p>
+<a id="md:standalone-cli" class="tsd-anchor"></a><h4><a href="#md:standalone-cli">Standalone CLI</a></h4><p>Assuming you have the following CDS project structure:</p>
+<pre><code><span class="hl-0">/home/</span><br/><span class="hl-1">├── </span><span class="hl-2">mybookshop</span><span class="hl-1">/</span><br/><span class="hl-1">│   ├── </span><span class="hl-2">db</span><span class="hl-1">/</span><br/><span class="hl-1">│   │   └── </span><span class="hl-2">schema</span><span class="hl-1">.</span><span class="hl-2">cds</span><br/><span class="hl-1">│   ├── </span><span class="hl-2">srv</span><span class="hl-1">/</span><br/><span class="hl-1">│   │   └── </span><span class="hl-2">service</span><span class="hl-1">.</span><span class="hl-2">js</span>
+</code><button>Copy</button></pre>
+<p>a typical workflow to generate types for your CDS project could look something like this:</p>
+<pre><code class="language-sh"><span class="hl-3">npx</span><span class="hl-1"> </span><span class="hl-4">@cap-js/cds-typer</span><span class="hl-1"> </span><span class="hl-4">/home/mybookshop/db/schema.cds</span><span class="hl-1"> </span><span class="hl-5">--outputDirectory</span><span class="hl-1"> </span><span class="hl-4">/home/mybookshop/@types</span>
+</code><button>Copy</button></pre>
+<p>You would then end up with a directory <code>@types</code>, which contains your entities and their accompanying types in a directory structure. The directory structure directly reflects the namespaces you have defined your entities in. They have to be imported in any JavaScript-based service handlers you want to have type support in and can replace calls to <code>cds.entities(...)</code>:</p>
+<pre><code class="language-js"><span class="hl-6">// srv/service.js</span><br/><span class="hl-5">const</span><span class="hl-1"> { </span><span class="hl-7">Books</span><span class="hl-1"> } = </span><span class="hl-3">require</span><span class="hl-1">(</span><span class="hl-4">&#39;my.bookshop&#39;</span><span class="hl-1">)</span>
+</code><button>Copy</button></pre>
+<p>becomes</p>
+<pre><code class="language-js"><span class="hl-6">// srv/service.js</span><br/><span class="hl-5">const</span><span class="hl-1"> { </span><span class="hl-7">Books</span><span class="hl-1"> } = </span><span class="hl-3">require</span><span class="hl-1">(</span><span class="hl-4">&#39;../@types/mybookshop&#39;</span><span class="hl-1">)</span>
+</code><button>Copy</button></pre>
+<p>From that point on you should receive code completion from the type system for <code>Books</code>.</p>
+<p><em>Note:</em> the above command generates types for the model contained within the mentioned <code>schema.cds</code> file. If you have multiple <code>.cds</code> files that are included via <code>using</code> statements by <code>schema.cds</code>, then those files will also be included in the type generation process. If you have <code>.cds</code> files that are <em>not</em> in some way included in <code>schema.cds</code>, you have to explicitly pass those as positional argument as well, if you want types for them.</p>
+<p><em>cds-typer</em> comes with rudimentary CLI support and a few command line options:</p>
+<ul>
+<li><code>--help</code>: prints all available parameters.</li>
+<li><code>--outputDirectory</code>: specifies the root directory where all generated files should be put. Defaults to the CWD.</li>
+<li><code>--jsConfigPath</code>: specifies the path to the <code>jsconfig.json</code> file to generate. Usually your project&#39;s root directory. If specified, a config file is created that restricts the usage of types even further:</li>
+</ul>
+<pre><code class="language-js"><span class="hl-6">// generated .ts file</span><br/><span class="hl-5">class</span><span class="hl-1"> </span><span class="hl-8">Book</span><span class="hl-1"> {</span><br/><span class="hl-1">    </span><span class="hl-2">title</span><span class="hl-1">: </span><span class="hl-8">string</span><span class="hl-1">;</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-6">// some hook in your service</span><br/><span class="hl-3">SELECT</span><span class="hl-1">(</span><span class="hl-2">Books</span><span class="hl-1">, </span><span class="hl-2">b</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">    </span><span class="hl-2">b</span><span class="hl-1">.</span><span class="hl-2">title</span><span class="hl-1"> </span><span class="hl-6">// 👍 no problem, property exists</span><br/><span class="hl-1">    </span><span class="hl-2">b</span><span class="hl-1">.</span><span class="hl-2">numberOfPages</span><span class="hl-1"> </span><span class="hl-6">// ❌ property does not exist</span><br/><span class="hl-1">})</span>
+</code><button>Copy</button></pre>
+<p>With the generated config in place, the language server will display an error, telling you that <code>numberOfPages</code> does not exist in this context. Without the config it would just infer it as <code>any</code>.</p>
+<ul>
+<li><code>--loglevel</code>: minimum log level that should be printed. Defaults to <code>NONE</code>. Available log levels roughly follow <a href="https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.logging.loglevel?view=dotnet-plat-ext-6.0">Microsoft&#39;s dotnet log levels</a>:</li>
+</ul>
+<pre><code><span class="hl-7">TRACE</span><br/><span class="hl-7">DEBUG</span><br/><span class="hl-7">INFO</span><br/><span class="hl-7">WARNING</span><br/><span class="hl-7">ERROR</span><br/><span class="hl-7">CRITICAL</span><br/><span class="hl-7">NONE</span>
+</code><button>Copy</button></pre>
+<p>The utility expects (at least) one path to a <code>.cds</code> file as positional parameter which serves as entry point to the model in question, e.g.:</p>
+<pre><code class="language-sh"><span class="hl-3">npx</span><span class="hl-1"> </span><span class="hl-4">@cap-js/cds-typer</span><span class="hl-1"> </span><span class="hl-4">./path/to/my/model/model.cds</span><span class="hl-1"> </span><span class="hl-5">--outputDirectory</span><span class="hl-1"> </span><span class="hl-4">/tmp/</span>
+</code><button>Copy</button></pre>
+<p>Note that you can also pass multiple paths or <code>&quot;*&quot;</code> as glob pattern (with quotes to circumvent expansion by the shell). This passes the pattern on to the compiler where the <a href="https://cap.cloud.sap/docs/node.js/cds-compile?q=compiler#cds-resolve">regular resolve strategy</a> is used.</p>
+<a id="md:from-vscode" class="tsd-anchor"></a><h4><a href="#md:from-vscode">From VSCode</a></h4><p>Installing the <a href="https://www.npmjs.com/package/@sap/vscode-cds">CDS VSCode Extension</a> also adds support for generating types for your model from within VSCode. Adding the appropriate facet to your project via <code>cds add typer</code> (and installing the added dependencies thereafter) allows you to simply hit save on any <code>.cds</code> file that is part of your model to trigger the generation process.</p>
+<a id="md:programmatically" class="tsd-anchor"></a><h4><a href="#md:programmatically">Programmatically</a></h4><p>The main API for using <em>cds-typer</em> within another project is contained in <a href="https://github.tools.sap/cap/cds-typer/blob/master/lib/compile.js"><code>compile.js</code></a>, specifically:</p>
+<ul>
+<li><code>compileFromFile(…)</code> to parse a <code>.cds</code> file. This involves compiling it to CSN first.</li>
+<li><code>compileFromCSN(…)</code> to directly compile from CSN object. This is useful when you already have your CSN available as part of a tool chain. ⚠️ <strong>WARNING</strong>: the application of <code>cdstyper</code> may be impure, meaning that it <em>could</em> alter the provided CSN. If you use the typer this way, you may want to apply it as last step of your tool chain.</li>
+</ul>
+<a id="md:features" class="tsd-anchor"></a><h3><a href="#md:features">Features</a></h3><a id="md:plural-types" class="tsd-anchor"></a><h4><a href="#md:plural-types">Plural Types</a></h4><p>While CDS encourages the use of plural form for defined entities, their OOP equivalent classes are usually named in singular. <em>cds-typer</em> automatically transforms entity names to singular and adds the plural form for arrays:</p>
+<pre><code class="language-cds">entity Books : cuid {
+    …
+}
+</code><button>Copy</button></pre>
+<p>becomes</p>
+<pre><code class="language-ts"><span class="hl-5">class</span><span class="hl-1"> </span><span class="hl-8">Book</span><span class="hl-1"> {</span><br/><span class="hl-1">    …</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-5">class</span><span class="hl-1"> </span><span class="hl-8">Books</span><span class="hl-1"> </span><span class="hl-5">extends</span><span class="hl-1"> </span><span class="hl-8">Array</span><span class="hl-1">&lt;</span><span class="hl-8">Book</span><span class="hl-1">&gt; {}</span>
+</code><button>Copy</button></pre>
+<p>If you need to customise the singular or plural form, or if your entities are already in singular form, you can do so using annotations:</p>
+<pre><code class="language-cds">@singular: &#39;Mouse&#39;
+entity Mice {}
+
+@plural: &#39;SomeListList&#39;
+entity SomeList {}
+</code><button>Copy</button></pre>
+<p>results in</p>
+<pre><code class="language-ts"><span class="hl-5">class</span><span class="hl-1"> </span><span class="hl-8">Mouse</span><span class="hl-1"> { … }</span><br/><span class="hl-5">class</span><span class="hl-1"> </span><span class="hl-8">Mice</span><span class="hl-1"> </span><span class="hl-5">extends</span><span class="hl-1"> </span><span class="hl-8">Array</span><span class="hl-1">&lt;</span><span class="hl-8">Mouse</span><span class="hl-1">&gt; { … }</span><br/><br/><span class="hl-5">class</span><span class="hl-1"> </span><span class="hl-8">SomeList</span><span class="hl-1"> { … }</span><br/><span class="hl-5">class</span><span class="hl-1"> </span><span class="hl-8">SomeListList</span><span class="hl-1"> </span><span class="hl-5">extends</span><span class="hl-1"> </span><span class="hl-8">Array</span><span class="hl-1">&lt;</span><span class="hl-8">SomeList</span><span class="hl-1">&gt; { … }</span>
+</code><button>Copy</button></pre>
+<a id="md:relation-to-cds2types" class="tsd-anchor"></a><h3><a href="#md:relation-to-cds2types">Relation to <em>cds2types</em></a></h3><p>This project is inspired by the existing <a href="https://github.com/mrbandler/cds2types"><em>cds2types</em></a>, but differs in a few aspects:</p>
+<a id="md:reworked-imports" class="tsd-anchor"></a><h4><a href="#md:reworked-imports">Reworked Imports</a></h4><p>Instead of one monolithic <code>.d.ts</code> file containing all entities in nested namespaces, multiple files are generated where each namespace is represented by a directory structure. This facilicates simpler imports in a more Java-esque style:</p>
+<pre><code class="language-js"><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-7">types</span><span class="hl-1"> = </span><span class="hl-3">require</span><span class="hl-1">(</span><span class="hl-4">&#39;./cds2types/compiled.d.ts&#39;</span><span class="hl-1">)</span><br/><br/><span class="hl-2">console</span><span class="hl-1">.</span><span class="hl-3">log</span><span class="hl-1">(</span><span class="hl-2">types</span><span class="hl-1">.</span><span class="hl-2">sap</span><span class="hl-1">.</span><span class="hl-2">cap</span><span class="hl-1">.</span><span class="hl-2">bookshop</span><span class="hl-1">.</span><span class="hl-2">Books</span><span class="hl-1">) </span><span class="hl-6">// a class</span>
+</code><button>Copy</button></pre>
+<p>becomes</p>
+<pre><code class="language-js"><span class="hl-5">const</span><span class="hl-1"> { </span><span class="hl-7">Books</span><span class="hl-1"> } = </span><span class="hl-3">require</span><span class="hl-1">(</span><span class="hl-4">&#39;./cds-typer/sap/cap/bookshop&#39;</span><span class="hl-1">)</span><br/><br/><span class="hl-2">console</span><span class="hl-1">.</span><span class="hl-3">log</span><span class="hl-1">(</span><span class="hl-2">Books</span><span class="hl-1">) </span><span class="hl-6">// the same class</span>
+</code><button>Copy</button></pre>
+<a id="md:usable-in-javascript-projects" class="tsd-anchor"></a><h4><a href="#md:usable-in-javascript-projects">Usable in Javascript Projects</a></h4><p>Generated code is usable from within plain Javascript projects. The code generated by <em>cds2types</em> would represent each cds-entity as an interface, which are not visible to Javascript projects. <em>cds-typer</em> uses classes instead.</p>
+<a id="md:faster" class="tsd-anchor"></a><h4><a href="#md:faster">Faster</a></h4><p><em>cds2types</em> takes a detour to create a Typescript AST first and then print out the formatted source files. <em>cds-typer</em> directly walks the linked CSN and creates strings on the fly. Also, file operations are <code>async</code>. These two changes speed up <em>cds-typer</em> by around one to two orders of magnitude compared to <em>cds2types</em>.</p>
+<a id="md:small-footprint" class="tsd-anchor"></a><h4><a href="#md:small-footprint">Small Footprint</a></h4><p><em>cds-typer</em> tries to keep its dependency footprint as small as possible. Libraries like <code>typescript</code> are only needed as dev dependencies.</p>
+<a id="md:support-feedback-contributing" class="tsd-anchor"></a><h2><a href="#md:support-feedback-contributing">Support, Feedback, Contributing</a></h2><p>This project is open to feature requests/suggestions, bug reports etc. via <a href="https://github.com/cap-js/cds-typer/issues">GitHub issues</a>. Contribution and feedback are encouraged and always welcome. For more information about how to contribute, the project structure, as well as additional contribution information, see our <a href="CONTRIBUTING.md">Contribution Guidelines</a>.</p>
+<a id="md:code-of-conduct" class="tsd-anchor"></a><h2><a href="#md:code-of-conduct">Code of Conduct</a></h2><p>We as members, contributors, and leaders pledge to make participation in our community a harassment-free experience for everyone. By participating in this project, you agree to abide by its <a href="https://github.com/cap-js/.github/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a> at all times.</p>
+<a id="md:licensing" class="tsd-anchor"></a><h2><a href="#md:licensing">Licensing</a></h2><p>Copyright 2022-2022 SAP SE or an SAP affiliate company and cds-typer contributors. Please see our <a href="LICENSE">LICENSE</a> for copyright and license information. Detailed information including third-party components and their licensing/copyright information is available <a href="https://api.reuse.software/info/github.com/SAP/cds-dts-generator">via the REUSE tool</a>.</p>
+</div></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4.93896 8.531L12 15.591L19.061 8.531L16.939 6.409L12 11.349L7.06098 6.409L4.93896 8.531Z" fill="var(--color-text)" id="icon-chevronDown"></path></svg>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility">
+<h4 class="uppercase">Member Visibility</h4><form>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></form></div>
+<div class="tsd-theme-toggle">
+<h4 class="uppercase">Theme</h4><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-index-accordion tsd-page-navigation"><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="#icon-chevronDown"></use></svg>On This Page</h3></summary>
+<div class="tsd-accordion-details">
+<ul>
+<li>
+<ul>
+<li><a href="#md:cds-type-generator-for-javascript"><span>CDS type generator for <wbr/>Java<wbr/>Script</span></a></li>
+<li>
+<ul>
+<li><a href="#md:about-this-project"><span>About this project</span></a></li>
+<li><a href="#md:requirements-and-setup"><span>Requirements and <wbr/>Setup</span></a></li>
+<li>
+<ul>
+<li><a href="#md:usage"><span>Usage</span></a></li>
+<li>
+<ul>
+<li><a href="#md:standalone-cli"><span>Standalone CLI</span></a></li>
+<li><a href="#md:from-vscode"><span>From VSCode</span></a></li>
+<li><a href="#md:programmatically"><span>Programmatically</span></a></li></ul></li>
+<li><a href="#md:features"><span>Features</span></a></li>
+<li>
+<ul>
+<li><a href="#md:plural-types"><span>Plural <wbr/>Types</span></a></li></ul></li>
+<li><a href="#md:relation-to-cds2types"><span>Relation to cds2types</span></a></li>
+<li>
+<ul>
+<li><a href="#md:reworked-imports"><span>Reworked <wbr/>Imports</span></a></li>
+<li><a href="#md:usable-in-javascript-projects"><span>Usable in <wbr/>Javascript <wbr/>Projects</span></a></li>
+<li><a href="#md:faster"><span>Faster</span></a></li>
+<li><a href="#md:small-footprint"><span>Small <wbr/>Footprint</span></a></li></ul></li></ul></li>
+<li><a href="#md:support-feedback-contributing"><span>Support, <wbr/>Feedback, <wbr/>Contributing</span></a></li>
+<li><a href="#md:code-of-conduct"><span>Code of <wbr/>Conduct</span></a></li>
+<li><a href="#md:licensing"><span>Licensing</span></a></li></ul></li></ul></li></ul></div></details></div>
+<div class="site-menu">
+<nav class="tsd-navigation"><a href="index.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-namespace)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.33 16V7.24H10.77L13.446 14.74C13.43 14.54 13.41 14.296 13.386 14.008C13.37 13.712 13.354 13.404 13.338 13.084C13.33 12.756 13.326 12.448 13.326 12.16V7.24H14.37V16H12.93L10.266 8.5C10.282 8.692 10.298 8.936 10.314 9.232C10.33 9.52 10.342 9.828 10.35 10.156C10.366 10.476 10.374 10.784 10.374 11.08V16H9.33Z" fill="var(--color-text)"></path></g></svg><span>@cap-<wbr/>js/cds-<wbr/>typer</span></a>
+<ul class="tsd-small-nested-navigation">
+<li><a href="modules/cli.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>cli</span></a></li>
+<li><a href="modules/compile.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>compile</span></a></li>
+<li><a href="modules/components_inline.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>components/inline</span></a></li>
+<li><a href="modules/components_resolver.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>components/resolver</span></a></li>
+<li><a href="modules/components_wrappers.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>components/wrappers</span></a></li>
+<li><a href="modules/file.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>file</span></a></li>
+<li><a href="modules/logging.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>logging</span></a></li>
+<li><a href="modules/util.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>util</span></a></li>
+<li><a href="modules/visitor.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>visitor</span></a></li></ul></nav></div></div></div>
+<div class="tsd-generator">
+<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div>
+<div class="overlay"></div></body></html>
