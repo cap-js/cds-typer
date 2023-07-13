@@ -1,4 +1,3 @@
-# ci.yml file for GitHub Actions
 name: Documentation
 
 on: [push, pull_request]
