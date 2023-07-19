@@ -1,7 +1,7 @@
 # CDS type generator for JavaScript
 
 [![REUSE status](https://api.reuse.software/badge/github.com/cap-js/cds-typer)](https://api.reuse.software/info/github.com/cap-js/cds-typer)
-[![Unit Tests passing]](https://github.com/cap-js/cds-typer/actions/workflows/test.yml/badge.svg)
+![Unit Tests passing](https://github.com/cap-js/cds-typer/actions/workflows/test.yml/badge.svg)
 
 ## About this project
 
