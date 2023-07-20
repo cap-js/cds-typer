@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.4.1 - TBD
 
+### Changed
+- Facilitate strict property checks. Note: `checkJs: true` must be present in the project's _jsconfig.json_ or _tsconfig.json_ respectively for this feature to become effective
+
+### Added
+- Support for `array of` syntax
+
+
 ## Version 0.4.0 - 2023-07-06
 ### Added
 - Support for enums when they are defined separately (not inline in the property type of an entity)
