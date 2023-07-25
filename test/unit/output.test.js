@@ -110,7 +110,10 @@ describe('Compilation', () => {
             expect(ast.exists('_EAspect', 'str', m => m.type.keyword === 'string')).toBeTruthy()
             expect(ast.exists('_EAspect', 'bin', m => m.type.keyword === 'string')).toBeTruthy()
             expect(ast.exists('_EAspect', 'lstr', m => m.type.keyword === 'string')).toBeTruthy()
-            expect(ast.exists('_EAspect', 'lbin', m => m.type.keyword === 'string')).toBeTruthy()
+            expect(ast.exists('_EAspect', 'lbin', m => m.type.keyword === 'uniontype'
+                && m.type.subtypes[0].full === 'Buffer'
+                && m.type.subtypes[1].keyword === 'string'
+            )).toBeTruthy()
             expect(ast.exists('_EAspect', 'integ', m => m.type.keyword === 'number')).toBeTruthy()
             expect(ast.exists('_EAspect', 'uint8', m => m.type.keyword === 'number')).toBeTruthy()
             expect(ast.exists('_EAspect', 'int16', m => m.type.keyword === 'number')).toBeTruthy()
