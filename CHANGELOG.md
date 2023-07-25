@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 - Support for `array of` syntax
 
+### Fixes
+- Generate `string` type for date-related types in CDS definitions
+- Generate `Buffer | string` type for the CDS type `LargeBinary`
+
 
 ## Version 0.4.0 - 2023-07-06
 ### Added
