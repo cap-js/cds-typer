@@ -1,6 +1,6 @@
 {
   "name": "@cap-js/cds-typer",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Generates .ts files for a CDS model to receive code completion in VS Code",
   "main": "index.js",
   "homepage": "https://cap.cloud.sap/",
