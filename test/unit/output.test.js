@@ -119,9 +119,9 @@ describe('Compilation', () => {
             expect(ast.exists('_EAspect', 'integer64', m => m.type.keyword === 'number')).toBeTruthy()
             expect(ast.exists('_EAspect', 'dec', m => m.type.keyword === 'number')).toBeTruthy()
             expect(ast.exists('_EAspect', 'doub', m => m.type.keyword === 'number')).toBeTruthy()
-            expect(ast.exists('_EAspect', 'd', m => m.type.name === 'Date')).toBeTruthy()
-            expect(ast.exists('_EAspect', 'dt', m => m.type.name === 'Date')).toBeTruthy()
-            expect(ast.exists('_EAspect', 'ts', m => m.type.name === 'Date')).toBeTruthy()
+            expect(ast.exists('_EAspect', 'd', m => m.type.keyword === 'string')).toBeTruthy()
+            expect(ast.exists('_EAspect', 'dt', m => m.type.keyword === 'string')).toBeTruthy()
+            expect(ast.exists('_EAspect', 'ts', m => m.type.keyword === 'string')).toBeTruthy()
         })
     })
 
