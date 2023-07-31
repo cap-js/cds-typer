@@ -3,7 +3,7 @@ name: Bug report
 about: Please fill out all sections that are applicable to your bug, remove sections
   that are not relevant for your case.
 title: "[BUG]"
-labels: ''
+labels: 'new'
 assignees: ''
 
 ---
