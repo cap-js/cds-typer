@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.5.1 - TBD
 
+### Added
+- Support for `event` syntax
+
+
 ## Version 0.5.0 - 2023-07-25
 
 ### Changed
