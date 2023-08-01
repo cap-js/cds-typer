@@ -22,13 +22,12 @@ describe('events', () => {
     })
 
     describe('Event Type Present', () => {
-        let aspect
-        beforeAll(async () => aspect = ast.tree.find(n => n.name === '_EAspect').body[0])
-
         test('Top Level Event', async () => {
-            expect(aspect.members.find(m => m.name === 'stringz' 
-                && m.type.full === 'Array' 
-                && m.type.args[0].keyword === 'string')).toBeTruthy()
-        })    
+            expect(ast.tree.find(cls => cls.name === 'Bar' 
+                && cls.members.length === 2
+                && cls.members[0].name === 'id' && cls.members[0].type.keyword === 'number'
+                && cls.members[1].name === 'name' && cls.members[1].type.keyword === 'indexedaccesstype'
+            )).toBeTruthy()
+        })
     })
 })
