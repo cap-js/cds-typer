@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Support for `event` syntax
 
 
+### Fixed
+- Add leading underscore to appease `noUnusedParameters` in strict tsconfigs
+
 ## Version 0.5.0 - 2023-07-25
 
 ### Changed
