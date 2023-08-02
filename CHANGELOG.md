@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 - Support for `event` syntax
 
+### Fixed
+- Initialise bound actions with stubs to support `"strict":true` in _tsconfig.json_
 
 ## Version 0.5.0 - 2023-07-25
 
