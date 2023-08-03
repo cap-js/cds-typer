@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 - Support for `event` syntax
 
+### Fixed
+- Initialise bound actions with stubs to support `"strict":true` in _tsconfig.json_
+- Add leading underscore to appease `noUnusedParameters` in strict tsconfigs
 
 ### Fixed
 - No longer inflect `type` definitions when they are referenced within entities or other type definitions
