@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 - Initialise bound actions with stubs to support `"strict":true` in _tsconfig.json_
 - Add leading underscore to appease `noUnusedParameters` in strict tsconfigs
+- No longer inflect `type` definitions when they are referenced within entities or other type definitions
 
 ## Version 0.5.0 - 2023-07-25
 
@@ -21,7 +22,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 - Support for `array of` syntax
 
-### Fixes
+### Fixed
 - Generate `string` type for date-related types in CDS definitions
 - Generate `Buffer | string` type for the CDS type `LargeBinary`
 
