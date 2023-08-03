@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 - Initialise bound actions with stubs to support `"strict":true` in _tsconfig.json_
+- Add leading underscore to appease `noUnusedParameters` in strict tsconfigs
 
 ## Version 0.5.0 - 2023-07-25
 
