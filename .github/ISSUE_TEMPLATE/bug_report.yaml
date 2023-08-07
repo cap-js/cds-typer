@@ -39,11 +39,13 @@ body:
     description: |
       Steps to reproduce the behavior.
       Tip: You can add CDS code in code fences:
+      <pre>
       ```cds
       entity Foo {
         bar: String;
         baz: Integer;
       }
+      </pre>
     placeholder: |
       1. In this environment...
       2. With this config...
