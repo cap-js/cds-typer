@@ -14,13 +14,13 @@ body:
   attributes:
     label: Nature of your project
     description: Have you encountered the issue in the context of a JavaScript or TypeScript project?
-    default: JavaScript
+    default: 0
     multiple: true
     options:
       - JavaScript
       - TypeScript
-    validations:
-      required: true
+  validations:
+    required: true
 - type: textarea
   attributes:
     label: Current Behavior
