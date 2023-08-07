@@ -10,14 +10,17 @@ body:
     options:
     - label: I have searched the existing issues
       required: true
-- type: radio
+- type: dropdown
   attributes:
     label: Nature of your project
     description: Have you encountered the issue in the context of a JavaScript or TypeScript project?
     default: JavaScript
+    multiple: true
     options:
-      js: JavaScript
-      ts: TypeScript
+      - JavaScript
+      - TypeScript
+    validations:
+      required: true
 - type: textarea
   attributes:
     label: Current Behavior
