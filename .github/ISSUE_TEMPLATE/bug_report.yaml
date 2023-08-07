@@ -64,7 +64,8 @@ body:
           | @sap/eslint-plugin-cds | 2.6.4       |
           | @sap/cds-mtxs          | 1.10.0      |
 
-      *Note*: you can acquire the input for the cds-field by running `cds v -i`.
+
+      **Note**: you can acquire the input for the cds-field by running `cds v -i`.
       The version of cds-typer can be acquired by running `npx cds-typer --version`.
     value: |
         - **OS**:
