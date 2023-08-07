@@ -12,7 +12,7 @@ body:
       required: true
 - type: dropdown
   attributes:
-    label: Nature of your project
+    label: Nature of Your Project
     description: Have you encountered the issue in the context of a JavaScript or TypeScript project?
     default: 0
     multiple: true
@@ -52,12 +52,26 @@ body:
         - **OS**: Ubuntu 20.04
         - **Node**: 13.14.0
         - **npm**: 7.6.3
-      (*Note*: you acquire the input for the cds-field by running `cds v -i`.)
+        - **cds-typer**: 0.6.0
+        - **cds**:
+          | my-repo | github:me/my-repo |
+          |:---------------------- | ----------- |
+          | Node.js                | v18.12.1    |
+          | @sap/cds               | 7.0.2       |
+          | @sap/cds-compiler      | 4.0.2       |
+          | @sap/cds-dk            | -- missing  |
+          | @sap/cds-dk (global)   | 7.1.1       |
+          | @sap/eslint-plugin-cds | 2.6.4       |
+          | @sap/cds-mtxs          | 1.10.0      |
+
+      *Note*: you can acquire the input for the cds-field by running `cds v -i`.
+      The version of cds-typer can be acquired by running `npx cds-typer --version`.
     value: |
-        - OS:
-        - Node:
-        - npm:
-        - cds:
+        - **OS**:
+        - **Node**:
+        - **npm**:
+        - **cds-typer**: 
+        - **cds**:
     render: markdown
   validations:
     required: false
