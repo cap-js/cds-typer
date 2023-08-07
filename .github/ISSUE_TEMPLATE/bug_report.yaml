@@ -45,6 +45,7 @@ body:
         bar: String;
         baz: Integer;
       }
+      ```
       </pre>
     placeholder: |
       1. In this environment...
