@@ -75,7 +75,7 @@ body:
     label: Repository Containing a Minimal Reproducible Example
     placeholder: https://github.com/my/repository
     description: |
-      Do you have a sample repository where we can observe the reported behaviour?
+      Do you have a sample repository where we can observe the reported behaviour? Please include the relevant branch.
   validations:
     required: false
 - type: textarea
