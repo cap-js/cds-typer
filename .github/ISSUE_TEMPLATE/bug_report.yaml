@@ -72,6 +72,14 @@ body:
     required: false
 - type: textarea
   attributes:
+    label: Repository Containing a Minimal Reproducible Example
+    placeholder: https://github.com/my/repository
+    description: |
+      Do you have a sample repository where we can observe the reported behaviour?
+  validations:
+    required: false
+- type: textarea
+  attributes:
     label: Anything else?
     description: |
       Links? References? Anything that will give us more context about the issue you are encountering!
