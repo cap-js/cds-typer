@@ -48,24 +48,7 @@ body:
   attributes:
     label: Environment
     description: |
-      examples:
-        - **OS**: Ubuntu 20.04
-        - **Node**: 13.14.0
-        - **npm**: 7.6.3
-        - **cds-typer**: 0.6.0
-        - **cds**:
-          | my-repo | github:me/my-repo |
-          |:---------------------- | ----------- |
-          | Node.js                | v18.12.1    |
-          | @sap/cds               | 7.0.2       |
-          | @sap/cds-compiler      | 4.0.2       |
-          | @sap/cds-dk            | -- missing  |
-          | @sap/cds-dk (global)   | 7.1.1       |
-          | @sap/eslint-plugin-cds | 2.6.4       |
-          | @sap/cds-mtxs          | 1.10.0      |
-
-
-      **Note**: you can acquire the input for the cds-field by running `cds v -i`.
+      You can acquire the input for the cds-field by running `cds v -i`.
       The version of cds-typer can be acquired by running `npx cds-typer --version`.
     value: |
         - **OS**:
