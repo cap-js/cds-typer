@@ -36,7 +36,14 @@ body:
 - type: textarea
   attributes:
     label: Steps To Reproduce
-    description: Steps to reproduce the behavior.
+    description: |
+      Steps to reproduce the behavior.
+      Tip: You can add CDS code in code fences:
+      ```cds
+      entity Foo {
+        bar: String;
+        baz: Integer;
+      }
     placeholder: |
       1. In this environment...
       2. With this config...
@@ -44,12 +51,7 @@ body:
       4. Run '...'/ Do...
       5. See error...
 
-      Tip: You can add CDS code in code fences:
-      ```cds
-      entity Foo {
-        bar: String;
-        baz: Integer;
-      }
+
       ```
   validations:
     required: false
