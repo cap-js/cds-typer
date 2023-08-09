@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 ### Fixed
-
+- Removed a warning about circular imports
 
 ## Version 0.6.0 - 2023-08-07
 
