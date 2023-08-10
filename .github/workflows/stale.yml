@@ -21,12 +21,13 @@ jobs:
     - uses: actions/stale@v5
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-        days-before-issue-stale: 14
+        days-before-issue-stale: 30
         stale-issue-message: 'This issue has not been updated in a while. If it is still relevant, please comment on it to keep it open. The issue will be closed soon if it remains inactive.'
         close-issue-message: 'This issue has been closed automatically due to inactivity.'
         stale-pr-message: 'This PR has not been updated in a while. If it is still relevant, please comment on it to keep it open. The PR will be closed soon if it remains inactive.'
         close-pr-message: 'This PR has been closed automatically due to inactivity.'
         stale-issue-label: 'stale'
         stale-pr-label: 'stale'
-        exempt-issue-labels: 'keepalive'
-        exempt-pr-labels: 'keepalive'
+        exempt-issue-labels: 'keepalive', 'feature request'
+        exempt-pr-labels: 'keepalive', 'feature request'
+        exempt-all-milestones: true
