@@ -28,6 +28,6 @@ jobs:
         close-pr-message: 'This PR has been closed automatically due to inactivity.'
         stale-issue-label: 'stale'
         stale-pr-label: 'stale'
-        exempt-issue-labels: 'keepalive', 'feature request'
-        exempt-pr-labels: 'keepalive', 'feature request'
+        exempt-issue-labels: 'keepalive,feature request'
+        exempt-pr-labels: 'keepalive,feature request'
         exempt-all-milestones: true
