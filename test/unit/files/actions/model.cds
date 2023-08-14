@@ -11,6 +11,8 @@ service S {
             action h () returns { a: Integer; b: String };
             action k () returns ExternalType;
             action l () returns ExternalInRoot;
+            action s1 (x: $self);
+            action sn (x: many $self);
         }
 }
 

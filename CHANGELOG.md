@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 
 ### Added
+- Support for `[many] $self` syntax in bound action parameters
 
 ### Fixed
 ## Version 0.6.1 - 2023-08-10
