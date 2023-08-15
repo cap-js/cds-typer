@@ -8,7 +8,6 @@ const { locations } = require('../util')
 
 const dir = locations.testOutput('draft_test')
 
-// FIXME: need to parse the function args from the AST to test them
 describe('@odata.draft.enabled', () => {
     let ast
 
