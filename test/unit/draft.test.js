@@ -23,29 +23,36 @@ describe('@odata.draft.enabled', () => {
 
     test('Direct Annotation', async () => {
         expect(ast.find(n => n.name === 'A' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
+        expect(ast.find(n => n.name === 'A_' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
     })
 
     test('First Level Inheritance', async () => {
         expect(ast.find(n => n.name === 'B' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
+        expect(ast.find(n => n.name === 'B_' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
     })
 
     test('Explicit Override via Inheritance', async () => {
         expect(ast.find(n => n.name === 'C' && n.members.find(({name}) => name === 'drafts' ))).not.toBeTruthy()
+        expect(ast.find(n => n.name === 'C_' && n.members.find(({name}) => name === 'drafts' ))).not.toBeTruthy()
     })
 
     test('Inheritance of Explicit Override', async () => {
         expect(ast.find(n => n.name === 'D' && n.members.find(({name}) => name === 'drafts' ))).not.toBeTruthy()
+        expect(ast.find(n => n.name === 'D_' && n.members.find(({name}) => name === 'drafts' ))).not.toBeTruthy()
     })
 
     test('Declaration With true', async () => {
         expect(ast.find(n => n.name === 'E' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
+        expect(ast.find(n => n.name === 'E_' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
     })
 
     test('Multiple Inheritance With Most Significant true', async () => {
         expect(ast.find(n => n.name === 'F' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
+        expect(ast.find(n => n.name === 'F_' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
     })
 
     test('Multiple Inheritance With Most Significant false', async () => {
         expect(ast.find(n => n.name === 'G' && n.members.find(({name}) => name === 'drafts' ))).not.toBeTruthy()
+        expect(ast.find(n => n.name === 'G_' && n.members.find(({name}) => name === 'drafts' ))).not.toBeTruthy()
     })
 })
