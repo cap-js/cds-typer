@@ -4,7 +4,24 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.5.1 - TBD
+## Version 0.6.2 - TBD
+
+### Changed
+
+### Added
+- Support for `[many] $self` syntax in bound action parameters
+
+### Fixed
+## Version 0.6.1 - 2023-08-10
+
+### Changed
+
+### Added
+
+### Fixed
+- Removed a warning about circular imports
+
+## Version 0.6.0 - 2023-08-07
 
 ### Added
 - Support for `event` syntax
