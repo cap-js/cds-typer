@@ -10,94 +10,42 @@ const dir = locations.testOutput('draft_test')
 
 // FIXME: need to parse the function args from the AST to test them
 describe('@odata.draft.enabled', () => {
-    beforeEach(async () => await fs.unlink(dir).catch(err => {}))
+    let ast
 
-    test('Bound', async () => {
+    beforeAll(async () => {
+        await fs.unlink(dir).catch(err => {})
         const paths = await cds2ts
-            .compileFromFile(locations.unit.files('actions/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
+            .compileFromFile(locations.unit.files('draft/model.cds'), { outputDirectory: dir })
             // eslint-disable-next-line no-console
             .catch((err) => console.error(err))
-        const ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
-        expect(ast.exists('_EAspect', 'f', 
-            m => m.type.keyword === 'functiontype'
-            && m.type.type.keyword === 'any'
-        )).toBeTruthy()
-        expect(ast.exists('_EAspect', 'g', 
-        m => m.type.keyword === 'functiontype'
-        && m.type.type.keyword === 'number'
-        )).toBeTruthy()
+        ast = new ASTWrapper(path.join(paths[1], 'index.ts')).tree
     })
 
-    test('Unbound', async () => {
-        const paths = await cds2ts
-            .compileFromFile(locations.unit.files('actions/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
-            // eslint-disable-next-line no-console
-            .catch((err) => console.error(err))
-        const ast = new ASTWrapper(path.join(paths[2], 'index.ts'))
-
-        const fn = ast.tree[2]
-        expect(fn.nodeType).toBe('variableStatement')
-        expect(fn.name).toBe('free')
-        const res = fn.type.type
-        expect(res.members.length).toBe(2)
-        expect(res.members[0].name).toBe('a')
-        expect(res.members[1].name).toBe('b')
+    test('Direct Annotation', async () => {
+        expect(ast.find(n => n.name === 'A' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
     })
 
-    test('Bound Returning External Type', async () => {
-        const paths = await cds2ts
-            .compileFromFile(locations.unit.files('actions/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
-            // eslint-disable-next-line no-console
-            .catch((err) => console.error(err))
-        const ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
-        expect(ast.exists('_EAspect', 'f', 
-            m => m.type.keyword === 'functiontype'
-            && m.type.type.keyword === 'any'
-        )).toBeTruthy()
-
-        expect(ast.exists('_EAspect', 'k', 
-        m => m.type.keyword === 'functiontype'
-        && m.type.type.full === '_elsewhere.ExternalType'
-        )).toBeTruthy()
-
-        expect(ast.exists('_EAspect', 'l', 
-        m => m.type.keyword === 'functiontype'
-        && m.type.type.full === '_.ExternalInRoot'
-        )).toBeTruthy()   
+    test('First Level Inheritance', async () => {
+        expect(ast.find(n => n.name === 'B' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
     })
 
-    test('Unbound Returning External Type', async () => {
-        const paths = await cds2ts
-            .compileFromFile(locations.unit.files('actions/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
-            // eslint-disable-next-line no-console
-            .catch((err) => console.error(err))
-        const ast = new ASTWrapper(path.join(paths[2], 'index.ts'))
-
-        const fn = ast.tree[3]  // very classy with the index and such
-        expect(fn.nodeType).toBe('variableStatement')
-        expect(fn.name).toBe('free2')
-        const res = fn.type.type
-        expect(res.full).toBe('_elsewhere.ExternalType')
-
-        const fn2 = ast.tree[4]  // very classy with the index and such
-        expect(fn2.nodeType).toBe('variableStatement')
-        expect(fn2.name).toBe('free3')
-        const res2 = fn2.type.type
-        expect(res2.full).toBe('_.ExternalInRoot')
+    test('Explicit Override via Inheritance', async () => {
+        expect(ast.find(n => n.name === 'C' && n.members.find(({name}) => name === 'drafts' ))).not.toBeTruthy()
     })
 
-    test('Bound Expecting $self Arguments', async () => {
-        const paths = await cds2ts
-            .compileFromFile(locations.unit.files('actions/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
-            // eslint-disable-next-line no-console
-            .catch((err) => console.error(err))
-        const ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
-        expect(ast.exists('_EAspect', 's1', 
-            m => m.type.keyword === 'functiontype'
-        )).toBeTruthy()  
-        expect(ast.exists('_EAspect', 'sn', 
-            m => m.type.keyword === 'functiontype'
-        )).toBeTruthy()  
+    test('Inheritance of Explicit Override', async () => {
+        expect(ast.find(n => n.name === 'D' && n.members.find(({name}) => name === 'drafts' ))).not.toBeTruthy()
     })
 
+    test('Declaration With true', async () => {
+        expect(ast.find(n => n.name === 'E' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
+    })
+
+    test('Multiple Inheritance With Most Significant true', async () => {
+        expect(ast.find(n => n.name === 'F' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
+    })
+
+    test('Multiple Inheritance With Most Significant false', async () => {
+        expect(ast.find(n => n.name === 'G' && n.members.find(({name}) => name === 'drafts' ))).not.toBeTruthy()
+    })
 })
