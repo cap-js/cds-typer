@@ -6,10 +6,10 @@ const cds2ts = require('../../lib/compile')
 const { ASTWrapper } = require('../ast')
 const { locations } = require('../util')
 
-const dir = locations.testOutput('actions_test')
+const dir = locations.testOutput('draft_test')
 
 // FIXME: need to parse the function args from the AST to test them
-describe('Actions', () => {
+describe('@odata.draft.enabled', () => {
     beforeEach(async () => await fs.unlink(dir).catch(err => {}))
 
     test('Bound', async () => {
