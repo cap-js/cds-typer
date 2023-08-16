@@ -98,6 +98,9 @@ describe('Actions', () => {
         expect(ast.exists('_EAspect', 'sn', 
             m => m.type.keyword === 'functiontype'
         )).toBeTruthy()  
+        expect(ast.exists('_EAspect', 'sx', 
+            m => m.type.keyword === 'functiontype'
+        )).toBeTruthy()  
     })
 
 })
