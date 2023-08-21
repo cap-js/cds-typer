@@ -34,6 +34,12 @@ describe('References', () => {
                 && m.type.name === 'many'
                 && m.type.args[0].name === 'Foo_'
         )).toBeTruthy()
+        expect(ast.exists('_BarAspect', 'assoc_one_first_key', m => true
+                && m.type.keyword === 'string'
+        )).toBeTruthy()
+        expect(ast.exists('_BarAspect', 'assoc_one_second_key', m => true
+                && m.type.keyword === 'string'
+        )).toBeTruthy()
     })
 
     test('Inline', async () => {
