@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 - Support for drafts via `@odata.draft.enabled` annotation
-- 
+
 ### Fixed
 
 ## Version 0.7.0 - 2023-08-22
