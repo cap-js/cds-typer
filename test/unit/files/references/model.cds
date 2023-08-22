@@ -1,6 +1,9 @@
 namespace references;
 
-entity Foo {}
+entity Foo {
+    key first_key: UUID;
+    key second_key: String;
+}
 
 entity Bar {
     key id: Integer;  // required for composition of many ... to work.

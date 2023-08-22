@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 - Support for `[many] $self` syntax in bound action parameters
+- Foreign keys are now present in the generated types in addition to the resolved property
 
 ### Fixed
 ## Version 0.6.1 - 2023-08-10
