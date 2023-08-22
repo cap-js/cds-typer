@@ -54,4 +54,33 @@ describe('@odata.draft.enabled', () => {
         expect(ast.find(n => n.name === 'G' && n.members.find(({name}) => name === 'drafts' ))).not.toBeTruthy()
         expect(ast.find(n => n.name === 'G_' && n.members.find(({name}) => name === 'drafts' ))).not.toBeTruthy()
     })
+
+    test('Draftable by Association/ Composition', async () => {
+        expect(ast.find(n => n.name === 'H' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
+        expect(ast.find(n => n.name === 'H_' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
+        expect(ast.find(n => n.name === 'I' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
+        expect(ast.find(n => n.name === 'I_' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
+        expect(ast.find(n => n.name === 'J' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
+        expect(ast.find(n => n.name === 'J_' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
+        expect(ast.find(n => n.name === 'K' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
+        expect(ast.find(n => n.name === 'K_' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
+    })
+
+    test('Unchanged by Association/ Composition', async () => {
+        expect(ast.find(n => n.name === 'L' && n.members.find(({name}) => name === 'drafts' ))).not.toBeTruthy()
+        expect(ast.find(n => n.name === 'L_' && n.members.find(({name}) => name === 'drafts' ))).not.toBeTruthy()
+        expect(ast.find(n => n.name === 'M' && n.members.find(({name}) => name === 'drafts' ))).not.toBeTruthy()
+        expect(ast.find(n => n.name === 'M_' && n.members.find(({name}) => name === 'drafts' ))).not.toBeTruthy()
+        expect(ast.find(n => n.name === 'N' && n.members.find(({name}) => name === 'drafts' ))).not.toBeTruthy()
+        expect(ast.find(n => n.name === 'N_' && n.members.find(({name}) => name === 'drafts' ))).not.toBeTruthy()
+        expect(ast.find(n => n.name === 'O' && n.members.find(({name}) => name === 'drafts' ))).not.toBeTruthy()
+        expect(ast.find(n => n.name === 'O_' && n.members.find(({name}) => name === 'drafts' ))).not.toBeTruthy()
+    })
+
+    test('Precedence Over Explicit Annotation', async () => {
+        expect(ast.find(n => n.name === 'P' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
+        expect(ast.find(n => n.name === 'P_' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
+        expect(ast.find(n => n.name === 'Q' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
+        expect(ast.find(n => n.name === 'Q_' && n.members.find(({name}) => name === 'drafts' ))).toBeTruthy()
+    })
 })
