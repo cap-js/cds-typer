@@ -55,7 +55,7 @@ describe('@odata.draft.enabled', () => {
 
     test('Via Projection', async () => expect(draftable('PA')).toBeTruthy())
 
-    test('Transitive Via Projection', async () => {
+    test('Transitive Via Projection and Composition', async () => {
         expect(draftable('ProjectedReferrer')).toBeTruthy()
         expect(draftable('Referrer')).toBeTruthy()
         expect(draftable('Referenced')).toBeTruthy()
