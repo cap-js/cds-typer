@@ -39,7 +39,7 @@ entity PA as projection on A {}
 // propagate from projection to referenced entity
 entity Referenced {}
 entity Referrer {
-    ref: Association to Referenced
+    ref: Composition of Referenced
 }
 @odata.draft.enabled: true
 entity ProjectedReferrer as projection on Referrer {}
