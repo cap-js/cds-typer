@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 ### Fixed
+- Foreign keys that are inherited via aspects are now also generated in addition to the resolved property (see 0.7.0)
 
 ## Version 0.7.0 - 2023-08-22
 
