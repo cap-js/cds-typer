@@ -15,8 +15,6 @@ describe('References', () => {
     test('Entity', async () => {
         const paths = await cds2ts
             .compileFromFile(locations.unit.files('references/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
-            // eslint-disable-next-line no-console
-            //.catch((err) => console.error(err))
         const ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
         expect(ast.exists('_BarAspect', 'assoc_one', m => true
                 && m.type.name === 'to'
