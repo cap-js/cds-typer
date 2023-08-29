@@ -16,7 +16,7 @@ describe('References', () => {
         const paths = await cds2ts
             .compileFromFile(locations.unit.files('references/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
             // eslint-disable-next-line no-console
-            .catch((err) => console.error(err))
+            //.catch((err) => console.error(err))
         const ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
         expect(ast.exists('_BarAspect', 'assoc_one', m => true
                 && m.type.name === 'to'
@@ -40,6 +40,9 @@ describe('References', () => {
         expect(ast.exists('_BarAspect', 'assoc_one_second_key', m => true
                 && m.type.keyword === 'string'
         )).toBeTruthy()
+        expect(ast.exists('_BarAspect', 'assoc_one_ID', m => true
+                && m.type.keyword === 'string'
+        )).toBeTruthy()
     })
 
     test('Inline', async () => {
@@ -59,5 +62,7 @@ describe('References', () => {
                 && m.type.args[0].args[0].members[0].name === 'a'
                 && m.type.args[0].args[0].members[0].type.keyword === 'string'
         )).toBeTruthy()
+        // inline ID is not propagated into the parent entity
+        expect(() => ast.exists('_BarAspect', 'inl_comp_one_ID')).toThrow(Error)
     })
 })
