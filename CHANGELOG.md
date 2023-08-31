@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 ### Fixed
+- Explicitly annotated `@singular` and `@plural` names are now properly used in generated _index.js_ files
 
 ## Version 0.7.0 - 2023-08-22
 
