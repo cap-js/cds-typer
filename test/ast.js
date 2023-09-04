@@ -9,6 +9,7 @@
  */ 
  
 const ts = require('typescript')
+const acorn = require('acorn')
 
 const kinds = {
     TypeReference: 'typeReference',
@@ -346,6 +347,39 @@ class ASTWrapper {
     }
 }
 
+class JSASTWrapper {
+    constructor(code) {
+        this.programm = acorn.parse(code)
+    }
+
+    exportsAre(expected) {
+        if (expected.length < this.getExports().length) throw new Error(`there are more actual than expected exports. Expected ${expected.length}, found ${this.getExports().length}`)
+        for (const [lhs, rhs] of expected) {
+            if (!this.hasExport(lhs, rhs)) throw new Error(`missing export module.exports.${lhs} = ${rhs}`)
+        }
+    }
+
+    hasExport(lhs, rhs) {
+        return this.getExports().find(exp => exp.lhs === lhs && exp.rhs === rhs)
+    }
+
+    getExports() {
+        return this.exports ??= this.programm.body.filter(node => {
+            if (node.type !== 'ExpressionStatement') return false
+            if (node.expression.left.type !== 'MemberExpression') return false
+            const { object, property } = node.expression.left.object
+            return object.name === 'module' && property.name === 'exports'
+        }).map(node => (
+            {
+                lhs: node.expression.left.property.name,
+                rhs: node.expression.right.property.name
+            }
+        ))
+    }
+}
+
+
 module.exports = {
-    ASTWrapper
+    ASTWrapper,
+    JSASTWrapper
 }
