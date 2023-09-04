@@ -349,7 +349,7 @@ class ASTWrapper {
 
 class JSASTWrapper {
     constructor(code) {
-        this.programm = acorn.parse(code)
+        this.programm = acorn.parse(code, { ecmaVersion: 'latest'})
     }
 
     exportsAre(expected) {
