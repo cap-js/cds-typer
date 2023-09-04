@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 - Foreign keys that are inherited via aspects are now also generated in addition to the resolved property (see 0.7.0)
+- Explicitly annotated `@singular` and `@plural` names are now properly used in generated _index.js_ files
+
 
 ## Version 0.7.0 - 2023-08-22
 
