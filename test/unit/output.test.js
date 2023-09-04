@@ -44,6 +44,7 @@ describe('Compilation', () => {
                 ['D_', 'D'],
                 ['D', 'D'],
                 ['E_', 'E'],
+                ['E', 'E'],
                 ['QueryEntity_', 'QueryEntity'],
                 ['QueryEntity', 'QueryEntity']
             ])
@@ -164,6 +165,35 @@ describe('Compilation', () => {
         })
 
         test('Generated Paths', () => expect(paths).toHaveLength(2)) // the one module [1] + baseDefinitions [0]
+
+        test('index.js', async () => {
+            const code = await fs.readFile(path.join(paths[1], 'index.js'), 'utf-8')
+            const jsw = new JSASTWrapper(code)
+            jsw.exportsAre([
+                ['Gizmo', 'Gizmos'],
+                ['Gizmos', 'Gizmos'],
+                ['FooSingular', 'Foos'],
+                ['Foos', 'Foos'],
+                ['Bar', 'Bars'],  // this one...
+                ['BarPlural', 'Bars'],
+                ['Bars', 'Bars'],
+                ['BazSingular', 'Bazes'],
+                ['BazPlural', 'Bazes'],
+                ['Bazes', 'Bazes'],  // ...and this one...
+                ['A_', 'A'],
+                ['A', 'A'],
+                ['C', 'C'],
+                ['LotsOfCs', 'C'],
+                ['OneSingleD', 'D'],
+                ['D', 'D'],
+                ['Referer', 'Referer'],
+                ['Referer_', 'Referer']
+            ])
+            // ...are currently exceptions where both singular _and_ plural
+            // are annotated and the original name is used as an export on top of that.
+            // So _three_ exports per entity. If we every choose to remove this third one,
+            // then this test has to reflect that.
+        })
         
         test('Aspects', () => {
             const aspects = ast.getAspects()
