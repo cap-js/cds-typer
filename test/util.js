@@ -5,32 +5,6 @@ const { Logger } = require('../lib/logging')
 const { fail } = require('assert')
 const os = require('os')
 
-
-
-/**
-export type ClassBody = {
-    [key: string]: string[]
-}
-
-export interface Import {
-    imports: string;
-    from: string;
-    alias: string;
-}
-
-export interface TSParseResult {
-    classes: {[key: string]: ClassBody},
-    declarations: {[key: string]: string},
-    imports: Import[]
-}
-
-export class TSParser {
-    private _parseClassBody(lines: string[]): ClassBody
-    public parse(file: string): TSParseResult;
-}
-*/
-
-
 /**
  * Hackish. When having code as string, we can either:
  * (1) write to file and require() that file again (meh).

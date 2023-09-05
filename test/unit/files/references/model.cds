@@ -1,6 +1,8 @@
+using { cuid } from '@sap/cds/common';
+
 namespace references;
 
-entity Foo {
+entity Foo: cuid {  // inherits an additional key ID
     key first_key: UUID;
     key second_key: String;
 }
@@ -12,6 +14,6 @@ entity Bar {
     comp_one: Composition of one Foo;
     comp_many: Composition of many Foo;
     // inline structs (only composition is allowed for structs)
-    inl_comp_one: Composition of { a: String; };
+    inl_comp_one: Composition of { a: String; key ID: UUID };
     inl_comp_many: Composition of many { a: String; };
 };
