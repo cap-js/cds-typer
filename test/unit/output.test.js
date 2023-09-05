@@ -3,8 +3,9 @@
 const fs = require('fs').promises
 const path = require('path')
 const cds2ts = require('../../lib/compile')
-const { ASTWrapper } = require('../ast')
+const { ASTWrapper, JSASTWrapper } = require('../ast')
 const { locations } = require('../util')
+const { loadModule } = require('../util')
 
 const dir = locations.testOutput('output_test')
 
@@ -19,13 +20,34 @@ describe('Compilation', () => {
     describe('Bookshoplet', () => {
 
         beforeAll(async () => {
-        paths = await cds2ts
-            .compileFromFile(locations.unit.files('bookshoplet/model.cds'), {
-                outputDirectory: dir,
-            })
-            // eslint-disable-next-line no-console
-            .catch((err) => console.error(err))
+            paths = await cds2ts
+                .compileFromFile(locations.unit.files('bookshoplet/model.cds'), { outputDirectory: dir })
             ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
+        })
+
+        test('index.js', async () => {
+            const code = await fs.readFile(path.join(paths[1], 'index.js'), 'utf-8')
+            const jsw = new JSASTWrapper(code)
+            jsw.exportsAre([
+                ['Book', 'Books'],
+                ['Books', 'Books'],
+                ['Author', 'Authors'],
+                ['Authors', 'Authors'],
+                ['Genre', 'Genres'],
+                ['Genres', 'Genres'],
+                ['A_', 'A'],
+                ['A', 'A'],
+                ['B_', 'B'],
+                ['B', 'B'],
+                ['C_', 'C'],
+                ['C', 'C'],
+                ['D_', 'D'],
+                ['D', 'D'],
+                ['E_', 'E'],
+                ['E', 'E'],
+                ['QueryEntity_', 'QueryEntity'],
+                ['QueryEntity', 'QueryEntity']
+            ])
         })
 
         test('Generated Paths', () => expect(paths).toHaveLength(2)) // the one module [1] + baseDefinitions [0]
@@ -143,6 +165,35 @@ describe('Compilation', () => {
         })
 
         test('Generated Paths', () => expect(paths).toHaveLength(2)) // the one module [1] + baseDefinitions [0]
+
+        test('index.js', async () => {
+            const code = await fs.readFile(path.join(paths[1], 'index.js'), 'utf-8')
+            const jsw = new JSASTWrapper(code)
+            jsw.exportsAre([
+                ['Gizmo', 'Gizmos'],
+                ['Gizmos', 'Gizmos'],
+                ['FooSingular', 'Foos'],
+                ['Foos', 'Foos'],
+                ['Bar', 'Bars'],  // this one...
+                ['BarPlural', 'Bars'],
+                ['Bars', 'Bars'],
+                ['BazSingular', 'Bazes'],
+                ['BazPlural', 'Bazes'],
+                ['Bazes', 'Bazes'],  // ...and this one...
+                ['A_', 'A'],
+                ['A', 'A'],
+                ['C', 'C'],
+                ['LotsOfCs', 'C'],
+                ['OneSingleD', 'D'],
+                ['D', 'D'],
+                ['Referer', 'Referer'],
+                ['Referer_', 'Referer']
+            ])
+            // ...are currently exceptions where both singular _and_ plural
+            // are annotated and the original name is used as an export on top of that.
+            // So _three_ exports per entity. If we every choose to remove this third one,
+            // then this test has to reflect that.
+        })
         
         test('Aspects', () => {
             const aspects = ast.getAspects()
