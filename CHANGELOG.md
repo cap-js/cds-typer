@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 
 ### Added
+- Support for drafts via `@odata.draft.enabled` annotation
 
 ### Fixed
 
