@@ -17,8 +17,6 @@ describe('Enum Types', () => {
     beforeAll(async () => {
         const paths = await cds2ts
             .compileFromFile(locations.unit.files('enums/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
-            // eslint-disable-next-line no-console
-            .catch((err) => console.error(err))
         ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
     })
 
