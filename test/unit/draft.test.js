@@ -30,8 +30,6 @@ describe('@odata.draft.enabled', () => {
         await fs.unlink(dir).catch(err => {})
         const paths = await cds2ts
             .compileFromFile(locations.unit.files('draft/model.cds'), { outputDirectory: dir })
-            // eslint-disable-next-line no-console
-            .catch((err) => console.error(err))
         ast = new ASTWrapper(path.join(paths[1], 'index.ts')).tree
     })
 
