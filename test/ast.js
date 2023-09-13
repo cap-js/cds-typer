@@ -378,8 +378,28 @@ class JSASTWrapper {
     }
 }
 
+const checkFunction = (fnNode, {callCheck, parameterCheck, returnTypeCheck}) => {  
+    const [callsignature, parameters, returnType] = fnNode?.type?.members
+    if (!callsignature || callsignature.keyword !== 'callsignature') throw new Error('callsignature is not present or of wrong type')
+    if (!parameters || ts.unescapeLeadingUnderscores(parameters.name) !== '__parameters') throw new Error('__parameters property is missing or named incorrectly')
+    if (!returnType || ts.unescapeLeadingUnderscores(returnType.name) !== '__returns') throw new Error('__returns property is missing or named incorrectly')
+
+    if (callCheck && !callCheck(callsignature.type)) throw new Error('callsignature is not matching expectations')
+    if (parameterCheck && !parameterCheck(parameters.type)) throw new Error('parameter type is not matching expectations')
+    if (returnTypeCheck && !returnTypeCheck(returnType.type)) throw new Error('return type is not matching expectations')
+
+    return true
+}
+
+const type = {
+    isString: node => node?.keyword === 'string',
+    isNumber: node => node?.keyword === 'number'
+}
+
 
 module.exports = {
     ASTWrapper,
-    JSASTWrapper
+    JSASTWrapper,
+    checkFunction,
+    type
 }
