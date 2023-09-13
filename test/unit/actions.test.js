@@ -3,7 +3,7 @@
 const fs = require('fs').promises
 const path = require('path')
 const cds2ts = require('../../lib/compile')
-const { ASTWrapper } = require('../ast')
+const { ASTWrapper, checkFunction, type } = require('../ast')
 const { locations } = require('../util')
 
 const dir = locations.testOutput('actions_test')
@@ -15,24 +15,29 @@ describe('Actions', () => {
     test('Bound', async () => {
         const paths = await cds2ts
             .compileFromFile(locations.unit.files('actions/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
-            // eslint-disable-next-line no-console
-            .catch((err) => console.error(err))
         const ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
-        expect(ast.exists('_EAspect', 'f', 
-            m => m.type.keyword === 'functiontype'
-            && m.type.type.keyword === 'any'
-        )).toBeTruthy()
-        expect(ast.exists('_EAspect', 'g', 
-        m => m.type.keyword === 'functiontype'
-        && m.type.type.keyword === 'number'
-        )).toBeTruthy()
+        const f = ast.getAspectProperty('_EAspect', 'f')
+        checkFunction(f, {
+            parameterCheck: params => {
+                const fst = params.members[0]
+                return fst.name === 'x' && type.isString(fst.type)
+            }
+        })
+        const g = ast.getAspectProperty('_EAspect', 'g')
+        checkFunction(g, {
+            parameterCheck: params => {
+                const [fst, snd] = params.members
+                const fstCorrect = fst.name === 'a' && fst.type.members[0].name === 'x' && type.isNumber(fst.type.members[0].type)
+                    && fst.type.members[1].name === 'y' && type.isNumber(fst.type.members[1].type)
+                const sndCorrect = snd.name === 'b' && type.isNumber(snd.type)
+                return fstCorrect && sndCorrect
+            }
+        })
     })
 
     test('Unbound', async () => {
         const paths = await cds2ts
             .compileFromFile(locations.unit.files('actions/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
-            // eslint-disable-next-line no-console
-            .catch((err) => console.error(err))
         const ast = new ASTWrapper(path.join(paths[2], 'index.ts'))
 
         const fn = ast.tree[2]

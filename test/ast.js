@@ -318,13 +318,17 @@ class ASTWrapper {
         return this.getAspectFunctions().map(({name, body}) => ({...body[0], name}))
     }
 
+    getAspect(name) {
+        return this.getAspects().find(c => c.name === name)
+    }
+
+    getAspectProperty(name, property) {
+        return this.getAspect(name).members.find(m => m.name === property)
+    }
+
     /** @returns {VariableStatement[]} */
     getEntities() {
         return this.tree.filter(n => n.nodeType === kinds.VariableStatement)
-    }
-
-    getAspectProperties(name) {
-        const cls = this.getAspects().find(c => c.name === name)
     }
 
     exists(clazz, property, type, typeArg) {
