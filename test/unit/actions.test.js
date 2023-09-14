@@ -16,17 +16,11 @@ describe('Actions', () => {
         const paths = await cds2ts
             .compileFromFile(locations.unit.files('actions/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
         const ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
-        const f = ast.getAspectProperty('_EAspect', 'f')
-        checkFunction(f, {
-            parameterCheck: params => {
-                const fst = params.members[0]
-                return fst.name === 'x' && type.isString(fst.type)
-            }
+        checkFunction(ast.getAspectProperty('_EAspect', 'f'), {
+            parameterCheck: ({members: [fst]}) => fst.name === 'x' && type.isString(fst.type)
         })
-        const g = ast.getAspectProperty('_EAspect', 'g')
-        checkFunction(g, {
-            parameterCheck: params => {
-                const [fst, snd] = params.members
+        checkFunction(ast.getAspectProperty('_EAspect', 'g'), {
+            parameterCheck: ({members: [fst, snd]}) => {
                 const fstCorrect = fst.name === 'a' && fst.type.members[0].name === 'x' && type.isNumber(fst.type.members[0].type)
                     && fst.type.members[1].name === 'y' && type.isNumber(fst.type.members[1].type)
                 const sndCorrect = snd.name === 'b' && type.isNumber(snd.type)
@@ -39,36 +33,34 @@ describe('Actions', () => {
         const paths = await cds2ts
             .compileFromFile(locations.unit.files('actions/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
         const ast = new ASTWrapper(path.join(paths[2], 'index.ts'))
-
-        const fn = ast.tree[2]
-        expect(fn.nodeType).toBe('variableStatement')
-        expect(fn.name).toBe('free')
-        const res = fn.type.type
-        expect(res.members.length).toBe(2)
-        expect(res.members[0].name).toBe('a')
-        expect(res.members[1].name).toBe('b')
+        checkFunction(ast.tree.find(node => node.name === 'free'), {
+            callCheck: ({members: [fst, snd]}) => fst.name === 'a' && type.isNumber(fst.type)
+                && snd.name === 'b' && type.isString(snd.type),
+            parameterCheck: ({members: [fst]}) => fst.name === 'param' && type.isString(fst.type),
+            returnTypeCheck: ({members: [fst, snd]}) => fst.name === 'a' && type.isNumber(fst.type)
+                && snd.name === 'b' && type.isString(snd.type)
+        })
     })
 
     test('Bound Returning External Type', async () => {
         const paths = await cds2ts
             .compileFromFile(locations.unit.files('actions/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
-            // eslint-disable-next-line no-console
-            .catch((err) => console.error(err))
         const ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
-        expect(ast.exists('_EAspect', 'f', 
-            m => m.type.keyword === 'functiontype'
-            && m.type.type.keyword === 'any'
-        )).toBeTruthy()
+        checkFunction(ast.getAspectProperty('_EAspect', 'f'), {
+            callCheck: signature => type.isAny(signature),
+            parameterCheck: ({members: [fst]}) => fst.name === 'x' && type.isString(fst.type),
+            returnTypeCheck: returns => type.isAny(returns)
+        })
 
-        expect(ast.exists('_EAspect', 'k', 
-        m => m.type.keyword === 'functiontype'
-        && m.type.type.full === '_elsewhere.ExternalType'
-        )).toBeTruthy()
+        checkFunction(ast.getAspectProperty('_EAspect', 'k'), {
+            callCheck: ({full}) => full === '_elsewhere.ExternalType',
+            returnTypeCheck: ({full}) => full === '_elsewhere.ExternalType'
+        })
 
-        expect(ast.exists('_EAspect', 'l', 
-        m => m.type.keyword === 'functiontype'
-        && m.type.type.full === '_.ExternalInRoot'
-        )).toBeTruthy()   
+        checkFunction(ast.getAspectProperty('_EAspect', 'l'), {
+            callCheck: ({full}) => full === '_.ExternalInRoot',
+            returnTypeCheck: ({full}) => full === '_.ExternalInRoot'
+        })
     })
 
     test('Unbound Returning External Type', async () => {
