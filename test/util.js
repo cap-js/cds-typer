@@ -4,6 +4,8 @@ const path = require('path')
 const { Logger } = require('../lib/logging')
 const { fail } = require('assert')
 const os = require('os')
+const typer = require('../lib/compile')
+
 
 /**
  * Hackish. When having code as string, we can either:
@@ -311,6 +313,12 @@ const locations = {
     }
 }
 
+
+const cds2ts = async (cdsFile, options = {}) => await typer.compileFromFile(
+    locations.unit.files(cdsFile), 
+    options
+)
+
 module.exports = {
     loadModule,
     toHaveAll,
@@ -320,5 +328,6 @@ module.exports = {
     resolveAliases,
     validateDTSTypes,
     toHavePropertyOfType,
-    locations
+    locations,
+    cds2ts
 }

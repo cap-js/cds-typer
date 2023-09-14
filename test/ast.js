@@ -318,13 +318,17 @@ class ASTWrapper {
         return this.getAspectFunctions().map(({name, body}) => ({...body[0], name}))
     }
 
+    getAspect(name) {
+        return this.getAspects().find(c => c.name === name)
+    }
+
+    getAspectProperty(name, property) {
+        return this.getAspect(name).members.find(m => m.name === property)
+    }
+
     /** @returns {VariableStatement[]} */
     getEntities() {
         return this.tree.filter(n => n.nodeType === kinds.VariableStatement)
-    }
-
-    getAspectProperties(name) {
-        const cls = this.getAspects().find(c => c.name === name)
     }
 
     exists(clazz, property, type, typeArg) {
@@ -378,8 +382,30 @@ class JSASTWrapper {
     }
 }
 
+const checkFunction = (fnNode, {callCheck, parameterCheck, returnTypeCheck}) => {
+    if (!fnNode) throw new Error('the function does not exist (or was not properly accessed from the AST)') 
+    const [callsignature, parameters, returnType] = fnNode?.type?.members
+    if (!callsignature || callsignature.keyword !== 'callsignature') throw new Error('callsignature is not present or of wrong type')
+    if (!parameters || ts.unescapeLeadingUnderscores(parameters.name) !== '__parameters') throw new Error('__parameters property is missing or named incorrectly')
+    if (!returnType || ts.unescapeLeadingUnderscores(returnType.name) !== '__returns') throw new Error('__returns property is missing or named incorrectly')
+
+    if (callCheck && !callCheck(callsignature.type)) throw new Error('callsignature is not matching expectations')
+    if (parameterCheck && !parameterCheck(parameters.type)) throw new Error('parameter type is not matching expectations')
+    if (returnTypeCheck && !returnTypeCheck(returnType.type)) throw new Error('return type is not matching expectations')
+
+    return true
+}
+
+const type = {
+    isString: node => node?.keyword === 'string',
+    isNumber: node => node?.keyword === 'number',
+    isAny: node => node?.keyword === 'any'
+}
+
 
 module.exports = {
     ASTWrapper,
-    JSASTWrapper
+    JSASTWrapper,
+    checkFunction,
+    type
 }
