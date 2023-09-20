@@ -186,7 +186,7 @@ function visitTypeReference(node) {
 }
 
 /**
- * @typedef {{name: string, type: any, optional: boolean, nodeType: string}} PropertyDeclaration
+ * @typedef {{name: string, type: any, optional: boolean, nodeType: string, modifiers: object}} PropertyDeclaration
  * @param node {ts.PropertyDeclaration}
  * @returns {PropertyDeclaration}
  */
@@ -194,7 +194,8 @@ function visitPropertyDeclaration(node) {
     const name = visit(node.name)
     const type = visit(node.type)
     const optional = !!node.questionToken
-    return { name, type, optional, nodeType: kinds.PropertyDeclaration }
+    const modifiers = node.modifiers?.map(visit) ?? []
+    return { name, type, optional, nodeType: kinds.PropertyDeclaration, modifiers }
 }
 
 /**
@@ -382,7 +383,7 @@ class JSASTWrapper {
     }
 }
 
-const checkFunction = (fnNode, {callCheck, parameterCheck, returnTypeCheck}) => {
+const checkFunction = (fnNode, {callCheck, parameterCheck, returnTypeCheck, modifiersCheck}) => {
     if (!fnNode) throw new Error('the function does not exist (or was not properly accessed from the AST)') 
     const [callsignature, parameters, returnType] = fnNode?.type?.members
     if (!callsignature || callsignature.keyword !== 'callsignature') throw new Error('callsignature is not present or of wrong type')
@@ -392,14 +393,18 @@ const checkFunction = (fnNode, {callCheck, parameterCheck, returnTypeCheck}) => 
     if (callCheck && !callCheck(callsignature.type)) throw new Error('callsignature is not matching expectations')
     if (parameterCheck && !parameterCheck(parameters.type)) throw new Error('parameter type is not matching expectations')
     if (returnTypeCheck && !returnTypeCheck(returnType.type)) throw new Error('return type is not matching expectations')
+    if (modifiersCheck && !modifiersCheck(fnNode?.modifiers)) throw new Error('modifiers did not meet expectations')
 
     return true
 }
 
-const type = {
-    isString: node => node?.keyword === 'string',
-    isNumber: node => node?.keyword === 'number',
-    isAny: node => node?.keyword === 'any'
+const checkKeyword = (node, expected) => node?.keyword === expected
+
+const check = {
+    isString: node => checkKeyword(node, 'string'),
+    isNumber: node => checkKeyword(node, 'number'),
+    isAny: node => checkKeyword(node, 'any'),
+    isStatic: node => checkKeyword(node, 'static')
 }
 
 
@@ -407,5 +412,5 @@ module.exports = {
     ASTWrapper,
     JSASTWrapper,
     checkFunction,
-    type
+    check: check
 }
