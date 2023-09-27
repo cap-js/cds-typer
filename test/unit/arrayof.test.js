@@ -3,7 +3,7 @@
 const fs = require('fs').promises
 const path = require('path')
 const cds2ts = require('../../lib/compile')
-const { ASTWrapper } = require('../ast')
+const { ASTWrapper, checkFunction, check } = require('../ast')
 const { locations } = require('../util')
 
 const dir = locations.testOutput('arrayof_test')
@@ -28,13 +28,13 @@ describe('array of', () => {
         test('array of String', async () => {
             expect(aspect.members.find(m => m.name === 'stringz' 
                 && m.type.full === 'Array' 
-                && m.type.args[0].keyword === 'string')).toBeTruthy()
+                && check.isString(m.type.args[0]))).toBeTruthy()
         })
     
         test('many Integer', async () => {
             expect(aspect.members.find(m => m.name === 'numberz' 
                 && m.type.full === 'Array' 
-                && m.type.args[0].keyword === 'number')).toBeTruthy()
+                && check.isNumber(m.type.args[0]))).toBeTruthy()
         })
     
         test('array of locally defined type', async () => {
@@ -62,7 +62,12 @@ describe('array of', () => {
         beforeAll(async () => func = ast.tree.find(n => n.name === 'fn'))
 
         test('Returning array of String', async () => {
-            expect(func.type.type.full === 'Array' && func.type.type.args[0].keyword === 'string').toBeTruthy()
+            //expect(func.type.type.full === 'Array' && func.type.type.args[0].keyword === 'string').toBeTruthy()
+            expect(checkFunction(func, {
+                callCheck: signature => check.isString(signature.args?.[0]),
+                parameterCheck: params => params.members?.[0]?.name === 'xs',
+                returnTypeCheck: returns => check.isString(returns?.args[0])
+            }))
         })
 
         /*

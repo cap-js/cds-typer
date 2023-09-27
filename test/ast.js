@@ -186,7 +186,7 @@ function visitTypeReference(node) {
 }
 
 /**
- * @typedef {{name: string, type: any, optional: boolean, nodeType: string}} PropertyDeclaration
+ * @typedef {{name: string, type: any, optional: boolean, nodeType: string, modifiers: object}} PropertyDeclaration
  * @param node {ts.PropertyDeclaration}
  * @returns {PropertyDeclaration}
  */
@@ -194,7 +194,8 @@ function visitPropertyDeclaration(node) {
     const name = visit(node.name)
     const type = visit(node.type)
     const optional = !!node.questionToken
-    return { name, type, optional, nodeType: kinds.PropertyDeclaration }
+    const modifiers = node.modifiers?.map(visit) ?? []
+    return { name, type, optional, nodeType: kinds.PropertyDeclaration, modifiers }
 }
 
 /**
@@ -318,13 +319,17 @@ class ASTWrapper {
         return this.getAspectFunctions().map(({name, body}) => ({...body[0], name}))
     }
 
+    getAspect(name) {
+        return this.getAspects().find(c => c.name === name)
+    }
+
+    getAspectProperty(name, property) {
+        return this.getAspect(name).members.find(m => m.name === property)
+    }
+
     /** @returns {VariableStatement[]} */
     getEntities() {
         return this.tree.filter(n => n.nodeType === kinds.VariableStatement)
-    }
-
-    getAspectProperties(name) {
-        const cls = this.getAspects().find(c => c.name === name)
     }
 
     exists(clazz, property, type, typeArg) {
@@ -378,8 +383,34 @@ class JSASTWrapper {
     }
 }
 
+const checkFunction = (fnNode, {callCheck, parameterCheck, returnTypeCheck, modifiersCheck}) => {
+    if (!fnNode) throw new Error('the function does not exist (or was not properly accessed from the AST)') 
+    const [callsignature, parameters, returnType] = fnNode?.type?.members
+    if (!callsignature || callsignature.keyword !== 'callsignature') throw new Error('callsignature is not present or of wrong type')
+    if (!parameters || ts.unescapeLeadingUnderscores(parameters.name) !== '__parameters') throw new Error('__parameters property is missing or named incorrectly')
+    if (!returnType || ts.unescapeLeadingUnderscores(returnType.name) !== '__returns') throw new Error('__returns property is missing or named incorrectly')
+
+    if (callCheck && !callCheck(callsignature.type)) throw new Error('callsignature is not matching expectations')
+    if (parameterCheck && !parameterCheck(parameters.type)) throw new Error('parameter type is not matching expectations')
+    if (returnTypeCheck && !returnTypeCheck(returnType.type)) throw new Error('return type is not matching expectations')
+    if (modifiersCheck && !modifiersCheck(fnNode?.modifiers)) throw new Error('modifiers did not meet expectations')
+
+    return true
+}
+
+const checkKeyword = (node, expected) => node?.keyword === expected
+
+const check = {
+    isString: node => checkKeyword(node, 'string'),
+    isNumber: node => checkKeyword(node, 'number'),
+    isAny: node => checkKeyword(node, 'any'),
+    isStatic: node => checkKeyword(node, 'static')
+}
+
 
 module.exports = {
     ASTWrapper,
-    JSASTWrapper
+    JSASTWrapper,
+    checkFunction,
+    check: check
 }

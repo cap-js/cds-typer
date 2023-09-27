@@ -4,9 +4,18 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.9.1 - TBD
+## Version 0.10.1 - TBD
 
 ### Changed
+
+### Added
+
+### Fixed
+
+## Version 0.10.0 - 2023-09-21
+
+### Changed
+- Actions and functions are now attached to a static `.actions` property of each generated class. This reflects the runtime behaviour better than the former way of generating instance methods
 
 ### Added
 
