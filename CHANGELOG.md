@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Inline enums that are defined as literal type of properties are now supported as well
 
 ### Fixed
+- Fixed an error when an entity uses `type of` on a property they have inherited from another entity
 
 ## Version 0.10.0 - 2023-09-21
 
