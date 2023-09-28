@@ -22,9 +22,9 @@ describe('Enum Types', () => {
 
     test('string enums values', async () => {
         expect(ast.tree.find(n => n.name === 'Gender' 
-        && n.initializer.female === 'female'
-        && n.initializer.male === 'male'
-        && n.initializer.non_binary === 'non-binary'))
+        && n.initializer.expression.female === 'female'
+        && n.initializer.expression.male === 'male'
+        && n.initializer.expression.non_binary === 'non-binary'))
         .toBeTruthy()
     })
 
@@ -36,9 +36,9 @@ describe('Enum Types', () => {
 
     test('int enums values', async () => {
         expect(ast.tree.find(n => n.name === 'Status' 
-        && n.initializer.submitted === 1
-        && n.initializer.unknown === 0
-        && n.initializer.cancelled === -1))
+        && n.initializer.expression.submitted === 1
+        && n.initializer.expression.unknown === 0
+        && n.initializer.expression.cancelled === -1))
         .toBeTruthy()
     })
 
