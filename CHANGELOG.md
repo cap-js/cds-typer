@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 
 ### Added
+- Inline enums that are defined as literal type of properties are now supported as well
 
 ### Fixed
 
