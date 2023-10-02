@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 
 ### Added
+- Each generated class now contains their original fully qualified name in a static `.name` property
 
 ### Fixed
 - Fixed an error when an entity uses `type of` on a property they have inherited from another entity
