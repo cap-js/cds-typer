@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 - Fixed an error when an entity uses `type of` on a property they have inherited from another entity
+- Fixed an error during draftability propagation when defining compositions on types that are declared inline
 
 ## Version 0.10.0 - 2023-09-21
 
