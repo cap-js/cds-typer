@@ -20,45 +20,75 @@ describe('Enum Types', () => {
         ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
     })
 
-    test('string enums values', async () => {
-        expect(ast.tree.find(n => n.name === 'Gender' 
-        && n.initializer.expression.female === 'female'
-        && n.initializer.expression.male === 'male'
-        && n.initializer.expression.non_binary === 'non-binary'))
-        .toBeTruthy()
+    describe('Anonymous', () => {
+        test('string enums values', async () => {
+            expect(ast.tree.find(n => n.name === 'InlineEnum_gender' 
+            && n.initializer.expression.female.val === 'female'
+            && n.initializer.expression.male.val === 'male'
+            && n.initializer.expression.non_binary.val === 'non-binary'))
+            .toBeTruthy()
+        })
+
+        test('int enums values', async () => {
+            expect(ast.tree.find(n => n.name === 'InlineEnum_status' 
+            && n.initializer.expression.submitted.val === 1
+            && n.initializer.expression.fulfilled.val === 2
+            && n.initializer.expression.canceled.val === -1
+            && n.initializer.expression.shipped.val === 42))
+            .toBeTruthy()
+        })
+
+        test('mixed enums values', async () => {
+            expect(ast.tree.find(n => n.name === 'InlineEnum_yesno'
+            && n.initializer.expression.catchall.val === 42
+            && n.initializer.expression.no.val === false
+            && n.initializer.expression.yes.val === true
+            && n.initializer.expression.yesnt.val === false))
+            .toBeTruthy()
+        })
     })
 
-    test('string enums type alias', async () => {
-        expect(ast.getTypeAliasDeclarations().find(n => n.name === 'Gender'
-        && ['male', 'female', 'non-binary'].every(t => n.types.includes(t))))
-        .toBeTruthy()
-    })
+    describe('Named', () => {
+        test('string enums values', async () => {
+            expect(ast.tree.find(n => n.name === 'Gender' 
+            && n.initializer.expression.female === 'female'
+            && n.initializer.expression.male === 'male'
+            && n.initializer.expression.non_binary === 'non-binary'))
+            .toBeTruthy()
+        })
 
-    test('int enums values', async () => {
-        expect(ast.tree.find(n => n.name === 'Status' 
-        && n.initializer.expression.submitted === 1
-        && n.initializer.expression.unknown === 0
-        && n.initializer.expression.cancelled === -1))
-        .toBeTruthy()
-    })
+        test('string enums type alias', async () => {
+            expect(ast.getTypeAliasDeclarations().find(n => n.name === 'Gender'
+            && ['male', 'female', 'non-binary'].every(t => n.types.includes(t))))
+            .toBeTruthy()
+        })
 
-    test('int enums type alias', async () => {
-        expect(ast.getTypeAliasDeclarations().find(n => n.name === 'Status'
-        && [-1, 0, 1].every(t => n.types.includes(t))))
-        .toBeTruthy()
-    })
+        test('int enums values', async () => {
+            expect(ast.tree.find(n => n.name === 'Status' 
+            && n.initializer.expression.submitted === 1
+            && n.initializer.expression.unknown === 0
+            && n.initializer.expression.cancelled === -1))
+            .toBeTruthy()
+        })
 
-    test('mixed enums values', async () => {
-        ast.tree.find(n => n.name === 'Truthy' 
-        && n.yes === true
-        && n.no === false
-        && n.yesnt === false
-        && n.catchall === 42
-    )})
+        test('int enums type alias', async () => {
+            expect(ast.getTypeAliasDeclarations().find(n => n.name === 'Status'
+            && [-1, 0, 1].every(t => n.types.includes(t))))
+            .toBeTruthy()
+        })
 
-    test('mixed enums type alias', async () => {
-        expect(ast.getTypeAliasDeclarations().find(n => n.name === 'Truthy'
-        && [true, false, 42].every(t => n.types.includes(t))))
-        .toBeTruthy()
+        test('mixed enums values', async () => {
+            ast.tree.find(n => n.name === 'Truthy' 
+            && n.yes === true
+            && n.no === false
+            && n.yesnt === false
+            && n.catchall === 42
+        )})
+
+        test('mixed enums type alias', async () => {
+            expect(ast.getTypeAliasDeclarations().find(n => n.name === 'Truthy'
+            && [true, false, 42].every(t => n.types.includes(t))))
+            .toBeTruthy()
+        })
     })
 })
