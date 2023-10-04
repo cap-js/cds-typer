@@ -20,6 +20,14 @@ describe('Enum Types', () => {
         ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
     })
 
+    describe('Properties', () => {
+        test('string enum', async () => {
+            expect(ast.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
+                && members?.find(member => member.name === 'elements' && member.modifiers?.find(m => m.keyword === 'static')))
+            ).toBeTruthy()
+        })
+    })
+
     describe('Anonymous', () => {
         test('string enums values', async () => {
             expect(ast.tree.find(n => n.name === 'InlineEnum_gender' 
