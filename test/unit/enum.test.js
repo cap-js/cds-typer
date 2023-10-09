@@ -20,8 +20,8 @@ describe('Enum Types', () => {
         ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
     })
 
-    describe('Properties', () => {
-        test('string enum', async () => {
+    describe('Static Enum Property', () => {
+        test('Wrapper Present', async () => {
             expect(ast.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
                 && members?.find(member => member.name === 'elements' && member.modifiers?.find(m => m.keyword === 'static')))
             ).toBeTruthy()
@@ -29,74 +29,93 @@ describe('Enum Types', () => {
     })
 
     describe('Anonymous', () => {
-        test('string enums values', async () => {
-            expect(ast.tree.find(n => n.name === 'InlineEnum_gender' 
-            && n.initializer.expression.female.val === 'female'
-            && n.initializer.expression.male.val === 'male'
-            && n.initializer.expression.non_binary.val === 'non-binary'))
-            .toBeTruthy()
+        describe('String Enum', () => {
+            test('Definition Present', async () => 
+                expect(ast.tree.find(n => n.name === 'InlineEnum_gender' 
+                && n.initializer.expression.female.val === 'female'
+                && n.initializer.expression.male.val === 'male'
+                && n.initializer.expression.non_binary.val === 'non-binary'))
+                .toBeTruthy())
+
+            test('Referring Property', async () =>
+                expect(ast.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
+                && members?.find(member => member.name === 'gender' && member.type?.full === 'InlineEnum_gender')))
+                .toBeTruthy())
+
         })
 
-        test('int enums values', async () => {
-            expect(ast.tree.find(n => n.name === 'InlineEnum_status' 
-            && n.initializer.expression.submitted.val === 1
-            && n.initializer.expression.fulfilled.val === 2
-            && n.initializer.expression.canceled.val === -1
-            && n.initializer.expression.shipped.val === 42))
-            .toBeTruthy()
+        describe('Int Enum', () => {
+            test('Definition Present', async () => 
+                expect(ast.tree.find(n => n.name === 'InlineEnum_status' 
+                && n.initializer.expression.submitted.val === 1
+                && n.initializer.expression.fulfilled.val === 2
+                && n.initializer.expression.canceled.val === -1
+                && n.initializer.expression.shipped.val === 42))
+                .toBeTruthy())
+
+            test('Referring Property', async () =>
+                expect(ast.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
+                && members?.find(member => member.name === 'status' && member.type?.full === 'InlineEnum_status')))
+                .toBeTruthy())
         })
 
-        test('mixed enums values', async () => {
-            expect(ast.tree.find(n => n.name === 'InlineEnum_yesno'
-            && n.initializer.expression.catchall.val === 42
-            && n.initializer.expression.no.val === false
-            && n.initializer.expression.yes.val === true
-            && n.initializer.expression.yesnt.val === false))
-            .toBeTruthy()
+        describe('Mixed Enum', () => {
+            test('Definition Present', async () =>
+                expect(ast.tree.find(n => n.name === 'InlineEnum_yesno'
+                && n.initializer.expression.catchall.val === 42
+                && n.initializer.expression.no.val === false
+                && n.initializer.expression.yes.val === true
+                && n.initializer.expression.yesnt.val === false))
+                .toBeTruthy())
+
+            test('Referring Property', async () =>
+                expect(ast.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
+                && members?.find(member => member.name === 'yesno' && member.type?.full === 'InlineEnum_yesno')))
+                .toBeTruthy())
         })
     })
 
     describe('Named', () => {
-        test('string enums values', async () => {
-            expect(ast.tree.find(n => n.name === 'Gender' 
-            && n.initializer.expression.female === 'female'
-            && n.initializer.expression.male === 'male'
-            && n.initializer.expression.non_binary === 'non-binary'))
-            .toBeTruthy()
+        describe('String Enum', () => {
+            test('Values', async () =>
+                expect(ast.tree.find(n => n.name === 'Gender' 
+                && n.initializer.expression.female === 'female'
+                && n.initializer.expression.male === 'male'
+                && n.initializer.expression.non_binary === 'non-binary'))
+                .toBeTruthy())
+
+            test('Type Alias', async () =>
+                expect(ast.getTypeAliasDeclarations().find(n => n.name === 'Gender'
+                && ['male', 'female', 'non-binary'].every(t => n.types.includes(t))))
+                .toBeTruthy())
         })
 
-        test('string enums type alias', async () => {
-            expect(ast.getTypeAliasDeclarations().find(n => n.name === 'Gender'
-            && ['male', 'female', 'non-binary'].every(t => n.types.includes(t))))
-            .toBeTruthy()
+        describe('Int Enum', () => {
+            test('Values', async () =>
+                expect(ast.tree.find(n => n.name === 'Status' 
+                && n.initializer.expression.submitted === 1
+                && n.initializer.expression.unknown === 0
+                && n.initializer.expression.cancelled === -1))
+                .toBeTruthy())
+
+            test('Type Alias', async () =>
+                expect(ast.getTypeAliasDeclarations().find(n => n.name === 'Status'
+                && [-1, 0, 1].every(t => n.types.includes(t))))
+                .toBeTruthy())
         })
 
-        test('int enums values', async () => {
-            expect(ast.tree.find(n => n.name === 'Status' 
-            && n.initializer.expression.submitted === 1
-            && n.initializer.expression.unknown === 0
-            && n.initializer.expression.cancelled === -1))
-            .toBeTruthy()
-        })
+        describe('Mixed Enum', () => {
+            test('Values', async () =>
+                ast.tree.find(n => n.name === 'Truthy' 
+                && n.yes === true
+                && n.no === false
+                && n.yesnt === false
+                && n.catchall === 42))
 
-        test('int enums type alias', async () => {
-            expect(ast.getTypeAliasDeclarations().find(n => n.name === 'Status'
-            && [-1, 0, 1].every(t => n.types.includes(t))))
-            .toBeTruthy()
-        })
-
-        test('mixed enums values', async () => {
-            ast.tree.find(n => n.name === 'Truthy' 
-            && n.yes === true
-            && n.no === false
-            && n.yesnt === false
-            && n.catchall === 42
-        )})
-
-        test('mixed enums type alias', async () => {
-            expect(ast.getTypeAliasDeclarations().find(n => n.name === 'Truthy'
-            && [true, false, 42].every(t => n.types.includes(t))))
-            .toBeTruthy()
+            test('Type Alias', async () =>
+                expect(ast.getTypeAliasDeclarations().find(n => n.name === 'Truthy'
+                && [true, false, 42].every(t => n.types.includes(t))))
+                .toBeTruthy())
         })
     })
 })
