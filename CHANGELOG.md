@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 
 ### Added
+- Inline enums that are defined as literal type of properties are now supported as well (note: this feature is experimental. The location to which enums are generated might change in the future!)
 
 ### Fixed
 - Fixed an error when an entity uses `type of` on a property they have inherited from another entity
