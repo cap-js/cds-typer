@@ -45,7 +45,8 @@ function resolveKeyword(node) {
         elementType: visit(node.elementType),  // only in arraytypes
         members: node.members?.map(visit),     // only in inline type definitions 
         indexType: visit(node.indexType),      // only in indexedaccesstype
-        literal: visit(node.literal)           // only in literaltype
+        literal: visit(node.literal),          // only in literaltype
+        expression: visit(node.expression)     // only in asexpression ("as const")
     }).filter(([,v]) => v !== undefined))
 }
 
