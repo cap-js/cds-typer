@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 - Autoexposed entities in services are now also generated
+- Each generated class now contains their original fully qualified name in a static `.name` property
 - Inline enums that are defined as literal type of properties are now supported as well (note: this feature is experimental. The location to which enums are generated might change in the future!)
 
 ### Fixed
