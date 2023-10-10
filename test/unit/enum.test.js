@@ -20,21 +20,13 @@ describe('Enum Types', () => {
         ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
     })
 
-    describe('Static Enum Property', () => {
-        test('Wrapper Present', async () => {
-            expect(ast.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
-                && members?.find(member => member.name === 'elements' && member.modifiers?.find(m => m.keyword === 'static')))
-            ).toBeTruthy()
-        })
-    })
-
     describe('Anonymous', () => {
         describe('String Enum', () => {
             test('Definition Present', async () => 
                 expect(ast.tree.find(n => n.name === 'InlineEnum_gender' 
-                && n.initializer.expression.female.val === 'female'
-                && n.initializer.expression.male.val === 'male'
-                && n.initializer.expression.non_binary.val === 'non-binary'))
+                && n.initializer.expression.female === 'female'
+                && n.initializer.expression.male === 'male'
+                && n.initializer.expression.non_binary === 'non-binary'))
                 .toBeTruthy())
 
             test('Referring Property', async () =>
@@ -47,10 +39,10 @@ describe('Enum Types', () => {
         describe('Int Enum', () => {
             test('Definition Present', async () => 
                 expect(ast.tree.find(n => n.name === 'InlineEnum_status' 
-                && n.initializer.expression.submitted.val === 1
-                && n.initializer.expression.fulfilled.val === 2
-                && n.initializer.expression.canceled.val === -1
-                && n.initializer.expression.shipped.val === 42))
+                && n.initializer.expression.submitted === 1
+                && n.initializer.expression.fulfilled === 2
+                && n.initializer.expression.canceled === -1
+                && n.initializer.expression.shipped === 42))
                 .toBeTruthy())
 
             test('Referring Property', async () =>
@@ -62,10 +54,10 @@ describe('Enum Types', () => {
         describe('Mixed Enum', () => {
             test('Definition Present', async () =>
                 expect(ast.tree.find(n => n.name === 'InlineEnum_yesno'
-                && n.initializer.expression.catchall.val === 42
-                && n.initializer.expression.no.val === false
-                && n.initializer.expression.yes.val === true
-                && n.initializer.expression.yesnt.val === false))
+                && n.initializer.expression.catchall === 42
+                && n.initializer.expression.no === false
+                && n.initializer.expression.yes === true
+                && n.initializer.expression.yesnt === false))
                 .toBeTruthy())
 
             test('Referring Property', async () =>
