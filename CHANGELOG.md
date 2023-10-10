@@ -9,12 +9,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 
 ### Added
+- Autoexposed entities in services are now also generated
 - Each generated class now contains their original fully qualified name in a static `.name` property
 - Inline enums that are defined as literal type of properties are now supported as well (note: this feature is experimental. The location to which enums are generated might change in the future!)
 
 ### Fixed
 - Fixed an error when an entity uses `type of` on a property they have inherited from another entity
 - Fixed an error during draftability propagation when defining compositions on types that are declared inline
+
+### Removed
+- `compileFromCSN` is no longer part of the package's API
 
 ## Version 0.10.0 - 2023-09-21
 
