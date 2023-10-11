@@ -1,6 +1,6 @@
 ---
 name: 💡 Feature Request
-description: Suggest an idea to help us improve W&B
+description: Request a missing feature
 title: "[FEATURE] <title>"
 labels: ["feature_request", "new"]
 body:
@@ -8,7 +8,7 @@ body:
     attributes:
       label: Description
       description: |
-        A concise description of the feature you're interested in. If possible, please include use cases, pointers to CAPire, and how it would benefit this tool and its users.
+        A concise description of the feature you're interested in. If possible include use cases, pointers to CAPire, and how it would benefit this tool and its users.
     validations:
       required: true
   - type: textarea
