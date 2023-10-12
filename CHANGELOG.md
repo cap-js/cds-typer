@@ -11,6 +11,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 ### Fixed
 
+## Version 0.11.1 - 2023-10-12
+
+### Changed
+
+### Added
+### Fixed
+Fixed how service names are exported as default export
+
 ## Version 0.11.0 - 2023-10-10
 
 ### Changed
