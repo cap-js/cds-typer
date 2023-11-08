@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Version 0.12.0 - TBD
 
 ### Changed
+- Generate `cds.LargeBinary` as string, buffer, _or readable_ in the case of media content
 
 ### Added
 ### Fixed
