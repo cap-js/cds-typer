@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 ### Fixed
+- Now using names of enum values in generated _index.js_ files if no explicit value is present
 
 ## Version 0.11.1 - 2023-10-12
 
@@ -17,7 +18,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 ### Fixed
-Fixed how service names are exported as default export
+- Fixed how service names are exported as default export
 
 ## Version 0.11.0 - 2023-10-10
 
