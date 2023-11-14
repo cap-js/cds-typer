@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 - Generate `cds.LargeBinary` as string, buffer, _or readable_ in the case of media content
+- Enums are now generated ecplicitly in the respective _index.js_ files and don't have to extract their values from the model at runtime anymore
 
 ### Added
 ### Fixed
