@@ -1,7 +1,10 @@
 namespace events;
 
 entity Foo {
-    name: String;
+    name : String;
 }
 
-event Bar: { id: Integer; name: Foo:name };
+event Bar : {
+    id   : Integer not null;
+    name : Foo:name not null
+};
