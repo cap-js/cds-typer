@@ -53,8 +53,9 @@ describe('References', () => {
                 && m.type.keyword === 'uniontype'
                 && m.type.subtypes["0"]
                 && m.type.subtypes["0"].name === 'of'
-                && m.type.subtypes["0"].args[0].members[0].name === 'a'
-                && m.type.subtypes["0"].args[0].members[0].type.keyword === 'string'
+                && m.type.subtypes["0"].args[0].keyword === 'uniontype'
+                && m.type.subtypes["0"].args[0].subtypes[0].members[0].name === 'a'
+                && m.type.subtypes["0"].args[0].subtypes[0].members[0].type.keyword === 'string'
         )).toBeTruthy()
         expect(ast.exists('_BarAspect', 'inl_comp_many', m => true
                 && m.type.name === 'many'
