@@ -14,7 +14,7 @@ describe('References', () => {
 
     test('Entity', async () => {
         const paths = await cds2ts
-            .compileFromFile(locations.unit.files('references/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured', propertiesOptional: false })
+            .compileFromFile(locations.unit.files('references/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
         const ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
         expect(ast.exists('_BarAspect', 'assoc_one', m => true
                 && m.type.name === 'to'
@@ -45,7 +45,7 @@ describe('References', () => {
 
     test('Inline', async () => {
         const paths = await cds2ts
-            .compileFromFile(locations.unit.files('references/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured', propertiesOptional: false })
+            .compileFromFile(locations.unit.files('references/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
             // eslint-disable-next-line no-console
             .catch((err) => console.error(err))
         const ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
@@ -53,9 +53,12 @@ describe('References', () => {
                 && m.type.keyword === 'uniontype'
                 && m.type.subtypes["0"]
                 && m.type.subtypes["0"].name === 'of'
-                && m.type.subtypes["0"].args[0].keyword === 'uniontype'
-                && m.type.subtypes["0"].args[0].subtypes[0].members[0].name === 'a'
-                && m.type.subtypes["0"].args[0].subtypes[0].members[0].type.keyword === 'string'
+                && m.type.subtypes["0"].args[0].keyword === 'typeliteral'
+                && m.type.subtypes["0"].args[0].members[0].name === 'a'
+                && m.type.subtypes["0"].args[0].members[0].type.keyword === 'string'
+                && m.type.subtypes["1"]
+                && m.type.subtypes["1"].keyword === 'literaltype'
+                && m.type.subtypes["1"].literal.keyword === 'null'
         )).toBeTruthy()
         expect(ast.exists('_BarAspect', 'inl_comp_many', m => true
                 && m.type.name === 'many'
