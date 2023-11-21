@@ -8,7 +8,7 @@ const { locations, cds2ts } = require('../util')
 const dir = locations.testOutput('actions_test')
 
 describe('Actions', () => {
-    beforeEach(async () => await fs.unlink(dir).catch(err => {}))
+    beforeEach(async () => await fs.unlink(dir).catch(() => {}))
 
     test('Bound', async () => {
         const paths = await cds2ts('actions/model.cds', { outputDirectory: dir, inlineDeclarations: 'structured' })

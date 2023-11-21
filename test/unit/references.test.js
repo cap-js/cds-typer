@@ -10,7 +10,7 @@ const dir = locations.unit.files('output/references')
 
 // compilation produces semantically complete Typescript
 describe('References', () => {
-    beforeEach(async () => await fs.unlink(dir).catch(err => {})) //console.log('INFO', `Unable to unlink '${dir}' (${err}). This may not be an issue.`)
+    beforeEach(async () => await fs.unlink(dir).catch(() => {})) //console.log('INFO', `Unable to unlink '${dir}' (${err}). This may not be an issue.`)
 
     test('Entity', async () => {
         const paths = await cds2ts

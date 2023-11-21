@@ -27,7 +27,7 @@ describe('@odata.draft.enabled', () => {
     let ast
 
     beforeAll(async () => {
-        await fs.unlink(dir).catch(err => {})
+        await fs.unlink(dir).catch(() => {})
         const paths = await cds2ts
             .compileFromFile(locations.unit.files('draft/model.cds'), { outputDirectory: dir })
         ast = new ASTWrapper(path.join(paths[1], 'index.ts')).tree
