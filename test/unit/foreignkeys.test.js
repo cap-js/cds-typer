@@ -10,7 +10,7 @@ const dir = locations.testOutput('foreign_keys')
 
 describe('Foreign Keys', () => {
     let ast
-    beforeEach(async () => await fs.unlink(dir).catch(err => {}))
+    beforeEach(async () => await fs.unlink(dir).catch(() => {}))
     beforeAll(async () => {
         const paths = await cds2ts
             .compileFromFile(locations.unit.files('foreignkeys/model.cds'), { outputDirectory: dir })

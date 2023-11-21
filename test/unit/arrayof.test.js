@@ -12,7 +12,7 @@ const dir = locations.testOutput('arrayof_test')
 describe('array of', () => {
     let ast
 
-    beforeEach(async () => await fs.unlink(dir).catch(err => {}))
+    beforeEach(async () => await fs.unlink(dir).catch(() => {}))
     beforeAll(async () => {
         const paths = await cds2ts
             .compileFromFile(locations.unit.files('arrayof/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })

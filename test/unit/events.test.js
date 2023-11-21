@@ -12,7 +12,7 @@ const dir = locations.testOutput('events_test')
 describe('events', () => {
     let ast
 
-    beforeEach(async () => await fs.unlink(dir).catch(err => {}))
+    beforeEach(async () => await fs.unlink(dir).catch(() => {}))
     beforeAll(async () => {
         const paths = await cds2ts
             .compileFromFile(locations.unit.files('events/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })

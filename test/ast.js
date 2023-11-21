@@ -23,10 +23,12 @@ const kinds = {
     TypeAliasDeclaration: 'typeAliasDeclaration'
 }
 
+/*
 const keywords = {
     ExpressionWithTypeArguments: 'expressionwithtypearguments',
     HeritageClause: 'heritageclause'
 }
+*/
 
 function isKeyword(node) {
     return !!ts.SyntaxKind[node.kind]
@@ -386,7 +388,7 @@ class JSASTWrapper {
 
 const checkFunction = (fnNode, {callCheck, parameterCheck, returnTypeCheck, modifiersCheck}) => {
     if (!fnNode) throw new Error('the function does not exist (or was not properly accessed from the AST)') 
-    const [callsignature, parameters, returnType] = fnNode?.type?.members
+    const [callsignature, parameters, returnType] = fnNode?.type?.members ?? []
     if (!callsignature || callsignature.keyword !== 'callsignature') throw new Error('callsignature is not present or of wrong type')
     if (!parameters || ts.unescapeLeadingUnderscores(parameters.name) !== '__parameters') throw new Error('__parameters property is missing or named incorrectly')
     if (!returnType || ts.unescapeLeadingUnderscores(returnType.name) !== '__returns') throw new Error('__returns property is missing or named incorrectly')
