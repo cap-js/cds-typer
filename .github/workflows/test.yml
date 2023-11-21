@@ -21,6 +21,11 @@ jobs:
       with:
           node-version: ${{ matrix.version }}
 
+    - name: Run Linter
+      run: |
+        npm install
+        npm run lint
+
     - name: Run Unit Tests
       run: |
         npm install

@@ -5,14 +5,13 @@ const path = require('path')
 const cds2ts = require('../../lib/compile')
 const { ASTWrapper, JSASTWrapper } = require('../ast')
 const { locations } = require('../util')
-const { loadModule } = require('../util')
 
 const dir = locations.testOutput('output_test')
 
 // compilation produces semantically complete Typescript
 describe('Compilation', () => {
     //console.log('INFO', `Unable to unlink '${dir}' (${err}). This may not be an issue.`)
-    beforeEach(() => fs.unlink(dir).catch(err => {}))
+    beforeEach(() => fs.unlink(dir).catch(() => {}))
 
     let paths
     let ast
