@@ -10,7 +10,7 @@ const dir = locations.testOutput('inline_test')
 
 // compilation produces semantically complete Typescript
 describe('Inline Type Declarations', () => {
-    beforeEach(async () => await fs.unlink(dir).catch(err => {})) //console.log('INFO', `Unable to unlink '${dir}' (${err}). This may not be an issue.`)
+    beforeEach(async () => await fs.unlink(dir).catch(() => {})) //console.log('INFO', `Unable to unlink '${dir}' (${err}). This may not be an issue.`)
 
     test('Structured', async () => {
         const paths = await cds2ts
