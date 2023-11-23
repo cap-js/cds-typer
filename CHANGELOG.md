@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.12.0 - TBD
+## Version 0.13.0 - TBD
+
+## Version 0.12.0 - 2023-11-23
 
 ### Changed
 - Generate `cds.LargeBinary` as string, buffer, _or readable_ in the case of media content
