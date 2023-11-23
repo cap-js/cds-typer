@@ -5,6 +5,7 @@ coverage
 test/**/output
 test/**/cloud-cap-samples
 .DS_Store
+.idea/
 
 # Logs
 logs

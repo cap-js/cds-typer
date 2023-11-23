@@ -16,13 +16,15 @@ describe('Actions', () => {
         const actions = astw.getAspectProperty('_EAspect', 'actions')
         expect(actions.modifiers.some(check.isStatic)).toBeTruthy()
         checkFunction(actions.type.members.find(fn => fn.name === 'f'), {
-            parameterCheck: ({members: [fst]}) => fst.name === 'x' && check.isString(fst.type)
+            parameterCheck: ({members: [fst]}) => fst.name === 'x' && check.isNullable(fst.type, [check.isString])
         })
         checkFunction(actions.type.members.find(fn => fn.name === 'g'), {
             parameterCheck: ({members: [fst, snd]}) => {
-                const fstCorrect = fst.name === 'a' && fst.type.members[0].name === 'x' && check.isNumber(fst.type.members[0].type)
-                    && fst.type.members[1].name === 'y' && check.isNumber(fst.type.members[1].type)
-                const sndCorrect = snd.name === 'b' && check.isNumber(snd.type)
+                const fstCorrect = fst.name === 'a' 
+                    && fst.type.subtypes[0].members[0].name === 'x' 
+                    && check.isNullable(fst.type.subtypes[0].members[0].type, [check.isNumber])
+                    && fst.type.subtypes[0].members[1].name === 'y' && check.isNullable(fst.type.subtypes[0].members[1].type, [check.isNumber])
+                const sndCorrect = snd.name === 'b' && check.isNullable(snd.type, [check.isNumber])
                 return fstCorrect && sndCorrect
             }
         })
@@ -33,11 +35,17 @@ describe('Actions', () => {
         const ast = new ASTWrapper(path.join(paths[2], 'index.ts')).tree
         checkFunction(ast.find(node => node.name === 'free'), {
             modifiersCheck: (modifiers = []) => !modifiers.some(check.isStatic),
-            callCheck: ({members: [fst, snd]}) => fst.name === 'a' && check.isNumber(fst.type)
-                && snd.name === 'b' && check.isString(snd.type),
-            parameterCheck: ({members: [fst]}) => fst.name === 'param' && check.isString(fst.type),
-            returnTypeCheck: ({members: [fst, snd]}) => fst.name === 'a' && check.isNumber(fst.type)
-                && snd.name === 'b' && check.isString(snd.type)
+            callCheck: type => check.isNullable(type) 
+                && type.subtypes[0].members[0].name === 'a'
+                && check.isNullable(type.subtypes[0].members[0].type, [check.isNumber])
+                && type.subtypes[0].members[1].name === 'b'
+                && check.isNullable(type.subtypes[0].members[1].type, [check.isString]),
+            parameterCheck: ({members: [fst]}) => fst.name === 'param' && check.isNullable(fst.type, [check.isString]),
+            returnTypeCheck: type => check.isNullable(type) 
+                && type.subtypes[0].members[0].name === 'a'
+                && check.isNullable(type.subtypes[0].members[0].type, [check.isNumber])
+                && type.subtypes[0].members[1].name === 'b'
+                && check.isNullable(type.subtypes[0].members[1].type, [check.isString]),
         })
     })
 
@@ -48,7 +56,7 @@ describe('Actions', () => {
         expect(actions.modifiers.some(check.isStatic)).toBeTruthy()
         checkFunction(actions.type.members.find(fn => fn.name === 'f'), {
             callCheck: signature => check.isAny(signature),
-            parameterCheck: ({members: [fst]}) => fst.name === 'x' && check.isString(fst.type),
+            parameterCheck: ({members: [fst]}) => fst.name === 'x' && check.isNullable(fst.type, [check.isString]),
             returnTypeCheck: returns => check.isAny(returns)
         })
 
@@ -69,14 +77,14 @@ describe('Actions', () => {
         
         checkFunction(ast.find(node => node.name === 'free2'), {
             modifiersCheck: (modifiers = []) => !modifiers.some(check.isStatic),
-            callCheck: ({full}) => full === '_elsewhere.ExternalType',
-            returnTypeCheck: ({full}) => full === '_elsewhere.ExternalType'
+            callCheck: type => check.isNullable(type, [t => t?.full === '_elsewhere.ExternalType']),
+            returnTypeCheck: type => check.isNullable(type, [t => t?.full === '_elsewhere.ExternalType'])
         })
 
         checkFunction(ast.find(node => node.name === 'free3'), {
             modifiersCheck: (modifiers = []) => !modifiers.some(check.isStatic),
-            callCheck: ({full}) => full === '_.ExternalInRoot',
-            returnTypeCheck: ({full}) => full === '_.ExternalInRoot'
+            callCheck: type => check.isNullable(type, [t => t?.full === '_.ExternalInRoot']),
+            returnTypeCheck: type => check.isNullable(type, [t => t?.full === '_.ExternalInRoot'])
         })
     })
 
@@ -101,7 +109,7 @@ describe('Actions', () => {
         checkFunction(actions.type.members.find(fn => fn.name === 'sx'), {
             callCheck: signature => check.isAny(signature),
             returnTypeCheck: returns => check.isAny(returns),
-            parameterCheck: ({members: [fst]}) => check.isNumber(fst.type)
+            parameterCheck: ({members: [fst]}) => check.isNullable(fst.type, [check.isNumber])
         })
     })
 

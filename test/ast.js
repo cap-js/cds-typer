@@ -407,7 +407,12 @@ const check = {
     isString: node => checkKeyword(node, 'string'),
     isNumber: node => checkKeyword(node, 'number'),
     isAny: node => checkKeyword(node, 'any'),
-    isStatic: node => checkKeyword(node, 'static')
+    isStatic: node => checkKeyword(node, 'static'),
+    isIndexedAccessType: node => checkKeyword(node, 'indexedaccesstype'),
+    isNull: node => checkKeyword(node, 'literaltype') && checkKeyword(node.literal, 'null'),
+    isUnionType: (node, of = []) => checkKeyword(node, 'uniontype') 
+        && of.reduce((acc, predicate) => acc && node.subtypes.some(st => predicate(st)), true),
+    isNullable: (node, of = []) => check.isUnionType(node, of.concat([check.isNull])),
 }
 
 
