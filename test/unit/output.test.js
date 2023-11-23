@@ -3,7 +3,7 @@
 const fs = require('fs').promises
 const path = require('path')
 const cds2ts = require('../../lib/compile')
-const { ASTWrapper, JSASTWrapper } = require('../ast')
+const { ASTWrapper, JSASTWrapper, check } = require('../ast')
 const { locations } = require('../util')
 
 const dir = locations.testOutput('output_test')
@@ -127,25 +127,25 @@ describe('Compilation', () => {
         })
 
         test('Primitives', () => {
-            expect(ast.exists('_EAspect', 'uuid', m => m.type.keyword === 'string')).toBeTruthy()
-            expect(ast.exists('_EAspect', 'str', m => m.type.keyword === 'string')).toBeTruthy()
-            expect(ast.exists('_EAspect', 'bin', m => m.type.keyword === 'string')).toBeTruthy()
-            expect(ast.exists('_EAspect', 'lstr', m => m.type.keyword === 'string')).toBeTruthy()
-            expect(ast.exists('_EAspect', 'lbin', m => m.type.keyword === 'uniontype'
-                && m.type.subtypes[0].full === 'Buffer'
-                && m.type.subtypes[1].keyword === 'string'
-            )).toBeTruthy()
-            expect(ast.exists('_EAspect', 'integ', m => m.type.keyword === 'number')).toBeTruthy()
-            expect(ast.exists('_EAspect', 'uint8', m => m.type.keyword === 'number')).toBeTruthy()
-            expect(ast.exists('_EAspect', 'int16', m => m.type.keyword === 'number')).toBeTruthy()
-            expect(ast.exists('_EAspect', 'int32', m => m.type.keyword === 'number')).toBeTruthy()
-            expect(ast.exists('_EAspect', 'int64', m => m.type.keyword === 'number')).toBeTruthy()
-            expect(ast.exists('_EAspect', 'integer64', m => m.type.keyword === 'number')).toBeTruthy()
-            expect(ast.exists('_EAspect', 'dec', m => m.type.keyword === 'number')).toBeTruthy()
-            expect(ast.exists('_EAspect', 'doub', m => m.type.keyword === 'number')).toBeTruthy()
-            expect(ast.exists('_EAspect', 'd', m => m.type.keyword === 'string')).toBeTruthy()
-            expect(ast.exists('_EAspect', 'dt', m => m.type.keyword === 'string')).toBeTruthy()
-            expect(ast.exists('_EAspect', 'ts', m => m.type.keyword === 'string')).toBeTruthy()
+            expect(ast.exists('_EAspect', 'uuid', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
+            expect(ast.exists('_EAspect', 'str', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
+            expect(ast.exists('_EAspect', 'bin', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
+            expect(ast.exists('_EAspect', 'lstr', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
+            expect(ast.exists('_EAspect', 'lbin', m => check.isUnionType(m.type, [
+                st => st.full === 'Buffer',
+                check.isString
+            ]))).toBeTruthy()
+            expect(ast.exists('_EAspect', 'integ', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
+            expect(ast.exists('_EAspect', 'uint8', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
+            expect(ast.exists('_EAspect', 'int16', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
+            expect(ast.exists('_EAspect', 'int32', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
+            expect(ast.exists('_EAspect', 'int64', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
+            expect(ast.exists('_EAspect', 'integer64', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
+            expect(ast.exists('_EAspect', 'dec', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
+            expect(ast.exists('_EAspect', 'doub', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
+            expect(ast.exists('_EAspect', 'd', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
+            expect(ast.exists('_EAspect', 'dt', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
+            expect(ast.exists('_EAspect', 'ts', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
         })
     })
 
@@ -235,18 +235,16 @@ describe('Compilation', () => {
         })
 
         test('Annotated Assoc/ Comp', () => {
-            expect(ast.exists('_RefererAspect', 'a', m => true
-                    && m.type.name === 'to'
-                    && m.type.args[0].name === 'BazSingular'
-            )).toBeTruthy()
+            expect(ast.exists('_RefererAspect', 'a', m => check.isNullable(m.type, [
+                    ({name, args}) => name === 'to' && args[0].name === 'BazSingular'
+            ]))).toBeTruthy()
             expect(ast.exists('_RefererAspect', 'b', m => true
                     && m.type.name === 'many'
                     && m.type.args[0].name === 'BazPlural'
             )).toBeTruthy()
-            expect(ast.exists('_RefererAspect', 'c', m => true
-                    && m.type.name === 'of'
-                    && m.type.args[0].name === 'BazSingular'
-            )).toBeTruthy()
+            expect(ast.exists('_RefererAspect', 'c', m => check.isNullable(m.type, [
+                ({name, args}) => name === 'of' && args[0].name === 'BazSingular'
+        ]))).toBeTruthy()
             expect(ast.exists('_RefererAspect', 'd', m => true
                     && m.type.name === 'many'
                     && m.type.args[0].name === 'BazPlural'
@@ -254,18 +252,16 @@ describe('Compilation', () => {
         })
 
         test('Inferred Assoc/ Comp', () => {
-            expect(ast.exists('_RefererAspect', 'e', m => true
-                    && m.type.name === 'to'
-                    && m.type.args[0].name === 'Gizmo'
-            )).toBeTruthy()
+            expect(ast.exists('_RefererAspect', 'e', m => check.isNullable(m.type, [
+                ({name, args}) => name === 'to' && args[0].name === 'Gizmo'
+        ]))).toBeTruthy()
             expect(ast.exists('_RefererAspect', 'f', m => true
                     && m.type.name === 'many'
                     && m.type.args[0].name === 'Gizmos'
             )).toBeTruthy()
-            expect(ast.exists('_RefererAspect', 'g', m => true
-                    && m.type.name === 'of'
-                    && m.type.args[0].name === 'Gizmo'
-            )).toBeTruthy()
+            expect(ast.exists('_RefererAspect', 'g', m => check.isNullable(m.type, [
+                ({name, args}) => name === 'of' && args[0].name === 'Gizmo'
+        ]))).toBeTruthy()
             expect(ast.exists('_RefererAspect', 'h', m => true
                     && m.type.name === 'many'
                     && m.type.args[0].name === 'Gizmos'

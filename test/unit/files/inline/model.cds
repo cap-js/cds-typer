@@ -4,11 +4,11 @@ namespace inline;
 entity Foo {}
 
 entity Bar {
-    x : {
-        a     : {
-            b : Integer not null;
-            c : Association to one Foo not null;
-        } not null;
-        y     : String not null;
-    } not null;
+    x: {
+        a: {
+            b: Integer;
+            c: Association to one Foo
+        };
+        y: String;
+    };
 };

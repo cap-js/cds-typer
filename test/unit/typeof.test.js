@@ -3,7 +3,7 @@
 const fs = require('fs').promises
 const path = require('path')
 const cds2ts = require('../../lib/compile')
-const { ASTWrapper } = require('../ast')
+const { ASTWrapper, check } = require('../ast')
 const { locations } = require('../util')
 
 const dir = locations.testOutput('typeof')
@@ -19,15 +19,15 @@ describe('Typeof Syntax', () => {
             .catch((err) => console.error(err))
         const ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
         expect(ast.exists('_BarAspect', 'ref_a', 
-            m => m.type.indexType.literal === 'a'
+            m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'a'])
         )).toBeTruthy()
         expect(ast.exists('_BarAspect', 'ref_b', 
-            m => m.type.indexType.literal === 'b'
+            m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'b'])
         )).toBeTruthy()
         // meh, this is not exactly correct, as I apparently did not retrieve the chained type accesses properly,
         // but it's kinda good enough
         expect(ast.exists('_BarAspect', 'ref_c', 
-            m => m.type.indexType.literal === 'x'
+            m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'x'])
         )).toBeTruthy()
     })
 
@@ -38,13 +38,13 @@ describe('Typeof Syntax', () => {
             .catch((err) => console.error(err))
         const ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
         expect(ast.exists('_BarAspect', 'ref_a', 
-            m => m.type.indexType.literal === 'a'
+        m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'a'])
         )).toBeTruthy()
         expect(ast.exists('_BarAspect', 'ref_b', 
-            m => m.type.indexType.literal === 'b'
+        m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'b'])
         )).toBeTruthy()
         expect(ast.exists('_BarAspect', 'ref_c', 
-            m => m.type.indexType.literal === 'c_x'
+        m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'c_x'])
         )).toBeTruthy()
               /*
                 && m.type.members.length === 2

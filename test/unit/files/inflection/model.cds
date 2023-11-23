@@ -5,7 +5,8 @@ entity Gizmos {
 }
 
 @singular: 'FooSingular'
-entity Foos {}
+entity Foos {
+}
 
 @plural: 'BarPlural'
 entity Bars {
@@ -13,40 +14,40 @@ entity Bars {
 }
 
 @singular: 'BazSingular'
-@plural  : 'BazPlural'
+@plural: 'BazPlural'
 entity Bazes {
 
 }
 
-@UI.HeaderInfo.TypeName      : 'OneA'
+@UI.HeaderInfo.TypeName: 'OneA'
 @UI.HeaderInfo.TypeNamePlural: 'ManyAs'
 entity A {
 
 }
 
-@UI.HeaderInfo.TypeName      : 'OneC'
+@UI.HeaderInfo.TypeName: 'OneC'
 @UI.HeaderInfo.TypeNamePlural: 'ManyCs'
-@plural                      : 'LotsOfCs'
+@plural: 'LotsOfCs'
 entity C {
 
 }
 
-@UI.HeaderInfo.TypeName      : 'OneD'
+@UI.HeaderInfo.TypeName: 'OneD'
 @UI.HeaderInfo.TypeNamePlural: 'ManyDs'
-@singular                    : 'OneSingleD'
+@singular: 'OneSingleD'
 entity D {
 
 }
 
 entity Referer {
     // annotated
-    a : Association to Bazes not null;
-    b : Association to many Bazes;
-    c : Composition of Bazes not null;
-    d : Composition of many Bazes;
+    a: Association to Bazes;
+    b: Association to many Bazes;
+    c: Composition of Bazes;
+    d: Composition of many Bazes;
     // automatically inferred
-    e : Association to Gizmos not null;
-    f : Association to many Gizmos;
-    g : Composition of Gizmos not null;
-    h : Composition of many Gizmos;
+    e: Association to Gizmos;
+    f: Association to many Gizmos;
+    g: Composition of Gizmos;
+    h: Composition of many Gizmos;
 }

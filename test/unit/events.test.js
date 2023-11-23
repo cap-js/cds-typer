@@ -3,7 +3,7 @@
 const fs = require('fs').promises
 const path = require('path')
 const cds2ts = require('../../lib/compile')
-const { ASTWrapper } = require('../ast')
+const { ASTWrapper, check } = require('../ast')
 const { locations } = require('../util')
 
 const dir = locations.testOutput('events_test')
@@ -25,8 +25,8 @@ describe('events', () => {
         test('Top Level Event', async () => {
             expect(ast.tree.find(cls => cls.name === 'Bar' 
                 && cls.members.length === 2
-                && cls.members[0].name === 'id' && cls.members[0].type.keyword === 'number'
-                && cls.members[1].name === 'name' && cls.members[1].type.keyword === 'indexedaccesstype'
+                && cls.members[0].name === 'id' && check.isNullable(cls.members[0].type, [check.isNumber])
+                && cls.members[1].name === 'name' && check.isNullable(cls.members[1].type, [check.isIndexedAccessType])
             )).toBeTruthy()
         })
     })
