@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Generate `cds.LargeBinary` as string, buffer, _or readable_ in the case of media content
 
 ### Added
+- Added support for the `not null` modifier
+
 ### Fixed
 - Now using names of enum values in generated _index.js_ files if no explicit value is present
 
