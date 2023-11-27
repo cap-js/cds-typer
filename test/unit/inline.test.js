@@ -3,14 +3,15 @@
 const fs = require('fs').promises
 const path = require('path')
 const cds2ts = require('../../lib/compile')
-const { ASTWrapper } = require('../ast')
+const { ASTWrapper, check } = require('../ast')
 const { locations } = require('../util')
 
 const dir = locations.testOutput('inline_test')
+console.log(check)
 
 // compilation produces semantically complete Typescript
 describe('Inline Type Declarations', () => {
-    beforeEach(async () => await fs.unlink(dir).catch(err => {})) //console.log('INFO', `Unable to unlink '${dir}' (${err}). This may not be an issue.`)
+    beforeEach(async () => await fs.unlink(dir).catch(() => {})) //console.log('INFO', `Unable to unlink '${dir}' (${err}). This may not be an issue.`)
 
     test('Structured', async () => {
         const paths = await cds2ts
@@ -18,19 +19,22 @@ describe('Inline Type Declarations', () => {
             // eslint-disable-next-line no-console
             .catch((err) => console.error(err))
         const ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
-        expect(ast.exists('_BarAspect', 'x', 
-            m => m.name === 'x'
-                && m.type.members.length === 2
-                && m.type.members[0].name === 'a'
-                    && m.type.members[0].type.members.length === 2
-                    && m.type.members[0].type.members[0].name === 'b'
-                    && m.type.members[0].type.members[0].type.keyword === 'number'
-                    && m.type.members[0].type.members[1].name === 'c'
-                    && m.type.members[0].type.members[1].type.nodeType === 'typeReference'
-                    && m.type.members[0].type.members[1].type.args[0].full === 'Foo'
-                && m.type.members[1].name === 'y'
-                    && m.type.members[1].type.keyword === 'string'
-        )).toBeTruthy()
+        expect(ast.exists('_BarAspect', 'x', ({name, type}) => { 
+                const [nonNullType] = type.subtypes
+                const [a, y] = nonNullType.members
+                const [b, c] = a.type.subtypes[0].members
+                return name === 'x' 
+                    && check.isNullable(type)
+                    && nonNullType.members.length === 2
+                    && a.name === 'a'
+                    && check.isNullable(a.type)
+                        && b.name === 'b'
+                        && check.isNullable(b.type, [check.isNumber])
+                        && c.name === 'c'
+                        && check.isNullable(c.type, [t => t.nodeType === 'typeReference' && t.args[0].full === 'Foo'])
+                    && y.name === 'y'
+                    && check.isNullable(y.type, [check.isString])
+        })).toBeTruthy()
     })
 
     test('Flat', async () => {
@@ -39,10 +43,8 @@ describe('Inline Type Declarations', () => {
             // eslint-disable-next-line no-console
             .catch((err) => console.error(err))
         const ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
-        expect(ast.exists('_BarAspect', 'x_a_b', 'number')).toBeTruthy() 
-        expect(ast.exists('_BarAspect', 'x_y', 'string')).toBeTruthy()
-        expect(ast.exists('_BarAspect', 'x_a_c', m => m.name === 'x_a_c' 
-            && m.type.args[0].full === 'Foo'
-        )).toBeTruthy()
+        expect(ast.exists('_BarAspect', 'x_a_b', ({type}) => check.isNullable(type, [check.isNumber]))).toBeTruthy() 
+        expect(ast.exists('_BarAspect', 'x_y', ({type}) => check.isNullable(type, [check.isString]))).toBeTruthy() 
+        expect(ast.exists('_BarAspect', 'x_a_c', ({type}) => check.isNullable(type, [m => m.name === 'to' && m.args[0].full === 'Foo' ]))).toBeTruthy()
     })
 })

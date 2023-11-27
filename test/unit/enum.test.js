@@ -3,7 +3,7 @@
 const fs = require('fs').promises
 const path = require('path')
 const cds2ts = require('../../lib/compile')
-const { ASTWrapper } = require('../ast')
+const { ASTWrapper, check } = require('../ast')
 const { locations } = require('../util')
 
 const dir = locations.testOutput('enums_test')
@@ -13,7 +13,7 @@ const dir = locations.testOutput('enums_test')
 describe('Enum Types', () => {
     let ast
 
-    beforeEach(async () => await fs.unlink(dir).catch(err => {}))
+    beforeEach(async () => await fs.unlink(dir).catch(() => {}))
     beforeAll(async () => {
         const paths = await cds2ts
             .compileFromFile(locations.unit.files('enums/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
@@ -31,7 +31,7 @@ describe('Enum Types', () => {
 
             test('Referring Property', async () =>
                 expect(ast.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
-                && members?.find(member => member.name === 'gender' && member.type?.full === 'InlineEnum_gender')))
+                && members?.find(member => member.name === 'gender' && check.isNullable(member.type, [t => t?.full === 'InlineEnum_gender']))))
                 .toBeTruthy())
 
         })
@@ -47,7 +47,7 @@ describe('Enum Types', () => {
 
             test('Referring Property', async () =>
                 expect(ast.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
-                && members?.find(member => member.name === 'status' && member.type?.full === 'InlineEnum_status')))
+                && members?.find(member => member.name === 'status' && check.isNullable(member.type, [t => t?.full === 'InlineEnum_status']))))
                 .toBeTruthy())
         })
 
@@ -62,7 +62,7 @@ describe('Enum Types', () => {
 
             test('Referring Property', async () =>
                 expect(ast.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
-                && members?.find(member => member.name === 'yesno' && member.type?.full === 'InlineEnum_yesno')))
+                && members?.find(member => member.name === 'yesno' &&  check.isNullable(member.type, [t => t?.full === 'InlineEnum_yesno']))))
                 .toBeTruthy())
         })
     })
