@@ -1,6 +1,6 @@
 'use strict'
 
-const fs = require('fs').promises
+const fs = require('fs/promises')
 const path = require('path')
 const cds2ts = require('../../lib/compile')
 const { ASTWrapper, JSASTWrapper, check } = require('../ast')
@@ -25,8 +25,7 @@ describe('Compilation', () => {
         })
 
         test('index.js', async () => {
-            const code = await fs.readFile(path.join(paths[1], 'index.js'), 'utf-8')
-            const jsw = new JSASTWrapper(code)
+            const jsw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'))
             jsw.exportsAre([
                 ['Book', 'Books'],
                 ['Books', 'Books'],
@@ -166,8 +165,7 @@ describe('Compilation', () => {
         test('Generated Paths', () => expect(paths).toHaveLength(2)) // the one module [1] + baseDefinitions [0]
 
         test('index.js', async () => {
-            const code = await fs.readFile(path.join(paths[1], 'index.js'), 'utf-8')
-            const jsw = new JSASTWrapper(code)
+            const jsw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'))
             jsw.exportsAre([
                 ['Gizmo', 'Gizmos'],
                 ['Gizmos', 'Gizmos'],
