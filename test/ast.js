@@ -7,7 +7,7 @@
  * That means, the resulting AST is highly specialised for TS elements that are emitted
  * by the type generator -- if the output of the generator changes, the AST has to be adjusted accordingly.
  */ 
- 
+const fs = require('fs/promises')
 const ts = require('typescript')
 const acorn = require('acorn')
 
@@ -356,6 +356,10 @@ class ASTWrapper {
 }
 
 class JSASTWrapper {
+    static async initialise(file) {
+        return new JSASTWrapper(await fs.readFile(file, 'utf-8'))
+    }
+
     constructor(code) {
         this.programm = acorn.parse(code, { ecmaVersion: 'latest'})
     }
