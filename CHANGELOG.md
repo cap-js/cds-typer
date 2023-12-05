@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Version 0.13.0 - TBD
 ### Changes
 - Enums are now generated ecplicitly in the respective _index.js_ files and don't have to extract their values from the model at runtime anymore
+- The `excluding` clause in projections now actually excludes the specified properties in the generated types
 
 ## Version 0.12.0 - 2023-11-23
 
