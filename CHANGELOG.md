@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.13.0 - TBD
+## Version 0.14.0 - TBD
+
+## Version 0.13.0 - 2023-12-06
 ### Changes
 - Enums are now generated ecplicitly in the respective _index.js_ files and don't have to extract their values from the model at runtime anymore
+
+### Added
 - The `excluding` clause in projections now actually excludes the specified properties in the generated types
 
 ## Version 0.12.0 - 2023-11-23
