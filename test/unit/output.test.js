@@ -188,7 +188,7 @@ describe('Compilation', () => {
             ])
             // ...are currently exceptions where both singular _and_ plural
             // are annotated and the original name is used as an export on top of that.
-            // So _three_ exports per entity. If we every choose to remove this third one,
+            // So _three_ exports per entity. If we ever choose to remove this third one,
             // then this test has to reflect that.
         })
         
