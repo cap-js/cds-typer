@@ -410,6 +410,7 @@ const checkKeyword = (node, expected) => node?.keyword === expected
 const check = {
     isString: node => checkKeyword(node, 'string'),
     isNumber: node => checkKeyword(node, 'number'),
+    isBoolean: node => checkKeyword(node, 'boolean'),
     isAny: node => checkKeyword(node, 'any'),
     isStatic: node => checkKeyword(node, 'static'),
     isIndexedAccessType: node => checkKeyword(node, 'indexedaccesstype'),

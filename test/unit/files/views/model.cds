@@ -8,7 +8,7 @@ entity Foo {
 
 entity FooView as
     select from Foo {
-        key id,
+        id,
         code,
         code as alias
     };
