@@ -6,7 +6,7 @@ const cds2ts = require('../../lib/compile')
 const { ASTWrapper, check } = require('../ast')
 const { locations } = require('../util')
 
-const dir = locations.unit.files('output/references')
+const dir = locations.testOutput('output/references')
 
 // compilation produces semantically complete Typescript
 describe('References', () => {
