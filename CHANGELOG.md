@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.14.0 - TBD
+## Version 0.15.0 - TBD
+
+## Version 0.14.0 - 2023-12-13
+### Added
+- Entities that are database views now also receive typings
 
 ## Version 0.13.0 - 2023-12-06
 ### Changes
