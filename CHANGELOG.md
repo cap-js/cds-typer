@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.15.0 - TBD
+### Fixed
+- Foreign keys of projection entities are now propagated as well
 
 ## Version 0.14.0 - 2023-12-13
 ### Added
