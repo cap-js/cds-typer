@@ -3,7 +3,7 @@
 const fs = require('fs').promises
 const path = require('path')
 const cds2ts = require('../../lib/compile')
-const { ASTWrapper, check } = require('../ast')
+const { ASTWrapper, check, JSASTWrapper } = require('../ast')
 const { locations } = require('../util')
 
 const dir = locations.testOutput('enums_test')
@@ -16,11 +16,18 @@ describe('Nested Enums', () => {
     beforeAll(async () => {
         const paths = await cds2ts
             .compileFromFile(locations.unit.files('enums/nested.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
-        astw = new ASTWrapper(path.join(paths[1], 'index.ts'))
+        astw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'))
     })
 
-    describe('Anonymous', () => {
+    test('Coalescing Assignment Present', () => {
+        const stmts = astw.programm.body
+        const enm = stmts.find(n => n.type === 'ExpressionStatement' && n.expression.type === 'AssignmentExpression' && n.expression.operator === '??=')
+        expect(enm).toBeTruthy()
+        const { left } = enm.expression
+        // not checking the entire object chain here...
+        expect(left.property.name).toBe('someEnumProperty')
 
+        console.log(42)
     }) 
 })
 
