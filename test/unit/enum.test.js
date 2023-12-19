@@ -3,12 +3,34 @@
 const fs = require('fs').promises
 const path = require('path')
 const cds2ts = require('../../lib/compile')
-const { ASTWrapper, check } = require('../ast')
+const { ASTWrapper, check, JSASTWrapper } = require('../ast')
 const { locations } = require('../util')
 
 const dir = locations.testOutput('enums_test')
 
 // FIXME: missing: inline enums (entity Foo { bar: String enum { ... }})
+describe('Nested Enums', () => {
+    let astw
+
+    beforeEach(async () => await fs.unlink(dir).catch(() => {}))
+    beforeAll(async () => {
+        const paths = await cds2ts
+            .compileFromFile(locations.unit.files('enums/nested.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
+        astw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'))
+    })
+
+    test('Coalescing Assignment Present', () => {
+        const stmts = astw.programm.body
+        const enm = stmts.find(n => n.type === 'ExpressionStatement' && n.expression.type === 'AssignmentExpression' && n.expression.operator === '??=')
+        expect(enm).toBeTruthy()
+        const { left } = enm.expression
+        // not checking the entire object chain here...
+        expect(left.property.name).toBe('someEnumProperty')
+
+        console.log(42)
+    }) 
+})
+
 
 describe('Enum Types', () => {
     let astw
