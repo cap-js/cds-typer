@@ -9,6 +9,21 @@ const { locations } = require('../util')
 const dir = locations.testOutput('enums_test')
 
 // FIXME: missing: inline enums (entity Foo { bar: String enum { ... }})
+describe('Nested Enums', () => {
+    let astw
+
+    beforeEach(async () => await fs.unlink(dir).catch(() => {}))
+    beforeAll(async () => {
+        const paths = await cds2ts
+            .compileFromFile(locations.unit.files('enums/nested.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
+        astw = new ASTWrapper(path.join(paths[1], 'index.ts'))
+    })
+
+    describe('Anonymous', () => {
+
+    }) 
+})
+
 
 describe('Enum Types', () => {
     let astw
