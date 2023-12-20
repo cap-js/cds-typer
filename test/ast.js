@@ -444,6 +444,7 @@ const check = {
     isUnionType: (node, of = []) => checkKeyword(node, 'uniontype') 
         && of.reduce((acc, predicate) => acc && node.subtypes.some(st => predicate(st)), true),
     isNullable: (node, of = []) => check.isUnionType(node, of.concat([check.isNull])),
+    isLiteral: (node, literal = undefined) => checkKeyword(node, 'literaltype') && (literal === undefined || node.literal === literal),
 }
 
 

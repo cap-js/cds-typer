@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 - Inline enums are now available during runtime as well
+- Inline enums can now be used as action parameter types as well. These enums will not have a runtime representation, but will only assert type safety!
 
 ## Version 0.14.0 - 2023-12-13
 ### Added
