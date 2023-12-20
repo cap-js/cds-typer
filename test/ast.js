@@ -20,7 +20,8 @@ const kinds = {
     PropertyDeclaration: 'propertyDeclaration',
     Keyword: 'keyword',
     VariableStatement: 'variableStatement',
-    TypeAliasDeclaration: 'typeAliasDeclaration'
+    TypeAliasDeclaration: 'typeAliasDeclaration',
+    ModuleDeclaration: 'moduleDeclaration'
 }
 
 /*
@@ -56,6 +57,7 @@ const visitors = [
     // order in some cases important. For example, 
     // ts.isStatement will be true for ImportDeclarations etc.
     // so it has to be added after more specific checks.
+    [ts.isModuleDeclaration, visitModuleDeclaration],
     [ts.isObjectLiteralExpression, visitObjectLiteralExpression],
     [ts.isClassDeclaration, visitClassDeclaration],
     [ts.isFunctionDeclaration, visitFunctionDeclaration],
@@ -77,6 +79,19 @@ const visitors = [
     [isKeyword, resolveKeyword],
     [() => true, node => console.error(`unhandled node type: ${JSON.stringify(node, null, 2)}`)]
 ]
+
+/**
+ * @typedef {{name: string, body: any[]}} ModuleDeclaration
+ * @param node {ts.ModuleDeclaration}
+ * @returns {ModuleDeclaration}
+ */
+function visitModuleDeclaration(node) {
+    return {
+        nodeType: kinds.ModuleDeclaration,
+        name: visit(node.name),
+        body: node.body.statements.map(visit)
+    }
+}
 
 /**
  * @typedef {{name: string, type: any[]}} TypeAliasDeclaration
@@ -297,6 +312,17 @@ class ASTWrapper {
             .filter(n => n.nodeType === kinds.TypeAliasDeclaration)
     }
 
+    /** @returns {ModuleDeclaration[]} */
+    getModuleDeclarations() {
+        return this.tree
+            .filter(n => n.nodeType === kinds.ModuleDeclaration)
+    }
+
+    /** @returns {ModuleDeclaration | undefined} */
+    getModuleDeclaration(name) {
+        return this.getModuleDeclarations().find(m => m.name === name)
+    }
+
     // /** @returns {ClassDeclaration[]} */
     // getSingularClassDeclarations() {
     //     return this.getTopLevelClassDeclarations()
@@ -418,6 +444,7 @@ const check = {
     isUnionType: (node, of = []) => checkKeyword(node, 'uniontype') 
         && of.reduce((acc, predicate) => acc && node.subtypes.some(st => predicate(st)), true),
     isNullable: (node, of = []) => check.isUnionType(node, of.concat([check.isNull])),
+    isLiteral: (node, literal = undefined) => checkKeyword(node, 'literaltype') && (literal === undefined || node.literal === literal),
 }
 
 

@@ -5,7 +5,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.15.0 - TBD
+### Added
+- Support for [scoped entities](https://cap.cloud.sap/docs/cds/cdl#scoped-names)
+
 ### Fixed
+- Inline enums are now available during runtime as well
+- Inline enums can now be used as action parameter types as well. These enums will not have a runtime representation, but will only assert type safety!
 - Foreign keys of projection entities are now propagated as well
 
 ## Version 0.14.0 - 2023-12-13
@@ -13,7 +18,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Entities that are database views now also receive typings
 
 ## Version 0.13.0 - 2023-12-06
-### Changes
+### Changed
 - Enums are now generated ecplicitly in the respective _index.js_ files and don't have to extract their values from the model at runtime anymore
 
 ### Added

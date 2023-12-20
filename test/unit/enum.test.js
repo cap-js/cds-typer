@@ -3,12 +3,55 @@
 const fs = require('fs').promises
 const path = require('path')
 const cds2ts = require('../../lib/compile')
-const { ASTWrapper, check } = require('../ast')
+const { ASTWrapper, check, JSASTWrapper, checkFunction } = require('../ast')
 const { locations } = require('../util')
 
 const dir = locations.testOutput('enums_test')
 
 // FIXME: missing: inline enums (entity Foo { bar: String enum { ... }})
+describe('Enum Action Parameters', () => {
+    let astw
+
+    beforeEach(async () => await fs.unlink(dir).catch(() => {}))
+    beforeAll(async () => {
+        const paths = await cds2ts
+            .compileFromFile(locations.unit.files('enums/actions.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
+        astw = new ASTWrapper(path.join(paths[1], 'index.ts'))
+    })
+    
+    test('Coalescing Assignment Present', () => {
+        const actions = astw.getAspectProperty('_FoobarAspect', 'actions')
+        checkFunction(actions.type.members.find(fn => fn.name === 'f'), {
+            parameterCheck: ({members: [fst]}) => fst.name === 'p'
+                && check.isUnionType(fst.type, [
+                    t => check.isLiteral(t, 'A'),
+                    t => check.isLiteral(t, 'b'),
+                ])
+        })
+    }) 
+})
+
+
+describe('Nested Enums', () => {
+    let astw
+
+    beforeEach(async () => await fs.unlink(dir).catch(() => {}))
+    beforeAll(async () => {
+        const paths = await cds2ts
+            .compileFromFile(locations.unit.files('enums/nested.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
+        astw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'))
+    })
+
+    test('Coalescing Assignment Present', () => {
+        const stmts = astw.programm.body
+        const enm = stmts.find(n => n.type === 'ExpressionStatement' && n.expression.type === 'AssignmentExpression' && n.expression.operator === '??=')
+        expect(enm).toBeTruthy()
+        const { left } = enm.expression
+        // not checking the entire object chain here...
+        expect(left.property.name).toBe('someEnumProperty')
+    }) 
+})
+
 
 describe('Enum Types', () => {
     let astw
