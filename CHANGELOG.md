@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.15.0 - TBD
+## Version 0.16.0 - TBD
+
+## Version 0.15.0 - 2023-12-21
 ### Added
 - Support for [scoped entities](https://cap.cloud.sap/docs/cds/cdl#scoped-names)
 - Support for [delimited identifiers](https://cap.cloud.sap/docs/cds/cdl#delimited-identifiers)
