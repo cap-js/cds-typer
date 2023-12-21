@@ -314,7 +314,7 @@ const locations = {
 }
 
 
-const cds2ts = async (cdsFile, options = {}) => await typer.compileFromFile(
+const cds2ts = async (cdsFile, options = {}) => typer.compileFromFile(
     locations.unit.files(cdsFile), 
     options
 )

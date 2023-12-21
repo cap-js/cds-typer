@@ -281,7 +281,7 @@ class ASTWrapper {
         sourceFile.forEachChild(c => { 
             const slim = visit(c)
             // ignore top-level keywords, like 'export', etc.
-            if (slim?.nodeType !== kinds.Keyword) {
+            if (slim && slim?.nodeType !== kinds.Keyword) {
                 this.tree.push(slim) 
             }
         })
