@@ -3,7 +3,7 @@
 const fs = require('fs').promises
 const path = require('path')
 const cds2ts = require('../../lib/compile')
-const { ASTWrapper, check, JSASTWrapper, checkFunction } = require('../ast')
+const { ASTWrapper } = require('../ast')
 const { locations } = require('../util')
 
 const dir = locations.testOutput('enums_test')
