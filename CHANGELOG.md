@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.16.0 - TBD
+### Fixed
+- Externally defined enums can now be used as parameter types in actions
 
 ## Version 0.15.0 - 2023-12-21
 ### Added
