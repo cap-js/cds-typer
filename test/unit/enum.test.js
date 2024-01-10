@@ -28,7 +28,15 @@ describe('Enum Action Parameters', () => {
                     t => check.isLiteral(t, 'b'),
                 ])
         })
-    }) 
+    })
+
+    test('External Enum Definition Parameter', () => {
+        const actions = astw.getAspectProperty('_FoobarAspect', 'actions')
+        checkFunction(actions.type.members.find(fn => fn.name === 'g'), {
+            parameterCheck: ({members: [fst]}) => fst.name === 'p'
+                && check.isNullable(fst.type, [t => check.isTypeReference(t, 'EnumFoo')])
+        })       
+    })
 })
 
 
