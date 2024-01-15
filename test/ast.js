@@ -432,6 +432,7 @@ const checkFunction = (fnNode, {callCheck, parameterCheck, returnTypeCheck, modi
 }
 
 const checkKeyword = (node, expected) => node?.keyword === expected
+const checkNodeType = (node, expected) => node?.nodeType === expected
 
 const check = {
     isString: node => checkKeyword(node, 'string'),
@@ -445,6 +446,7 @@ const check = {
         && of.reduce((acc, predicate) => acc && node.subtypes.some(st => predicate(st)), true),
     isNullable: (node, of = []) => check.isUnionType(node, of.concat([check.isNull])),
     isLiteral: (node, literal = undefined) => checkKeyword(node, 'literaltype') && (literal === undefined || node.literal === literal),
+    isTypeReference: (node, full) => checkNodeType(node, 'typeReference') && node.full === full
 }
 
 
