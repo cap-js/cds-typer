@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Version 0.16.0 - TBD
 ### Changed
 - Changed default log level from `NONE` to `ERROR`. See the doc to manually pass in another log level for cds-typer runs
+- Name collisions between automatically generated foreign key fields (`.…_ID`, `.…_code`, etc.) with explicitly named fields will now raise an error
 
 ### Fixed
 - Externally defined enums can now be used as parameter types in actions
