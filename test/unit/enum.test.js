@@ -73,10 +73,12 @@ describe('Enum Types', () => {
 
     describe('Anonymous', () => {
         describe('Within type Definition', () => {
-            // FIXME: this is for now the expected behaviour, but it should be possible to
-            //       resolve the type to the actual enum definition
-            test('Coalesces to cds.String', () => {
-                astw.tree
+            test('Property References Artificially Named Enum', () => {
+                astw.exists(
+                    '_TypeWithInlineEnumAspect',
+                    'inlineEnumProperty',
+                    p => check.isNullable(p.type, [t => check.isTypeReference(t, 'TypeWithInlineEnum_inlineEnumProperty')])
+                )
             })
         })
 

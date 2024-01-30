@@ -7,8 +7,8 @@ type Status : Integer enum {
     unknown = 0;
     cancelled  = -1;
 }
-type SomeType {
-    inlineEnum: String enum {
+type TypeWithInlineEnum {
+    inlineEnumProperty: String enum {
         foo; bar
     }
 }
