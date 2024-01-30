@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 - Changed default log level from `NONE` to `ERROR`. See the doc to manually pass in another log level for cds-typer runs
 - Name collisions between automatically generated foreign key fields (`.…_ID`, `.…_code`, etc.) with explicitly named fields will now raise an error
+- Generate CDS types that are actually structured types as if they were entities. This allows the correct representation of mixing aspects and types in CDS inheritance, and also fixes issues with inline enums in such types
 
 ### Fixed
 - Externally defined enums can now be used as parameter types in actions
