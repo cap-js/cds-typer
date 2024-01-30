@@ -22,9 +22,9 @@ describe('type Definitions', () => {
     })
     
     test('All Definitions Present', async () => {
-        expect(ast.tree.find(({name, nodeType}) => name === 'IntAlias' && nodeType === 'classDeclaration')).toBeTruthy()
+        expect(ast.tree.find(({name, nodeType}) => name === 'IntAlias' && nodeType === 'typeAliasDeclaration')).toBeTruthy()
         expect(ast.tree.find(({name, nodeType}) => name === 'Points' && nodeType === 'classDeclaration')).toBeTruthy()
-        expect(ast.tree.find(({name, nodeType}) => name === 'Lines' && nodeType === 'classDeclaration')).toBeTruthy()
+        expect(ast.tree.find(({name, nodeType}) => name === 'Lines' && nodeType === 'typeAliasDeclaration')).toBeTruthy()
     })
 
     test('Types as Properties', async () => {
