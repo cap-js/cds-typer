@@ -7,6 +7,11 @@ type Status : Integer enum {
     unknown = 0;
     cancelled  = -1;
 }
+type SomeType {
+    inlineEnum: String enum {
+        foo; bar
+    }
+}
 
 entity InlineEnums {
     gender: String enum { 

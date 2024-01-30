@@ -72,6 +72,14 @@ describe('Enum Types', () => {
     })
 
     describe('Anonymous', () => {
+        describe('Within type Definition', () => {
+            // FIXME: this is for now the expected behaviour, but it should be possible to
+            //       resolve the type to the actual enum definition
+            test('Coalesces to cds.String', () => {
+                astw.tree
+            })
+        })
+
         describe('String Enum', () => {
             test('Definition Present', async () => 
                 expect(astw.tree.find(n => n.name === 'InlineEnum_gender' 
