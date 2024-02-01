@@ -72,6 +72,16 @@ describe('Enum Types', () => {
     })
 
     describe('Anonymous', () => {
+        describe('Within type Definition', () => {
+            test('Property References Artificially Named Enum', () => {
+                astw.exists(
+                    '_TypeWithInlineEnumAspect',
+                    'inlineEnumProperty',
+                    p => check.isNullable(p.type, [t => check.isTypeReference(t, 'TypeWithInlineEnum_inlineEnumProperty')])
+                )
+            })
+        })
+
         describe('String Enum', () => {
             test('Definition Present', async () => 
                 expect(astw.tree.find(n => n.name === 'InlineEnum_gender' 
