@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.16.0 - TBD
+## Version 0.17.0 - TBD
+
+## Version 0.16.0 - 2024-02-01
 ### Changed
 - Changed default log level from `NONE` to `ERROR`. See the doc to manually pass in another log level for cds-typer runs
 - Name collisions between automatically generated foreign key fields (`.…_ID`, `.…_code`, etc.) with explicitly named fields will now raise an error
