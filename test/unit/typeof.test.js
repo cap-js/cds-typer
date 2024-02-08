@@ -12,6 +12,15 @@ const dir = locations.testOutput('typeof')
 describe('Typeof Syntax', () => {
     beforeEach(async () => await fs.unlink(dir).catch(() => {})) //console.log('INFO', `Unable to unlink '${dir}' (${err}). This may not be an issue.`)
 
+    test('External', async () => {
+        const paths = await cds2ts
+            .compileFromFile(locations.unit.files('typeof/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
+            // eslint-disable-next-line no-console
+            .catch((err) => console.error(err))
+        const astw = new ASTWrapper(path.join(paths[1], 'index.ts'))    
+        expect(astw.exists('_BazAspect', 'ref', m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'status']))).toBeTruthy()
+    })
+
     test('Structured', async () => {
         const paths = await cds2ts
             .compileFromFile(locations.unit.files('typeof/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
