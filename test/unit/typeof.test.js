@@ -10,20 +10,20 @@ const dir = locations.testOutput('typeof')
 
 // compilation produces semantically complete Typescript
 describe('Typeof Syntax', () => {
-    let astw
 
     beforeEach(async () => await fs.unlink(dir).catch(() => {}))
-    beforeAll(async () => {
-        const paths = await cds2ts
-            .compileFromFile(locations.unit.files('typeof/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
-        astw = new ASTWrapper(path.join(paths[1], 'index.ts'))
-    })
 
     test('External', async () => {
+        const paths = await cds2ts
+        .compileFromFile(locations.unit.files('typeof/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
+        const astw = new ASTWrapper(path.join(paths[1], 'index.ts'))
         expect(astw.exists('_BazAspect', 'ref', m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'status']))).toBeTruthy()
     })
 
     test('Structured', async () => {
+        const paths = await cds2ts
+        .compileFromFile(locations.unit.files('typeof/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
+        const astw = new ASTWrapper(path.join(paths[1], 'index.ts'))
         expect(astw.exists('_BarAspect', 'ref_a', 
             m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'a'])
         )).toBeTruthy()
@@ -38,6 +38,9 @@ describe('Typeof Syntax', () => {
     })
 
     test('Flat', async () => {
+        const paths = await cds2ts
+        .compileFromFile(locations.unit.files('typeof/model.cds'), { outputDirectory: dir, inlineDeclarations: 'flat' })
+        const astw = new ASTWrapper(path.join(paths[1], 'index.ts'))
         expect(astw.exists('_BarAspect', 'ref_a', 
         m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'a'])
         )).toBeTruthy()
