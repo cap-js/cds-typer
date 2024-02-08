@@ -50,17 +50,5 @@ describe('Typeof Syntax', () => {
         expect(astw.exists('_BarAspect', 'ref_c', 
         m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'c_x'])
         )).toBeTruthy()
-              /*
-                && m.type.members.length === 2
-                && m.type.members[0].name === 'a'
-                    && m.type.members[0].type.members.length === 2
-                    && m.type.members[0].type.members[0].name === 'b'
-                    && m.type.members[0].type.members[0].type.keyword === 'number'
-                    && m.type.members[0].type.members[1].name === 'c'
-                    && m.type.members[0].type.members[1].type.nodeType === 'typeReference'
-                    && m.type.members[0].type.members[1].type.args[0].full === 'Foo'
-                && m.type.members[1].name === 'y'
-                    && m.type.members[1].type.keyword === 'string'
-                */
     })
 })
