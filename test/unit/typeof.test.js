@@ -4,6 +4,10 @@ const { check } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 
 describe('Typeof Syntax', () => {
+    test('External', async () => {
+        const astw = (await prepareUnitTest('typeof/model.cds', locations.testOutput('typeof_structured_external'))).astw
+        expect(astw.exists('_BazAspect', 'ref', m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'status']))).toBeTruthy()
+    })
 
     test('Structured', async () => {
         const astw = (await prepareUnitTest('typeof/model.cds', locations.testOutput('typeof_structured'))).astw
