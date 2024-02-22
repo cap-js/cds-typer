@@ -6,7 +6,7 @@
 module.exports = {
     displayName: "integration",
     rootDir: '..',
-    testRegex: "./unit/.*.test.js",
+    testRegex: "./integration/.*.test.js",
     globalSetup: "<rootDir>/test/integration/setup.js",
     cache: false
 }
