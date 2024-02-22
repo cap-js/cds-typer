@@ -18,3 +18,5 @@ export class TSParser {
     private _parseClassBody(lines: string[]): ClassBody
     public parse(file: string): TSParseResult;
 }
+
+declare function prepareUnitTest(model: string, outputDirectory: string, typerOptions?: {}, fileSelector?: (paths: string[]) => string): void;

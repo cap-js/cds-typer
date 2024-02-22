@@ -1,29 +1,16 @@
 'use strict'
 
-const fs = require('fs').promises
-const path = require('path')
-const cds2ts = require('../../lib/compile')
-const { ASTWrapper, checkFunction, check } = require('../ast')
-const { locations } = require('../util')
-
-const dir = locations.testOutput('arrayof_test')
-
+const { checkFunction, check } = require('../ast')
+const { locations, prepareUnitTest } = require('../util')
 
 describe('array of', () => {
-    let ast
+    let astw
 
-    beforeEach(async () => await fs.unlink(dir).catch(() => {}))
-    beforeAll(async () => {
-        const paths = await cds2ts
-            .compileFromFile(locations.unit.files('arrayof/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
-            // eslint-disable-next-line no-console
-            .catch((err) => console.error(err))
-        ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
-    })
+    beforeAll(async () => astw = (await prepareUnitTest('arrayof/model.cds', locations.testOutput('arrayof_test'))).astw)
 
     describe('Entity Properties', () => {
         let aspect
-        beforeAll(async () => aspect = ast.tree.find(n => n.name === '_EAspect').body[0])
+        beforeAll(async () => aspect = astw.tree.find(n => n.name === '_EAspect').body[0])
 
         test('array of String', async () => {
             expect(aspect.members.find(m => m.name === 'stringz' 
@@ -59,7 +46,7 @@ describe('array of', () => {
 
     describe('Function', () => {
         let func
-        beforeAll(async () => func = ast.tree.find(n => n.name === 'fn'))
+        beforeAll(async () => func = astw.tree.find(n => n.name === 'fn'))
 
         test('Returning array of String', async () => {
             //expect(func.type.type.full === 'Array' && func.type.type.args[0].keyword === 'string').toBeTruthy()
