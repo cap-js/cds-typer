@@ -8,7 +8,7 @@ const { locations, prepareUnitTest } = require('../util')
 describe('Enum Action Parameters', () => {
     let astw
 
-    beforeAll(async () => astw = (await prepareUnitTest('enums/actions.cds', locations.testOutput('enums_test_actions'))).astw)
+    beforeAll(async () => astw = (await prepareUnitTest('enums/actions.cds', locations.testOutput('enums_test'))).astw)
     
     test('Coalescing Assignment Present', () => {
         const actions = astw.getAspectProperty('_FoobarAspect', 'actions')
@@ -35,7 +35,7 @@ describe('Nested Enums', () => {
     let astw
 
     beforeAll(async () => {
-        const paths = (await prepareUnitTest('enums/nested.cds', locations.testOutput('enums_test_nested'))).paths
+        const paths = (await prepareUnitTest('enums/nested.cds', locations.testOutput('enums_test'))).paths
         astw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'))
     })
 
@@ -53,7 +53,7 @@ describe('Nested Enums', () => {
 describe('Enum Types', () => {
     let astw
 
-    beforeAll(async () => astw = (await prepareUnitTest('enums/model.cds', locations.testOutput('enums_test_model'))).astw)
+    beforeAll(async () => astw = (await prepareUnitTest('enums/model.cds', locations.testOutput('enums_test'))).astw)
 
     describe('Anonymous', () => {
         describe('Within type Definition', () => {

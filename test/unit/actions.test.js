@@ -91,7 +91,6 @@ describe('Actions', () => {
     test('Bound Expecting $self Arguments', async () => {
         const actions = astwBound.getAspectProperty('_EAspect', 'actions')
         expect(actions.modifiers.some(check.isStatic)).toBeTruthy()
-
         // mainly make sure $self parameter is not present at all
         checkFunction(actions.type.members.find(fn => fn.name === 's1'), {
             callCheck: signature => check.isAny(signature),

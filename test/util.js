@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 const fs = require('fs')
-const { unlink } = require('fs').promises
+// const { unlink } = require('fs').promises
 const path = require('path')
 const { Logger } = require('../lib/logging')
 const { fail } = require('assert')
@@ -298,6 +298,7 @@ const resolveAliases = (file, resolves) => {
 }
 
 const locations = {
+    testOutputBase: path.normalize(`${os.tmpdir}/type-gen/test/output/`),
     testOutput: (suffix) => {
         const dir = path.normalize(`${os.tmpdir}/type-gen/test/output/${suffix}`)
         console.log(`preparing test output directory: ${dir}`)
@@ -320,9 +321,9 @@ const cds2ts = async (cdsFile, options = {}) => typer.compileFromFile(
     options
 )
 
-async function prepareUnitTest(model, outputDirectory, typerOptions = {}, fileSelector = paths => paths[1]) {
+async function prepareUnitTest(model, outputDirectory, typerOptions = {}, fileSelector = paths => paths.find(p => !p.endsWith('_'))) {
     const options = {...{ outputDirectory: outputDirectory, inlineDeclarations: 'structured' }, ...typerOptions}
-    await unlink(outputDirectory).catch(() => {})
+    //await unlink(outputDirectory).catch(() => {})
     const paths = await cds2ts(model, options)
         // eslint-disable-next-line no-console
         .catch((err) => console.error(err))
