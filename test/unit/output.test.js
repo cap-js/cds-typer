@@ -10,7 +10,7 @@ describe('Compilation', () => {
 
     describe('Bookshoplet', () => {
 
-        beforeAll(async () => ({paths, astw} = await prepareUnitTest('bookshoplet/model.cds', locations.testOutput('output_test'))))
+        beforeAll(async () => ({paths, astw} = await prepareUnitTest('bookshoplet/model.cds', locations.testOutput('output_test/bookshoplet'))))
 
         test('index.js', async () => {
             const jsw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'))
@@ -102,7 +102,7 @@ describe('Compilation', () => {
     describe('Builtin Types', () => {
         let astw
 
-        beforeAll(async () => astw = (await prepareUnitTest('builtins/model.cds', dir)).astw)
+        beforeAll(async () => astw = (await prepareUnitTest('builtins/model.cds', locations.testOutput('output_test/builtin'))).astw)
 
         test('Primitives', () => {
             expect(astw.exists('_EAspect', 'uuid', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
@@ -131,7 +131,7 @@ describe('Compilation', () => {
         let paths
         let astw
 
-        beforeAll(async () => ({paths, astw} = await prepareUnitTest('inflection/model.cds', dir)))
+        beforeAll(async () => ({paths, astw} = await prepareUnitTest('inflection/model.cds', locations.testOutput('output_test/inflection'))))
 
 
         test('Generated Paths', () => expect(paths).toHaveLength(2)) // the one module [1] + baseDefinitions [0]
