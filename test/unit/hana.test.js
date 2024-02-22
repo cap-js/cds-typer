@@ -1,50 +1,36 @@
 'use strict'
 
-const path = require('path')
-const cds2ts = require('../../lib/compile')
-const { locations } = require('../util')
-const { ASTWrapper, check } = require('../ast')
+const { locations, prepareUnitTest } = require('../util')
+const { check } = require('../ast')
 
-const dir = locations.testOutput('hana_files')
-
-// compilation produces semantically complete Typescript
 describe('Builtin HANA Datatypes', () => {
         let paths
-        let ast
+        let astw
 
-        beforeAll(async () => {
-            paths = await cds2ts
-                .compileFromFile(locations.unit.files('hana/model.cds'), {
-                    outputDirectory: dir,
-                })
-                // eslint-disable-next-line no-console
-                .catch((err) => console.error(err))
-            ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
-        })
+        beforeAll(async () => ({astw, paths} = await prepareUnitTest('hana/model.cds', locations.testOutput('hana_files'))))
 
-        test('Output Files Created', () => {
-            expect(paths).toHaveLength(3) // the one module [1] + baseDefinitions [0] + hana definitions [2]
-        })
+        // the one module [1] + baseDefinitions [0] + hana definitions [2]
+        test('Output Files Created', () => expect(paths).toHaveLength(3))
 
         test('Import of HANA Types Present', () => {
-            const imp = ast.getImports()
+            const imp = astw.getImports()
             expect(imp.length).toBe(2)
             expect(imp[0].as).toBe('_cds_hana')
         })
 
         test('Types Correct', () => {
-            ast.exists('_EverythingAspect', 'bar', ({type}) => check.isNullable(type, [check.isString]))
-            ast.exists('_EverythingAspect', 'smallint', ({type}) => check.isNullable(type, [t => t.name === 'SMALLINT']))
-            ast.exists('_EverythingAspect', 'tinyint', ({type}) => check.isNullable(type, [t => t.name === 'TINYINT']))
-            ast.exists('_EverythingAspect', 'smalldecimal', ({type}) => check.isNullable(type, [t => t.name === 'SMALLDECIMAL']))
-            ast.exists('_EverythingAspect', 'real', ({type}) => check.isNullable(type, [t => t.name === 'REAL']))
-            ast.exists('_EverythingAspect', 'char', ({type}) => check.isNullable(type, [t => t.name === 'CHAR']))
-            ast.exists('_EverythingAspect', 'nchar', ({type}) => check.isNullable(type, [t => t.name === 'NCHAR']))
-            ast.exists('_EverythingAspect', 'varchar', ({type}) => check.isNullable(type, [t => t.name === 'VARCHAR']))
-            ast.exists('_EverythingAspect', 'clob', ({type}) => check.isNullable(type, [t => t.name === 'CLOB']))
-            ast.exists('_EverythingAspect', 'binary', ({type}) => check.isNullable(type, [t => t.name === 'BINARY']))
-            ast.exists('_EverythingAspect', 'point', ({type}) => check.isNullable(type, [t => t.name === 'ST_POINT']))
-            ast.exists('_EverythingAspect', 'geometry', ({type}) => check.isNullable(type, [t => t.name === 'ST_GEOMETRY']))
-            ast.exists('_EverythingAspect', 'shorthand', ({type}) => check.isNullable(type, [t => t.name === 'REAL']))
+            astw.exists('_EverythingAspect', 'bar', ({type}) => check.isNullable(type, [check.isString]))
+            astw.exists('_EverythingAspect', 'smallint', ({type}) => check.isNullable(type, [t => t.name === 'SMALLINT']))
+            astw.exists('_EverythingAspect', 'tinyint', ({type}) => check.isNullable(type, [t => t.name === 'TINYINT']))
+            astw.exists('_EverythingAspect', 'smalldecimal', ({type}) => check.isNullable(type, [t => t.name === 'SMALLDECIMAL']))
+            astw.exists('_EverythingAspect', 'real', ({type}) => check.isNullable(type, [t => t.name === 'REAL']))
+            astw.exists('_EverythingAspect', 'char', ({type}) => check.isNullable(type, [t => t.name === 'CHAR']))
+            astw.exists('_EverythingAspect', 'nchar', ({type}) => check.isNullable(type, [t => t.name === 'NCHAR']))
+            astw.exists('_EverythingAspect', 'varchar', ({type}) => check.isNullable(type, [t => t.name === 'VARCHAR']))
+            astw.exists('_EverythingAspect', 'clob', ({type}) => check.isNullable(type, [t => t.name === 'CLOB']))
+            astw.exists('_EverythingAspect', 'binary', ({type}) => check.isNullable(type, [t => t.name === 'BINARY']))
+            astw.exists('_EverythingAspect', 'point', ({type}) => check.isNullable(type, [t => t.name === 'ST_POINT']))
+            astw.exists('_EverythingAspect', 'geometry', ({type}) => check.isNullable(type, [t => t.name === 'ST_GEOMETRY']))
+            astw.exists('_EverythingAspect', 'shorthand', ({type}) => check.isNullable(type, [t => t.name === 'REAL']))
         })
 })
