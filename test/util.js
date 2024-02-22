@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 const fs = require('fs')
-const { unlink } = require('fs').promises
+// const { unlink } = require('fs').promises
 const path = require('path')
 const { Logger } = require('../lib/logging')
 const { fail } = require('assert')
