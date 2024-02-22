@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.17.0 - TBD
+### Fixed
+- Fixed a bug where refering to an externally defined enum via the `typeof` syntax would crash the type generation
 
 ## Version 0.16.0 - 2024-02-01
 ### Changed
