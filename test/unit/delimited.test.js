@@ -1,22 +1,11 @@
 'use strict'
 
-const fs = require('fs').promises
-const path = require('path')
-const cds2ts = require('../../lib/compile')
-const { ASTWrapper } = require('../ast')
-const { locations } = require('../util')
-
-const dir = locations.testOutput('enums_test')
+const { locations, prepareUnitTest } = require('../util')
 
 describe('Delimited Identifiers', () => {
     let astw
 
-    beforeEach(async () => await fs.unlink(dir).catch(() => {}))
-    beforeAll(async () => {
-        const paths = await cds2ts
-            .compileFromFile(locations.unit.files('delimident/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
-        astw = new ASTWrapper(path.join(paths[1], 'index.ts'))
-    })
+    beforeAll(async () => astw = (await prepareUnitTest('delimident/model.cds', locations.testOutput('delimident_test'))).astw)
     
     test('Properties in Aspect Present', () => {
         expect(astw.getAspectProperty('_FooAspect', 'sap-icon://a')).toBeTruthy()

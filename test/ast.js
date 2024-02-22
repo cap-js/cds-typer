@@ -387,7 +387,7 @@ class JSASTWrapper {
     }
 
     constructor(code) {
-        this.programm = acorn.parse(code, { ecmaVersion: 'latest'})
+        this.program = acorn.parse(code, { ecmaVersion: 'latest'})
     }
 
     exportsAre(expected) {
@@ -402,7 +402,7 @@ class JSASTWrapper {
     }
 
     getExports() {
-        return this.exports ??= this.programm.body.filter(node => {
+        return this.exports ??= this.program.body.filter(node => {
             if (node.type !== 'ExpressionStatement') return false
             if (node.expression.left.type !== 'MemberExpression') return false
             const { object, property } = node.expression.left.object
