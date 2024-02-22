@@ -1,25 +1,12 @@
 'use strict'
 
-const fs = require('fs').promises
-const path = require('path')
-const cds2ts = require('../../lib/compile')
-const { ASTWrapper, check } = require('../ast')
-const { locations } = require('../util')
+const { check } = require('../ast')
+const { locations, prepareUnitTest } = require('../util')
 
-const dir = locations.testOutput('inline_test')
-console.log(check)
-
-// compilation produces semantically complete Typescript
 describe('Inline Type Declarations', () => {
-    beforeEach(async () => await fs.unlink(dir).catch(() => {})) //console.log('INFO', `Unable to unlink '${dir}' (${err}). This may not be an issue.`)
-
     test('Structured', async () => {
-        const paths = await cds2ts
-            .compileFromFile(locations.unit.files('inline/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
-            // eslint-disable-next-line no-console
-            .catch((err) => console.error(err))
-        const ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
-        expect(ast.exists('_BarAspect', 'x', ({name, type}) => { 
+        const astw = (await prepareUnitTest('inline/model.cds', locations.testOutput('inline_test_structured'))).astw
+        expect(astw.exists('_BarAspect', 'x', ({name, type}) => { 
                 const [nonNullType] = type.subtypes
                 const [a, y] = nonNullType.members
                 const [b, c] = a.type.subtypes[0].members
@@ -38,13 +25,9 @@ describe('Inline Type Declarations', () => {
     })
 
     test('Flat', async () => {
-        const paths = await cds2ts
-            .compileFromFile(locations.unit.files('inline/model.cds'), { outputDirectory: dir, inlineDeclarations: 'flat' })
-            // eslint-disable-next-line no-console
-            .catch((err) => console.error(err))
-        const ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
-        expect(ast.exists('_BarAspect', 'x_a_b', ({type}) => check.isNullable(type, [check.isNumber]))).toBeTruthy() 
-        expect(ast.exists('_BarAspect', 'x_y', ({type}) => check.isNullable(type, [check.isString]))).toBeTruthy() 
-        expect(ast.exists('_BarAspect', 'x_a_c', ({type}) => check.isNullable(type, [m => m.name === 'to' && m.args[0].full === 'Foo' ]))).toBeTruthy()
+        const astw = (await prepareUnitTest('inline/model.cds', locations.testOutput('inline_test_flat'), { inlineDeclarations: 'flat' })).astw
+        expect(astw.exists('_BarAspect', 'x_a_b', ({type}) => check.isNullable(type, [check.isNumber]))).toBeTruthy() 
+        expect(astw.exists('_BarAspect', 'x_y', ({type}) => check.isNullable(type, [check.isString]))).toBeTruthy() 
+        expect(astw.exists('_BarAspect', 'x_a_c', ({type}) => check.isNullable(type, [m => m.name === 'to' && m.args[0].full === 'Foo' ]))).toBeTruthy()
     })
 })
