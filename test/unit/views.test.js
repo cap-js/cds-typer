@@ -29,9 +29,9 @@ describe('View Entities', () => {
     })
 
     test('FooViewProjection: Unselected Fields Not Present', () => {
-        expect(astw.exists('_FooViewProjectionAspect', 'id', 'nonexistent' )).toThrow(Error)
-        expect(astw.exists('_FooViewProjectionAspect', 'code','nonexistent')).toThrow(Error)
-        expect(astw.exists('_FooViewProjectionAspect', 'alias', 'nonexistent')).toThrow(Error)
-        expect(astw.exists('_FooViewProjectionAspect', 'flag', 'nonexistent')).toThrow(Error)
+        expect(() => astw.exists('_FooViewProjectionAspect', 'id')).toThrow(Error)
+        expect(() => astw.exists('_FooViewProjectionAspect', 'code')).toThrow(Error)
+        expect(() => astw.exists('_FooViewProjectionAspect', 'alias')).toThrow(Error)
+        expect(() => astw.exists('_FooViewProjectionAspect', 'flag')).toThrow(Error)
     })
 })
