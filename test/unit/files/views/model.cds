@@ -12,3 +12,9 @@ entity FooView as
         code,
         code as alias
     };
+
+entity FooViewProjection as
+    projection on FooView {
+        id as IdProjected,
+        alias as AliasProjected
+    };
