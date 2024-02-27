@@ -1,23 +1,14 @@
 'use strict'
 
-const fs = require('fs').promises
 const path = require('path')
-const cds2ts = require('../../lib/compile')
-const { ASTWrapper, check, JSASTWrapper, checkFunction } = require('../ast')
-const { locations } = require('../util')
-
-const dir = locations.testOutput('enums_test')
+const { check, JSASTWrapper, checkFunction } = require('../ast')
+const { locations, prepareUnitTest } = require('../util')
 
 // FIXME: missing: inline enums (entity Foo { bar: String enum { ... }})
 describe('Enum Action Parameters', () => {
     let astw
 
-    beforeEach(async () => await fs.unlink(dir).catch(() => {}))
-    beforeAll(async () => {
-        const paths = await cds2ts
-            .compileFromFile(locations.unit.files('enums/actions.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
-        astw = new ASTWrapper(path.join(paths[1], 'index.ts'))
-    })
+    beforeAll(async () => astw = (await prepareUnitTest('enums/actions.cds', locations.testOutput('enums_test'))).astw)
     
     test('Coalescing Assignment Present', () => {
         const actions = astw.getAspectProperty('_FoobarAspect', 'actions')
@@ -43,15 +34,13 @@ describe('Enum Action Parameters', () => {
 describe('Nested Enums', () => {
     let astw
 
-    beforeEach(async () => await fs.unlink(dir).catch(() => {}))
     beforeAll(async () => {
-        const paths = await cds2ts
-            .compileFromFile(locations.unit.files('enums/nested.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
+        const paths = (await prepareUnitTest('enums/nested.cds', locations.testOutput('enums_test'))).paths
         astw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'))
     })
 
     test('Coalescing Assignment Present', () => {
-        const stmts = astw.programm.body
+        const stmts = astw.program.body
         const enm = stmts.find(n => n.type === 'ExpressionStatement' && n.expression.type === 'AssignmentExpression' && n.expression.operator === '??=')
         expect(enm).toBeTruthy()
         const { left } = enm.expression
@@ -64,12 +53,7 @@ describe('Nested Enums', () => {
 describe('Enum Types', () => {
     let astw
 
-    beforeEach(async () => await fs.unlink(dir).catch(() => {}))
-    beforeAll(async () => {
-        const paths = await cds2ts
-            .compileFromFile(locations.unit.files('enums/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
-        astw = new ASTWrapper(path.join(paths[1], 'index.ts'))
-    })
+    beforeAll(async () => astw = (await prepareUnitTest('enums/model.cds', locations.testOutput('enums_test'))).astw)
 
     describe('Anonymous', () => {
         describe('Within type Definition', () => {

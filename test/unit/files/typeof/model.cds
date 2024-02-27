@@ -1,3 +1,4 @@
+using { external } from './external';
 namespace typeof;
 
 //type T: { s: String };
@@ -14,3 +15,7 @@ entity Bar {
     ref_b: Foo:b;
     ref_c: Foo:c.x;
 };
+
+entity Baz {
+    ref: external.Issues:status
+}

@@ -1,19 +1,23 @@
 'use strict'
 
-const fs = require('fs').promises
 const path = require('path')
-const { ASTWrapper, checkFunction, check } = require('../ast')
-const { locations, cds2ts } = require('../util')
 
-const dir = locations.testOutput('actions_test')
+const { checkFunction, check, ASTWrapper } = require('../ast')
+const { locations, prepareUnitTest } = require('../util')
 
 describe('Actions', () => {
-    beforeEach(async () => await fs.unlink(dir).catch(() => {}))
+    let paths
+    let astwBound
+    let astwUnbound
+
+    beforeAll(async () => {
+        paths = (await prepareUnitTest('actions/model.cds', locations.testOutput('actions_test'))).paths
+        astwBound = new ASTWrapper(path.join(paths[1], 'index.ts'))
+        astwUnbound = new ASTWrapper(path.join(paths[2], 'index.ts'))
+    })
 
     test('Bound', async () => {
-        const paths = await cds2ts('actions/model.cds', { outputDirectory: dir, inlineDeclarations: 'structured' })
-        const astw = new ASTWrapper(path.join(paths[1], 'index.ts'))
-        const actions = astw.getAspectProperty('_EAspect', 'actions')
+        const actions = astwBound.getAspectProperty('_EAspect', 'actions')
         expect(actions.modifiers.some(check.isStatic)).toBeTruthy()
         checkFunction(actions.type.members.find(fn => fn.name === 'f'), {
             parameterCheck: ({members: [fst]}) => fst.name === 'x' && check.isNullable(fst.type, [check.isString])
@@ -31,8 +35,7 @@ describe('Actions', () => {
     })
 
     test('Unbound', async () => {
-        const paths = await cds2ts('actions/model.cds', { outputDirectory: dir, inlineDeclarations: 'structured' })
-        const ast = new ASTWrapper(path.join(paths[2], 'index.ts')).tree
+        const ast = astwUnbound.tree
         checkFunction(ast.find(node => node.name === 'free'), {
             modifiersCheck: (modifiers = []) => !modifiers.some(check.isStatic),
             callCheck: type => check.isNullable(type) 
@@ -50,9 +53,7 @@ describe('Actions', () => {
     })
 
     test('Bound Returning External Type', async () => {
-        const paths = await cds2ts('actions/model.cds', { outputDirectory: dir, inlineDeclarations: 'structured' })
-        const astw = new ASTWrapper(path.join(paths[1], 'index.ts'))
-        const actions = astw.getAspectProperty('_EAspect', 'actions')
+        const actions = astwBound.getAspectProperty('_EAspect', 'actions')
         expect(actions.modifiers.some(check.isStatic)).toBeTruthy()
         checkFunction(actions.type.members.find(fn => fn.name === 'f'), {
             callCheck: signature => check.isAny(signature),
@@ -72,8 +73,7 @@ describe('Actions', () => {
     })
 
     test('Unbound Returning External Type', async () => {
-        const paths = await cds2ts('actions/model.cds', { outputDirectory: dir, inlineDeclarations: 'structured' })
-        const ast = new ASTWrapper(path.join(paths[2], 'index.ts')).tree
+        const ast = astwUnbound.tree
         
         checkFunction(ast.find(node => node.name === 'free2'), {
             modifiersCheck: (modifiers = []) => !modifiers.some(check.isStatic),
@@ -89,12 +89,8 @@ describe('Actions', () => {
     })
 
     test('Bound Expecting $self Arguments', async () => {
-        const paths = await cds2ts('actions/model.cds', { outputDirectory: dir, inlineDeclarations: 'structured' })
-        const astw = new ASTWrapper(path.join(paths[1], 'index.ts'))
-        const actions = astw.getAspectProperty('_EAspect', 'actions')
+        const actions = astwBound.getAspectProperty('_EAspect', 'actions')
         expect(actions.modifiers.some(check.isStatic)).toBeTruthy()
-        
-
         // mainly make sure $self parameter is not present at all
         checkFunction(actions.type.members.find(fn => fn.name === 's1'), {
             callCheck: signature => check.isAny(signature),
