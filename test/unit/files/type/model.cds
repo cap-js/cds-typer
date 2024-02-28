@@ -9,3 +9,13 @@ entity Persons {
     history: Array of Points;
     line: Lines;
 }
+
+function fn() returns OuterType;
+
+type OuterType {
+    inner: InnerType;
+}
+
+type InnerType {
+    x : array of String;
+}
