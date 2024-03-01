@@ -8,4 +8,10 @@ entity Persons {
     pos: Points;
     history: Array of Points;
     line: Lines;
+};
+
+entity Wrapper {
+    e: String enum { a; b; }
 }
+
+type Ref: Wrapper:e;
