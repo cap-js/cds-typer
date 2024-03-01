@@ -20,4 +20,9 @@ describe('type Definitions', () => {
         expect(members.find(({name, type}) => name === 'history' && type.full === 'Array' && type.args[0].full === 'Points'))
         expect(members.find(({name, type}) => name === 'line' && type.full === 'Array' && type.args[0].full === 'Points'))
     })
+
+    test('Type Reference to Enums', async () => {
+        // FIXME: check target of Ref (not yet retained from TS AST)
+        expect(astw.tree.find(def => def.name === 'Ref')).toBeTruthy()
+    })
 })
