@@ -5,6 +5,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.17.0 - TBD
+### Changed
+- [breaking] CDS `type` definitions will not be inflected. Whatever inflection you define them in will be assumed treated as a singular form and will not receive a plural form anymore
+
 ### Fixed
 - Fixed a bug where refering to an externally defined enum via the `typeof` syntax would crash the type generation
 
