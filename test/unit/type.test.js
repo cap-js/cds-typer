@@ -27,4 +27,9 @@ describe('type Definitions', () => {
             callCheck: ptype => check.isNullable(ptype, [st => check.isTypeReference(st, 'OuterType')])
         })
     })
+
+    test('Type Reference to Enums', async () => {
+        // FIXME: check target of Ref (not yet retained from TS AST)
+        expect(astw.tree.find(def => def.name === 'Ref')).toBeTruthy()
+    })
 })

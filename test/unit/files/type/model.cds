@@ -8,7 +8,7 @@ entity Persons {
     pos: Points;
     history: Array of Points;
     line: Lines;
-}
+};
 
 function fn() returns OuterType;
 
@@ -19,3 +19,9 @@ type OuterType {
 type InnerType {
     x : array of String;
 }
+
+entity Wrapper {
+    e: String enum { a; b; }
+}
+
+type Ref: Wrapper:e;
