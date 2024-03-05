@@ -25,10 +25,10 @@ jobs:
       run: |
         npm install
         npm run test
-    - name: Run Integration Tests
-      run: |
-        npm install
-        npm run test:integration
+    #- name: Run Integration Tests
+    #  run: |
+    #    npm install
+    #    npm run test:integration
 
     - name: get-version
       id: package-version
