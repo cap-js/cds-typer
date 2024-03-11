@@ -29,7 +29,10 @@ describe('Projection Entities', () => {
         expect(() => astw.exists('_FooViewProjectionAspect', 'retainMeTwice', ({type}) => check.isNullable(type, [check.isNumber]))).toThrow(Error)
         expect(() => astw.exists('_FooViewProjectionAspect', 'removeMeNext', ({type}) => check.isNullable(type, [check.isNumber]))).toThrow(Error)
         expect(astw.exists('_FooViewProjectionAspect', 'Retained', ({type}) => check.isNullable(type, [check.isNumber]))).toBeTruthy()
-        
-        
+    })
+
+    test('Projection on Inline Property', () => {
+        expect(astw.exists('_BAspect', 'y', ({type}) => check.isNullable(type, [check.isString])))
+        expect(() => astw.exists('_BAspect', 'x', ({type}) => check.isNullable(type))).toThrow(Error)
     })
 })

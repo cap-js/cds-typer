@@ -16,3 +16,12 @@ entity FooViewProjection as
     projection on FooView {
         retainMeOnceMore as Retained
     };
+
+entity A {
+    key ID: UUID;
+    x: Composition of {
+        y: String;
+    }
+}
+
+entity B as projection on A.x;
