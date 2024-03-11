@@ -31,5 +31,6 @@ describe('type Definitions', () => {
     test('Type Reference to Enums', async () => {
         // FIXME: check target of Ref (not yet retained from TS AST)
         expect(astw.tree.find(def => def.name === 'Ref')).toBeTruthy()
+        expect(astw.tree.find(def => def.name === 'Refs')).toBeFalsy()
     })
 })
