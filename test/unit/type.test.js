@@ -32,5 +32,6 @@ describe('type Definitions', () => {
         // FIXME: check target of Ref (not yet retained from TS AST)
         expect(astw.tree.find(def => def.name === 'Ref')).toBeTruthy()
         expect(astw.tree.find(def => def.name === 'Refs')).toBeFalsy()
+        expect(astw.tree.find(def => def.name === 'Ref_')).toBeFalsy()
     })
 })
