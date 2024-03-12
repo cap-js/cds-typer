@@ -284,12 +284,8 @@ const resolveAliases = (file, resolves) => {
     for (const match of content.matchAll(/using.* from '(.*)'/g)) {
         if (!match[1].startsWith('@')) {
             let imp = `${path.dirname(file)}/${match[1]}`
-            if (fs.existsSync(imp) && fs.lstatSync(imp).isDirectory()) {
-                imp += '/index.cds'
-            }
-            if (!imp.endsWith('.cds')) {
-                imp += '.cds'
-            }
+            if (fs.existsSync(imp) && fs.lstatSync(imp).isDirectory()) imp += '/index.cds'
+            if (!imp.endsWith('.cds')) imp += '.cds'
             resolveAliases(imp, resolves)
         }
     }
