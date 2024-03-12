@@ -5,6 +5,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.18.0 - TBD
+### Added
+- Improved support for projections, including projections on inline definitions, and on views, as well as support for explicit exclusion and selection of properties
+
 ### Changed
 - [breaking] CDS `type` definitions will not be inflected. Whatever inflection you define them in will be assumed treated as a singular form and will not receive a plural form anymore
 
