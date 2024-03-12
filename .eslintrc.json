@@ -10,5 +10,9 @@
         "commonjs": true,
         "es2021": true,
         "jest": true
+    },
+    "plugins": ["@stylistic/js"],
+    "rules": {
+        "@stylistic/js/nonblock-statement-body-position": ["error", "beside"]
     }
 }
