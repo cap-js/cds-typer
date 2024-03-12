@@ -12,3 +12,9 @@ entity FooView as
         code,
         code as alias
     };
+
+entity FooView2 as 
+    select from Foo {
+        *,
+        id as id2
+    };
