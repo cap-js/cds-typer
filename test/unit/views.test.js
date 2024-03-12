@@ -20,4 +20,10 @@ describe('View Entities', () => {
     test('Unselected Field Not Present', () => { expect(() => 
         expect(astw.exists('_FooViewAspect', 'flag', ({type}) => check.isNullable(type, [check.isString]))).toThrow(Error)).toBeTruthy()
     })
+
+    test('Combining * and Explicit Selection', () => { () => 
+        expect(astw.exists('_FooView2Aspect', 'id', ({type}) => check.isNullable(type, [check.isNumber]))).toBeTruthy()
+        expect(astw.exists('_FooView2Aspect', 'id2', ({type}) => check.isNullable(type, [check.isNumber]))).toBeTruthy()
+        expect(astw.exists('_FooView2Aspect', 'code', ({type}) => check.isNullable(type, [check.isString]))).toBeTruthy()
+    })
 })
