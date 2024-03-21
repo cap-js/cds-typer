@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.19.0 - TBD
 
+## Version 0.18.2 - TBD
+### Fix
+- Resolving `@sap/cds` will now look in the CWD first to ensure a consistent use the same CDS version across different setups
+
 
 ## Version 0.18.1 - 2024-03-13
 ### Fix
