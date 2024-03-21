@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.19.0 - TBD
 
-## Version 0.18.2 - TBD
+## Version 0.18.2 - 2024-03-21
 ### Fix
 - Resolving `@sap/cds` will now look in the CWD first to ensure a consistent use the same CDS version across different setups
 - Types of function parameters starting with `cds.` are not automatically considered builtin anymore and receive a more thorough check against an allow-list
