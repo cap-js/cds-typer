@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.19.0 - TBD
+### Added
+- Support for `cds.Vector`, which will be represented as `string`
 
 ## Version 0.18.2 - 2024-03-21
 ### Fix
