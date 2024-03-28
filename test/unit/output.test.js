@@ -108,6 +108,7 @@ describe('Compilation', () => {
             expect(astw.exists('_EAspect', 'uuid', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
             expect(astw.exists('_EAspect', 'str', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
             expect(astw.exists('_EAspect', 'bin', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
+            // expect(astw.exists('_EAspect', 'vec', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
             expect(astw.exists('_EAspect', 'lstr', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
             expect(astw.exists('_EAspect', 'lbin', m => check.isUnionType(m.type, [
                 st => st.full === 'Buffer',
