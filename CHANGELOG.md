@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.20.0 - TBD
+### Changed
+- [breaking] The `.drafts` property in the generated plural form of entities will now be of the plural form as well, which reflects the actual runtime behaviour
 
 ## Version 0.19.0 - 2024-03-28
 ### Added
