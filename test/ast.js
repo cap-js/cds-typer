@@ -21,7 +21,8 @@ const kinds = {
     Keyword: 'keyword',
     VariableStatement: 'variableStatement',
     TypeAliasDeclaration: 'typeAliasDeclaration',
-    ModuleDeclaration: 'moduleDeclaration'
+    ModuleDeclaration: 'moduleDeclaration',
+    TypeQuery: 'typeQuery'
 }
 
 /*
@@ -74,6 +75,7 @@ const visitors = [
     [ts.isTypeAliasDeclaration, visitTypeAliasDeclaration],
     [ts.isPrefixUnaryExpression, visitPrefixUnaryExpression],
     [ts.isStatement, visitStatement],
+    [ts.isTypeQueryNode, visitTypeQuery],
     [n => [ts.SyntaxKind.TrueKeyword, ts.SyntaxKind.FalseKeyword].includes(n.kind), visitBooleanLiteral],
     [n => n.kind === ts.SyntaxKind.NumericLiteral, visitNumericLiteral],
     [isKeyword, resolveKeyword],
@@ -179,6 +181,15 @@ function visitImportDeclaration(node) {
     return { module, as, nodeType: kinds.ImportDeclaration }
 }
 
+/**
+ * @typedef {{typeOf: string, nodeType: string}} TypeQuery
+ * @param node {ts.TypeQueryNode}
+ * @returns {TypeQuery}
+ */
+function visitTypeQuery(node) {
+    return { typeOf: visit(node.exprName), kind: kinds.TypeQuery }
+}
+
 /** 
  * @typedef {{as: string}} ImportClause
  * @param node {ts.ImportClause} 
@@ -186,8 +197,7 @@ function visitImportDeclaration(node) {
  */
 function visitImportClause(node) {
     // we're only using namedBindings so far
-    const as = visit(node.namedBindings?.name)
-    return { as }
+    return { as: visit(node.namedBindings?.name) }
 }
 
 /**
