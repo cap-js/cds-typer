@@ -16,6 +16,7 @@ entity E {
     dec: Decimal;
     doub: Double;
     d: Date;
+    t: Time;
     dt: DateTime;
     ts: Timestamp;
 }
