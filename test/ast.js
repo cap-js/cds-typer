@@ -446,7 +446,8 @@ const check = {
         && of.reduce((acc, predicate) => acc && node.subtypes.some(st => predicate(st)), true),
     isNullable: (node, of = []) => check.isUnionType(node, of.concat([check.isNull])),
     isLiteral: (node, literal = undefined) => checkKeyword(node, 'literaltype') && (literal === undefined || node.literal === literal),
-    isTypeReference: (node, full) => checkNodeType(node, 'typeReference') && node.full === full
+    isTypeReference: (node, full) => checkNodeType(node, 'typeReference') && node.full === full,
+    isTypeAliasDeclaration: node => checkNodeType(node, 'typeAliasDeclaration'),
 }
 
 

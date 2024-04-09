@@ -156,3 +156,16 @@ describe('Enum Types', () => {
         })
     })
 })
+
+describe('Imported Enums', () => {
+    let astw
+
+    beforeAll(async () => astw = (await prepareUnitTest('enums/importing/service.cds', locations.testOutput('enums_test'))).astw)
+    
+    test('Present', () => {
+        
+        check.isTypeReference
+        const x = astw
+        console.log(x)
+    })
+})
