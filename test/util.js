@@ -9,6 +9,27 @@ const typer = require('../lib/compile')
 const { ASTWrapper } = require('./ast')
 
 /**
+ * @typedef {{[key: string]: string[]}} ClassBody
+ */
+
+/**
+ * @typedef {{
+ *  imports: string;
+ *   from: string;
+ *   alias: string;
+ * }} Import
+ */
+
+/**
+ * @typedef {{
+ *   classes: {[key: string]: ClassBody},
+ *   declarations: {[key: string]: string},
+ *   imports: Import[]
+ * }} TSParseResult
+ */
+
+
+/**
  * Hackish. When having code as string, we can either:
  * (1) write to file and require() that file again (meh).
  * (2) eval() the code. When the code is a module (as is the case here)
@@ -160,12 +181,19 @@ class TSParser {
         this.logger = logger ?? new Logger()
     }
 
+    /**
+     * @param {string} line
+     */
     isComment(line) {
         const trimmed = line.trim()
         return trimmed.startsWith('*') || trimmed.startsWith('/*') || trimmed.startsWith('//')
     }
 
-    _parseClassBody(lines) {
+    /**
+     * @param {string[]} lines
+     * @returns {ClassBody}
+     */
+    #parseClassBody(lines) {
         const props = {}
         let line = lines.shift()
         while (line && !line.match(/}/)) {
@@ -184,21 +212,8 @@ class TSParser {
     }
 
     /**
-     *
-     * @returns {
-     *  classes: {[key: string]: {
-     *
-     *   }
-     *  },
-     *  declarations: {
-     *   [key: string]: string
-     *  },
-     *  imports: [{
-     *   imports: string,
-     *   alias: string,
-     *   from: string
-     *  }]
-     * }
+     * @param {string} file
+     * @returns TSParseResult
      */
     parse(file) {
         const newNS = () => ({
@@ -232,7 +247,7 @@ class TSParser {
 
             // look at line
             if ((match = line.match(/(?:export )?class (\w+)( extends [.\w<>]+)?\s+\{/)) != null) {
-                currentNamespace.classes[match[1]] = this._parseClassBody(lines)
+                currentNamespace.classes[match[1]] = this.#parseClassBody(lines)
                 // quirk: as parseClassBody will consume all lines up until and
                 // including the next "}", we have to manually decrease the number
                 // of open scopes here.
@@ -311,12 +326,17 @@ const locations = {
     }
 }
 
-
 const cds2ts = async (cdsFile, options = {}) => typer.compileFromFile(
     locations.unit.files(cdsFile), 
     options
 )
 
+/**
+ * @param model {string} the path to the model file to be processed
+ * @param outputDirectory {string} the path to the output directory
+ * @param [typerOptions] {object} options to be passed to the typer
+ * @param [fileSelector] {(paths: string[]) => string} a function to select the file to be processed from the generated files
+ */
 async function prepareUnitTest(model, outputDirectory, typerOptions = {}, fileSelector = paths => paths.find(p => !p.endsWith('_'))) {
     const options = {...{ outputDirectory: outputDirectory, inlineDeclarations: 'structured' }, ...typerOptions}
     //await unlink(outputDirectory).catch(() => {})

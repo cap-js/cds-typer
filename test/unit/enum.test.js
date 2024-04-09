@@ -1,7 +1,7 @@
 'use strict'
 
 const path = require('path')
-const { check, JSASTWrapper, checkFunction } = require('../ast')
+const { check, JSASTWrapper, checkFunction, ASTWrapper } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 
 // FIXME: missing: inline enums (entity Foo { bar: String enum { ... }})
@@ -154,5 +154,24 @@ describe('Enum Types', () => {
                 && [true, false, 42].every(t => n.types.includes(t))))
                 .toBeTruthy())
         })
+    })
+})
+
+describe('Imported Enums', () => {
+    let paths
+
+    beforeAll(async () => paths = (await prepareUnitTest('enums/importing/service.cds', locations.testOutput('enums_test'))).paths)
+    
+    test('Is Type Alias in Service', () => {
+        const service = new ASTWrapper(path.join(paths[1], 'index.ts')).tree
+        expect(check.isTypeAliasDeclaration(service.find(n => n.name === 'EnumExample'))).toBeTruthy()
+    })
+
+    test('Is Enum Declaration in Schema', () => {
+        const schema = new ASTWrapper(path.join(paths[2], 'index.ts')).tree
+        const enumExampleNodes = schema.filter(n => n.name === 'EnumExample')
+        expect(enumExampleNodes.length).toBe(2)
+        expect(enumExampleNodes.find(n => n.nodeType === 'variableStatement')).toBeTruthy()
+        expect(enumExampleNodes.find(n => n.nodeType === 'typeAliasDeclaration')).toBeTruthy()
     })
 })
