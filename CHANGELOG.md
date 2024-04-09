@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Version 0.20.0 - TBD
 ### Fixed
 - Composition of aspects now properly resolve implicit `typeof` references in their properties
+- Importing an enum into a service will now generate an alias to the original enum, instead of incorrectly duplicating the definition
 
 ## Version 0.19.0 - 2024-03-28
 ### Added
