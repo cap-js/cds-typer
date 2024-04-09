@@ -5,6 +5,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.20.0 - TBD
+### Fixed
+- Composition of aspects now properly resolve implicit `typeof` references in their properties
+- Importing an enum into a service will now generate an alias to the original enum, instead of incorrectly duplicating the definition
 
 ### Added
 - Added the CdsDate, CdsDateTime, CdsTime, CdsTimestamp types, which are each represented as a `string`.
@@ -14,7 +17,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Support for `cds.Vector`, which will be represented as `string`
 
 ## Version 0.18.2 - 2024-03-21
-### Fix
+### Fixed
 - Resolving `@sap/cds` will now look in the CWD first to ensure a consistent use the same CDS version across different setups
 - Types of function parameters starting with `cds.` are not automatically considered builtin anymore and receive a more thorough check against an allow-list
 

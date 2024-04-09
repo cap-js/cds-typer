@@ -9,6 +9,18 @@ describe('Typeof Syntax', () => {
         expect(astw.exists('_BazAspect', 'ref', m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'status']))).toBeTruthy()
     })
 
+
+    test('Deep Required', async () => {
+        const astw = (await prepareUnitTest('typeof/deep.cds', locations.testOutput('typeof_deep'))).astw
+        expect(astw.exists('_UserRoleAspect', 'users',
+            m => check.isTypeReference(m.type) && check.isIndexedAccessType(m.type.args.at(0)) && check.isLiteral(m.type.args.at(0).indexType, 'roles')
+        )).toBeTruthy()
+        expect(astw.exists('_UserRoleGroupAspect', 'users',
+            m => check.isNullable(m.type, [
+                st => check.isTypeReference(st) && check.isIndexedAccessType(st.args[0]) && check.isLiteral(st.args[0].indexType, 'roleGroups')
+            ]))).toBeTruthy()
+    })
+
     test('Structured', async () => {
         const astw = (await prepareUnitTest('typeof/model.cds', locations.testOutput('typeof_structured'))).astw
         expect(astw.exists('_BarAspect', 'ref_a', 
