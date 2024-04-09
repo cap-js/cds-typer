@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.20.0 - TBD
 
+### Added
+- Added the CdsDate, CdsDateTime, CdsTime, CdsTimestamp types, which are each represented as a `string`.
+
 ## Version 0.19.0 - 2024-03-28
 ### Added
 - Support for `cds.Vector`, which will be represented as `string`
