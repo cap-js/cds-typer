@@ -18,6 +18,16 @@ describe('bookshop', () => {
         expect(draftable('Book', model, () => 'Books')).toBeTruthy()
         expect(draftable('Publisher', model, () => 'Publishers')).toBeTruthy()
     })
+
+    test('.drafts Inflected', async () => {
+        const paths = (await prepareUnitTest('draft/catalog-service.cds', locations.testOutput('bookshop_projection'))).paths
+        const model = new ASTWrapper(path.join(paths[2], 'index.ts')).tree
+        const draftsOfOwnType = ownType => model.find(node => node.name === ownType)?.members?.find(m => m.name === 'drafts')?.type?.typeOf === ownType
+        expect(draftsOfOwnType('Book')).toBeTruthy()
+        expect(draftsOfOwnType('Books')).toBeTruthy()
+        expect(draftsOfOwnType('Publisher')).toBeTruthy()
+        expect(draftsOfOwnType('Publishers')).toBeTruthy()
+    })
 })
 
 describe('@odata.draft.enabled', () => {
