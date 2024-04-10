@@ -125,7 +125,7 @@ describe('Compilation', () => {
             expect(astw.exists('_EAspect', 'd', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsDate')]))).toBeTruthy()
             expect(astw.exists('_EAspect', 't', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTime')]))).toBeTruthy()
             expect(astw.exists('_EAspect', 'dt', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsDateTime')]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'ts', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTimeStamp')]))).toBeTruthy()
+            expect(astw.exists('_EAspect', 'ts', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTimestamp')]))).toBeTruthy()
         })
     })
 
