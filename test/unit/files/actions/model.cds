@@ -15,6 +15,10 @@ service S {
             action sn (in: many $self);
             action sx (in: $self, x: Int16);
         }
+    function getOneE() returns E;
+    function getManyEs() returns array of E;
+    function getOneExternalType() returns ExternalType;
+    function getManyExternalTypes() returns array of ExternalType;
 }
 
 action free (param: String) returns { a: Integer; b: String } ;

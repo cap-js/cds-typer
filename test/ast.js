@@ -438,6 +438,11 @@ const check = {
     isString: node => checkKeyword(node, 'string'),
     isNumber: node => checkKeyword(node, 'number'),
     isBoolean: node => checkKeyword(node, 'boolean'),
+    /**
+     * @param {any} node
+     * @param {[(args: object[]) => boolean]} of
+     */
+    isArray: (node, of = undefined) => node?.full === 'Array' && (!of || of(node.args)),
     isAny: node => checkKeyword(node, 'any'),
     isStatic: node => checkKeyword(node, 'static'),
     isIndexedAccessType: node => checkKeyword(node, 'indexedaccesstype'),
