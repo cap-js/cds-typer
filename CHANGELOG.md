@@ -5,6 +5,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.20.0 - TBD
+### Added
+- Added the CdsDate, CdsDateTime, CdsTime, CdsTimestamp types, which are each represented as a `string`.
+
 ### Fixed
 - Composition of aspects now properly resolve implicit `typeof` references in their properties
 - Importing an enum into a service will now generate an alias to the original enum, instead of incorrectly duplicating the definition
