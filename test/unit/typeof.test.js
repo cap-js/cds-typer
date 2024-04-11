@@ -1,5 +1,6 @@
 'use strict'
 
+const { describe, test, expect } = require('@jest/globals')
 const { check } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 
@@ -39,13 +40,13 @@ describe('Typeof Syntax', () => {
     test('Flat', async () => {
         const astw = (await prepareUnitTest('typeof/model.cds', locations.testOutput('typeof_flat'), { inlineDeclarations: 'flat' })).astw
         expect(astw.exists('_BarAspect', 'ref_a', 
-        m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'a'])
+            m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'a'])
         )).toBeTruthy()
         expect(astw.exists('_BarAspect', 'ref_b', 
-        m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'b'])
+            m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'b'])
         )).toBeTruthy()
         expect(astw.exists('_BarAspect', 'ref_c', 
-        m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'c_x'])
+            m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'c_x'])
         )).toBeTruthy()
     })
 })

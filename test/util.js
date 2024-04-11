@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 const fs = require('fs')
 // const { unlink } = require('fs').promises
 const path = require('path')
@@ -37,42 +36,42 @@ const { ASTWrapper } = require('./ast')
  *     shadowing any previous content over multiple runs. Instead, we define
  *     a local variable to which the results of eval() will be bound.
  */
-const loadModule = (code) => {
+const loadModule = code => {
     const exports = {}
     eval(code)
     return exports
 }
 
 const toHaveAll = (module, props) => {
-    const missing = props.filter((p) => !(p in module))
+    const missing = props.filter(p => !(p in module))
     return missing.length === 0
         ? {
-              message: () => '',
-              pass: true,
-          }
+            message: () => '',
+            pass: true,
+        }
         : {
-              message: () =>
-                  `missing properties ${JSON.stringify(missing)} in module with properties ${JSON.stringify(
-                      Object.keys(module)
-                  )}.`,
-              pass: false,
-          }
+            message: () =>
+                `missing properties ${JSON.stringify(missing)} in module with properties ${JSON.stringify(
+                    Object.keys(module)
+                )}.`,
+            pass: false,
+        }
 }
 
 const toOnlyHave = (module, props) => {
-    const superfluous = Object.keys(module).filter((k) => !props.includes(k))
+    const superfluous = Object.keys(module).filter(k => !props.includes(k))
     return superfluous.length === 0
         ? {
-              message: () => '',
-              pass: true,
-          }
+            message: () => '',
+            pass: true,
+        }
         : {
-              message: () =>
-                  `extra properties ${JSON.stringify(superfluous)} in module with properties ${JSON.stringify(
-                      Object.keys(module)
-                  )}.`,
-              pass: false,
-          }
+            message: () =>
+                `extra properties ${JSON.stringify(superfluous)} in module with properties ${JSON.stringify(
+                    Object.keys(module)
+                )}.`,
+            pass: false,
+        }
 }
 
 const toExactlyHave = (module, props) => {
@@ -102,6 +101,23 @@ const toHavePropertyOfType = (clazz, property, types) => {
     return { message: () => '', pass: true }
 }
 
+const getTSSignatures = code =>
+    [...code.matchAll(/(\w+)\((.*)\)(?::\s?.*)?;/g)].map(f => ({
+        name: f[1],
+        args: f[2].split(',').filter(a => !!a) ?? [],
+    }))
+
+const getJSFunctions = code =>
+    [] // for better readbility after linting...
+        .concat(
+            [...code.matchAll(/^\s*(\w+)\((.*)\)\s?\{/gm)], // methods
+            [...code.matchAll(/^\s*const (\w+)\s?=\s?(?:async )?\((.*)\)\s=>/gm)] // arrow functions
+        )
+        .map(f => ({
+            name: f[1],
+            args: f[2].split(',').filter(a => !!a) ?? [],
+        }))
+
 const validateDTSTypes = (base, ignores = {}) => {
     ignores = Object.assign({ js: [], ts: [] }, ignores)
     const jsPath = path.normalize(`${base}.js`)
@@ -122,14 +138,14 @@ const validateDTSTypes = (base, ignores = {}) => {
         // (b) are ignored via the ignore list
         // (and vice versa for signatures)
         const missingSignatures = jsFunctions.filter(
-            (jsf) =>
+            jsf =>
                 !ignores.js.includes(jsf.name) &&
-                !tsSignatures.find((tsf) => tsf.name === jsf.name && tsf.args.length === jsf.args.length)
+                !tsSignatures.find(tsf => tsf.name === jsf.name && tsf.args.length === jsf.args.length)
         )
         const missingImplementations = tsSignatures.filter(
-            (tsf) =>
+            tsf =>
                 !ignores.ts.includes(tsf.name) &&
-                !jsFunctions.find((jsf) => tsf.name === jsf.name && tsf.args.length === jsf.args.length)
+                !jsFunctions.find(jsf => tsf.name === jsf.name && tsf.args.length === jsf.args.length)
         )
 
         const missing = []
@@ -146,29 +162,14 @@ const validateDTSTypes = (base, ignores = {}) => {
         }
 
         if (missing.length > 0) {
+            // eslint-disable-next-line no-console
             console.log(jsPath, jsFunctions)
+            // eslint-disable-next-line no-console
             console.log(dtsPath, tsSignatures)
             fail(missing.join('\n'))
         }
     }
 }
-
-const getTSSignatures = (code) =>
-    [...code.matchAll(/(\w+)\((.*)\)(?::\s?.*)?;/g)].map((f) => ({
-        name: f[1],
-        args: f[2].split(',').filter((a) => !!a) ?? [],
-    }))
-
-const getJSFunctions = (code) =>
-    [] // for better readbility after linting...
-        .concat(
-            [...code.matchAll(/^\s*(\w+)\((.*)\)\s?\{/gm)], // methods
-            [...code.matchAll(/^\s*const (\w+)\s?=\s?(?:async )?\((.*)\)\s=>/gm)] // arrow functions
-        )
-        .map((f) => ({
-            name: f[1],
-            args: f[2].split(',').filter((a) => !!a) ?? [],
-        }))
 
 /**
  * Really hacky way of consuming TS source code,
@@ -197,14 +198,14 @@ class TSParser {
         const props = {}
         let line = lines.shift()
         while (line && !line.match(/}/)) {
-            const [prop, type] = line.split(':').map((part) => part.trim())
+            const [prop, type] = line.split(':').map(part => part.trim())
             if (type) {
                 // type can be undefined, e.g. for "static readonly fq = 'foo';"
                 props[prop.replace('?', '').trim()] = type  // remove optional annotation
                     .replace(';', '')
                     .split(/[&|]/)
-                    .map((p) => p.trim())
-                    .filter((p) => !!p)
+                    .map(p => p.trim())
+                    .filter(p => !!p)
             }
             line = lines.shift()
         }
@@ -229,8 +230,8 @@ class TSParser {
         const lines = fs
             .readFileSync(file, 'utf-8')
             .split('\n')
-            .filter((l) => !this.isComment(l))
-            .filter((l) => !!l.trim())
+            .filter(l => !this.isComment(l))
+            .filter(l => !!l.trim())
 
         let match
         while (lines.length > 0) {
@@ -263,9 +264,11 @@ class TSParser {
             } else if ((match = line.match(/^\s*(?:export )?namespace (.*) \{/)) != null) {
                 currentNamespace = newNS()
                 namespaces[match[1]] = currentNamespace
+            // eslint-disable-next-line no-useless-assignment
             } else if ((match = line.match(/^\}/)) != null) {
                 // Just a closing brace that is already handled above.
                 // Catch in own case anyway to avoid logging in else case.
+            // eslint-disable-next-line no-useless-assignment
             } else if ((match = line.match(/^\s+/)) != null) {
                 // Empty line.
                 // Catch in own case anyway to avoid logging in else case.
@@ -310,19 +313,20 @@ const resolveAliases = (file, resolves) => {
 
 const locations = {
     testOutputBase: path.normalize(`${os.tmpdir}/type-gen/test/output/`),
-    testOutput: (suffix) => {
+    testOutput: suffix => {
         const dir = path.normalize(`${os.tmpdir}/type-gen/test/output/${suffix}`)
+        // eslint-disable-next-line no-console
         console.log(`preparing test output directory: ${dir}`)
         return dir
     },
     unit: {
         base: path.normalize('./test/unit/'),
-        files: (suffix) => path.normalize(`./test/unit/files/${suffix}`)
+        files: suffix => path.normalize(`./test/unit/files/${suffix}`)
     },
     integration: {
         base: path.normalize('./test/integration/'),
-        files: (suffix) => path.normalize(`./test/integration/files/${suffix}`),
-        cloudCapSamples: (suffix) => path.normalize(`./test/integration/files/cloud-cap-samples/${suffix}`),
+        files: suffix => path.normalize(`./test/integration/files/${suffix}`),
+        cloudCapSamples: suffix => path.normalize(`./test/integration/files/cloud-cap-samples/${suffix}`),
     }
 }
 
@@ -342,7 +346,7 @@ async function prepareUnitTest(model, outputDirectory, typerOptions = {}, fileSe
     //await unlink(outputDirectory).catch(() => {})
     const paths = await cds2ts(model, options)
         // eslint-disable-next-line no-console
-        .catch((err) => console.error(err))
+        .catch(err => console.error(err))
     return { astw: new ASTWrapper(path.join(fileSelector(paths), 'index.ts')), paths }
 }
 

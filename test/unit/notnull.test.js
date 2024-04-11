@@ -1,5 +1,6 @@
 'use strict'
 
+const { beforeAll, describe, test, expect } = require('@jest/globals')
 const { check, checkFunction } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 
@@ -14,34 +15,34 @@ describe('Not Null', () => {
         test('Primitive', async () => 
             expect(astw.getAspects().find(({name, members}) => name === '_EAspect'
             && members?.find(member => member.name === 'x' && !check.isNullable(member.type) && check.isNumber(member.type))))
-            .toBeTruthy())
+                .toBeTruthy())
 
         test('Association to One', async () => 
             expect(astw.getAspects().find(({name, members}) => name === '_EAspect'
             && members?.find(member => member.name === 'foo_assoc' && !check.isNullable(member.type))))
-            .toBeTruthy())
+                .toBeTruthy())
         
         test('Association to Many', async () => 
             expect(astw.getAspects().find(({name, members}) => name === '_EAspect'
             && members?.find(member => member.name === 'foos_assoc' && !check.isNullable(member.type))))
-            .toBeTruthy())
+                .toBeTruthy())
 
         test('Composition of One', async () => 
             expect(astw.getAspects().find(({name, members}) => name === '_EAspect'
             && members?.find(member => member.name === 'foo_comp' && !check.isNullable(member.type))))
-            .toBeTruthy())
+                .toBeTruthy())
         
         test('Composition of Many', async () => 
             expect(astw.getAspects().find(({name, members}) => name === '_EAspect'
             && members?.find(member => member.name === 'foos_comp' && !check.isNullable(member.type))))
-            .toBeTruthy())
+                .toBeTruthy())
 
         test('Inline', async () => 
             expect(astw.getAspects().find(({name, members}) => name === '_EAspect'
             && members?.find(member => member.name === 'inline' 
                 && !check.isNullable(member.type)
                 && !check.isNullable(member.type.members[0]))))
-            .toBeTruthy())
+                .toBeTruthy())
     })
 
 
