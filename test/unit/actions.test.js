@@ -1,7 +1,7 @@
 'use strict'
 
 const path = require('path')
-
+const { describe, beforeAll, test, expect } = require('@jest/globals')
 const { checkFunction, check, ASTWrapper } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 

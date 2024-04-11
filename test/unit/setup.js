@@ -1,9 +1,11 @@
-const { fs } = require("@sap/cds/lib/utils/cds-utils")
+const { fs } = require('@sap/cds/lib/utils/cds-utils')
 const util = require('../util')
 
 module.exports = () => {
     const base = util.locations.testOutputBase
+
     try {
         fs.unlinkSync(base)
-    } catch (e) { /* also fails on permissions, but still ignore */ }
+    // eslint-disable-next-line no-unused-vars        
+    } catch (_) { /* also fails on permissions, but still ignore */ }
 }

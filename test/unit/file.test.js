@@ -1,6 +1,7 @@
 'use strict'
 
 const path = require('path')
+const { describe, test, expect } = require('@jest/globals')
 const { Buffer, Path, SourceFile } = require('../../lib/file')
 
 describe('Buffer', () => {

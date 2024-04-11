@@ -1,6 +1,7 @@
 'use strict'
 
 const path = require('path')
+const { beforeAll, describe, test, expect } = require('@jest/globals')
 const { check, JSASTWrapper, checkFunction, ASTWrapper } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 
@@ -72,12 +73,12 @@ describe('Enum Types', () => {
                 && n.initializer.expression.female === 'female'
                 && n.initializer.expression.male === 'male'
                 && n.initializer.expression.non_binary === 'non-binary'))
-                .toBeTruthy())
+                    .toBeTruthy())
 
             test('Referring Property', async () =>
                 expect(astw.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
                 && members?.find(member => member.name === 'gender' && check.isNullable(member.type, [t => t?.full === 'InlineEnum_gender']))))
-                .toBeTruthy())
+                    .toBeTruthy())
 
         })
 
@@ -88,12 +89,12 @@ describe('Enum Types', () => {
                 && n.initializer.expression.fulfilled === 2
                 && n.initializer.expression.canceled === -1
                 && n.initializer.expression.shipped === 42))
-                .toBeTruthy())
+                    .toBeTruthy())
 
             test('Referring Property', async () =>
                 expect(astw.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
                 && members?.find(member => member.name === 'status' && check.isNullable(member.type, [t => t?.full === 'InlineEnum_status']))))
-                .toBeTruthy())
+                    .toBeTruthy())
         })
 
         describe('Mixed Enum', () => {
@@ -103,12 +104,12 @@ describe('Enum Types', () => {
                 && n.initializer.expression.no === false
                 && n.initializer.expression.yes === true
                 && n.initializer.expression.yesnt === false))
-                .toBeTruthy())
+                    .toBeTruthy())
 
             test('Referring Property', async () =>
                 expect(astw.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
                 && members?.find(member => member.name === 'yesno' &&  check.isNullable(member.type, [t => t?.full === 'InlineEnum_yesno']))))
-                .toBeTruthy())
+                    .toBeTruthy())
         })
     })
 
@@ -119,12 +120,12 @@ describe('Enum Types', () => {
                 && n.initializer.expression.female === 'female'
                 && n.initializer.expression.male === 'male'
                 && n.initializer.expression.non_binary === 'non-binary'))
-                .toBeTruthy())
+                    .toBeTruthy())
 
             test('Type Alias', async () =>
                 expect(astw.getTypeAliasDeclarations().find(n => n.name === 'Gender'
                 && ['male', 'female', 'non-binary'].every(t => n.types.includes(t))))
-                .toBeTruthy())
+                    .toBeTruthy())
         })
 
         describe('Int Enum', () => {
@@ -133,12 +134,12 @@ describe('Enum Types', () => {
                 && n.initializer.expression.submitted === 1
                 && n.initializer.expression.unknown === 0
                 && n.initializer.expression.cancelled === -1))
-                .toBeTruthy())
+                    .toBeTruthy())
 
             test('Type Alias', async () =>
                 expect(astw.getTypeAliasDeclarations().find(n => n.name === 'Status'
                 && [-1, 0, 1].every(t => n.types.includes(t))))
-                .toBeTruthy())
+                    .toBeTruthy())
         })
 
         describe('Mixed Enum', () => {
@@ -152,7 +153,7 @@ describe('Enum Types', () => {
             test('Type Alias', async () =>
                 expect(astw.getTypeAliasDeclarations().find(n => n.name === 'Truthy'
                 && [true, false, 42].every(t => n.types.includes(t))))
-                .toBeTruthy())
+                    .toBeTruthy())
         })
     })
 })

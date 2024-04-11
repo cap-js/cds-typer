@@ -1,6 +1,7 @@
 'use strict'
 
 const path = require('path')
+const { beforeAll, describe, test, expect } = require('@jest/globals')
 const { JSASTWrapper, check } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 
@@ -207,17 +208,17 @@ describe('Compilation', () => {
 
         test('Annotated Assoc/ Comp', () => {
             expect(astw.exists('_RefererAspect', 'a', m => check.isNullable(m.type, [
-                    ({name, args}) => name === 'to' && args[0].name === 'BazSingular'
+                ({name, args}) => name === 'to' && args[0].name === 'BazSingular'
             ]))).toBeTruthy()
-            expect(astw.exists('_RefererAspect', 'b', m => true
-                    && m.type.name === 'many'
+            expect(astw.exists('_RefererAspect', 'b', m =>
+                m.type.name === 'many'
                     && m.type.args[0].name === 'BazPlural'
             )).toBeTruthy()
             expect(astw.exists('_RefererAspect', 'c', m => check.isNullable(m.type, [
                 ({name, args}) => name === 'of' && args[0].name === 'BazSingular'
-        ]))).toBeTruthy()
-            expect(astw.exists('_RefererAspect', 'd', m => true
-                    && m.type.name === 'many'
+            ]))).toBeTruthy()
+            expect(astw.exists('_RefererAspect', 'd', m =>
+                m.type.name === 'many'
                     && m.type.args[0].name === 'BazPlural'
             )).toBeTruthy()
         })
@@ -225,16 +226,16 @@ describe('Compilation', () => {
         test('Inferred Assoc/ Comp', () => {
             expect(astw.exists('_RefererAspect', 'e', m => check.isNullable(m.type, [
                 ({name, args}) => name === 'to' && args[0].name === 'Gizmo'
-        ]))).toBeTruthy()
-            expect(astw.exists('_RefererAspect', 'f', m => true
-                    && m.type.name === 'many'
+            ]))).toBeTruthy()
+            expect(astw.exists('_RefererAspect', 'f', m =>
+                m.type.name === 'many'
                     && m.type.args[0].name === 'Gizmos'
             )).toBeTruthy()
             expect(astw.exists('_RefererAspect', 'g', m => check.isNullable(m.type, [
                 ({name, args}) => name === 'of' && args[0].name === 'Gizmo'
-        ]))).toBeTruthy()
-            expect(astw.exists('_RefererAspect', 'h', m => true
-                    && m.type.name === 'many'
+            ]))).toBeTruthy()
+            expect(astw.exists('_RefererAspect', 'h', m =>
+                m.type.name === 'many'
                     && m.type.args[0].name === 'Gizmos'
             )).toBeTruthy()
         })

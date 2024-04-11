@@ -39,7 +39,7 @@ function resolveKeyword(node) {
     // the TS AST packs a lot of information into keyword tokens, depending on their
     // actual keyword. We therefore try to resolve all the intersting fields
     // and then delete the ones that have not been filled in.
-   return Object.fromEntries(Object.entries({
+    return Object.fromEntries(Object.entries({
         keyword: ts.SyntaxKind[node.kind]?.replace('Keyword', '').toLowerCase(),
         nodeType: kinds.Keyword,
         name: visit(node.name),
@@ -77,6 +77,7 @@ const visitors = [
     [n => [ts.SyntaxKind.TrueKeyword, ts.SyntaxKind.FalseKeyword].includes(n.kind), visitBooleanLiteral],
     [n => n.kind === ts.SyntaxKind.NumericLiteral, visitNumericLiteral],
     [isKeyword, resolveKeyword],
+    // eslint-disable-next-line no-console
     [() => true, node => console.error(`unhandled node type: ${JSON.stringify(node, null, 2)}`)]
 ]
 
@@ -263,6 +264,7 @@ function visitFunctionDeclaration(node) {
 
 /** @param node {ts.Node} */
 function errorHandler(node) {
+    // eslint-disable-next-line no-console
     console.error(`unhandled node type ${node.kind}`)
 }
 
@@ -275,8 +277,8 @@ function visit(node) {
 
 class ASTWrapper {
     constructor(file) {
-        const program = ts.createProgram([file], { allowJs: true });
-        const sourceFile = program.getSourceFile(file);
+        const program = ts.createProgram([file], { allowJs: true })
+        const sourceFile = program.getSourceFile(file)
         this.tree = []
         sourceFile.forEachChild(c => { 
             const slim = visit(c)

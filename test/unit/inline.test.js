@@ -1,5 +1,6 @@
 'use strict'
 
+const { describe, test, expect } = require('@jest/globals')
 const { check } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 
@@ -7,10 +8,10 @@ describe('Inline Type Declarations', () => {
     test('Structured', async () => {
         const astw = (await prepareUnitTest('inline/model.cds', locations.testOutput('inline_test_structured'))).astw
         expect(astw.exists('_BarAspect', 'x', ({name, type}) => { 
-                const [nonNullType] = type.subtypes
-                const [a, y] = nonNullType.members
-                const [b, c] = a.type.subtypes[0].members
-                return name === 'x' 
+            const [nonNullType] = type.subtypes
+            const [a, y] = nonNullType.members
+            const [b, c] = a.type.subtypes[0].members
+            return name === 'x' 
                     && check.isNullable(type)
                     && nonNullType.members.length === 2
                     && a.name === 'a'
