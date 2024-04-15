@@ -8,4 +8,5 @@ entity B {}
 
 type T {}
 
-entity C : A, B, T, ExtE, ExtT {}
+entity LeafEntity : A, B, T, ExtE, ExtT {}
+type LeafType : A, B, T, ExtE, ExtT {}
