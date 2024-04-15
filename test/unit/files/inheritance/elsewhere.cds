@@ -1,0 +1,2 @@
+entity ExtE {}
+type ExtT {}

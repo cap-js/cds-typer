@@ -21,7 +21,8 @@ const kinds = {
     Keyword: 'keyword',
     VariableStatement: 'variableStatement',
     TypeAliasDeclaration: 'typeAliasDeclaration',
-    ModuleDeclaration: 'moduleDeclaration'
+    ModuleDeclaration: 'moduleDeclaration',
+    CallExpression: 'callExpression'
 }
 
 /*
@@ -59,6 +60,7 @@ const visitors = [
     // so it has to be added after more specific checks.
     [ts.isModuleDeclaration, visitModuleDeclaration],
     [ts.isObjectLiteralExpression, visitObjectLiteralExpression],
+    [ts.isCallExpression, visitCallExpression],
     [ts.isClassDeclaration, visitClassDeclaration],
     [ts.isFunctionDeclaration, visitFunctionDeclaration],
     [ts.isVariableStatement, visitVariableStatement],
@@ -82,8 +84,19 @@ const visitors = [
 ]
 
 /**
+ * @param {ts.CallExpression} node
+ */
+function visitCallExpression(node) {
+    return {
+        nodeType: kinds.CallExpression,
+        expression: visit(node.expression),
+        arguments: node.arguments.map(visit)
+    }
+}
+
+/**
  * @typedef {{name: string, body: any[]}} ModuleDeclaration
- * @param node {ts.ModuleDeclaration}
+ * @param {ts.ModuleDeclaration} node
  * @returns {ModuleDeclaration}
  */
 function visitModuleDeclaration(node) {
@@ -455,6 +468,40 @@ const check = {
     isLiteral: (node, literal = undefined) => checkKeyword(node, 'literaltype') && (literal === undefined || node.literal === literal),
     isTypeReference: (node, full = undefined) => checkNodeType(node, 'typeReference') && (!full || node.full === full),
     isTypeAliasDeclaration: node => checkNodeType(node, 'typeAliasDeclaration'),
+    isCallExpression: (node, expression) => checkNodeType(node, 'callExpression') && (!expression || node.expression === expression),
+    isPropertyAccessExpression: (node, expression, name) => checkKeyword(node, 'propertyaccessexpression') && (!expression || node.expression === expression) && (!name || node.name === name),
+}
+
+/**
+ * @param {object} node - the node to check (class definition)
+ * @param {string[]} ancestors - fully qualified names of ancestors
+ * @returns {boolean} - true iff node extends all ancestors
+ */
+const checkInheritance = (node, ancestors) => {
+    function checkPropertyAccessExpression (fq, node) {
+        if (check.isPropertyAccessExpression(node)) {
+            const [from, property] = fq.split('.')
+            if (check.isPropertyAccessExpression(node, from, property)) return true
+            if (inherits(fq, node.arguments)) return true
+        }
+        return false
+    }
+
+    function inherits (name, [ancestor] = []) {
+        if (!ancestor) return false
+        // A: B, C, D
+        if (check.isCallExpression(ancestor)) {
+            if (check.isCallExpression(ancestor, name)) return true
+            if (inherits(name, ancestor.arguments)) return true
+            // A: _.B, _.C, _.D
+            const isPropertyAccess = checkPropertyAccessExpression(name, ancestor.expression)
+            if (isPropertyAccess) return isPropertyAccess
+        }
+        // Entity (innermost)
+        return checkPropertyAccessExpression(name, ancestor)
+    }
+    const ancestry = [node.heritage[0].types[0].expression]
+    return ancestors.reduce((acc, ancestor) => acc && inherits(ancestor, ancestry), true)
 }
 
 
@@ -462,5 +509,6 @@ module.exports = {
     ASTWrapper,
     JSASTWrapper,
     checkFunction,
+    checkInheritance,
     check: check
 }
