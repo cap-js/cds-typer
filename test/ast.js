@@ -21,7 +21,8 @@ const kinds = {
     Keyword: 'keyword',
     VariableStatement: 'variableStatement',
     TypeAliasDeclaration: 'typeAliasDeclaration',
-    ModuleDeclaration: 'moduleDeclaration'
+    ModuleDeclaration: 'moduleDeclaration',
+    CallExpression: 'callExpression'
 }
 
 /*
@@ -59,6 +60,7 @@ const visitors = [
     // so it has to be added after more specific checks.
     [ts.isModuleDeclaration, visitModuleDeclaration],
     [ts.isObjectLiteralExpression, visitObjectLiteralExpression],
+    [ts.isCallExpression, visitCallExpression],
     [ts.isClassDeclaration, visitClassDeclaration],
     [ts.isFunctionDeclaration, visitFunctionDeclaration],
     [ts.isVariableStatement, visitVariableStatement],
@@ -82,8 +84,19 @@ const visitors = [
 ]
 
 /**
+ * @param {ts.CallExpression} node
+ */
+function visitCallExpression(node) {
+    return {
+        nodeType: kinds.CallExpression,
+        expression: visit(node.expression),
+        arguments: node.arguments.map(visit)
+    }
+}
+
+/**
  * @typedef {{name: string, body: any[]}} ModuleDeclaration
- * @param node {ts.ModuleDeclaration}
+ * @param {ts.ModuleDeclaration} node
  * @returns {ModuleDeclaration}
  */
 function visitModuleDeclaration(node) {
@@ -455,6 +468,13 @@ const check = {
     isLiteral: (node, literal = undefined) => checkKeyword(node, 'literaltype') && (literal === undefined || node.literal === literal),
     isTypeReference: (node, full = undefined) => checkNodeType(node, 'typeReference') && (!full || node.full === full),
     isTypeAliasDeclaration: node => checkNodeType(node, 'typeAliasDeclaration'),
+    isCallExpression: (node, expression) => checkNodeType(node, 'callExpression') && (!expression || node.expression === expression),
+}
+
+const checkInheritance = (node, ancestors = []) => {
+    const inherits = (name, [ancestor]) => check.isCallExpression(ancestor, name) || inherits(name, ancestor.arguments)
+    const ancestry = node.heritage[0].types
+    return ancestors.reduce((acc, ancestor) => acc && inherits(ancestor, ancestry), true)
 }
 
 
@@ -462,5 +482,6 @@ module.exports = {
     ASTWrapper,
     JSASTWrapper,
     checkFunction,
+    checkInheritance,
     check: check
 }
