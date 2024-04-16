@@ -510,5 +510,6 @@ module.exports = {
     JSASTWrapper,
     checkFunction,
     checkInheritance,
+    checkKeyword,
     check: check
 }

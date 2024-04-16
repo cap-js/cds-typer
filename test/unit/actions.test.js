@@ -2,7 +2,7 @@
 
 const path = require('path')
 const { describe, beforeAll, test, expect } = require('@jest/globals')
-const { checkFunction, check, ASTWrapper } = require('../ast')
+const { checkFunction, check, ASTWrapper, checkKeyword } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 
 describe('Actions', () => {
@@ -95,12 +95,16 @@ describe('Actions', () => {
         checkFunction(actions.type.members.find(fn => fn.name === 's1'), {
             callCheck: signature => check.isAny(signature),
             returnTypeCheck: returns => check.isAny(returns),
-            parameterCheck: ({members}) => members.length === 0
+            parameterCheck: ({full, args}) => full === 'Record' 
+                && checkKeyword(args[0], 'never') 
+                && checkKeyword(args[1], 'never')
         })
         checkFunction(actions.type.members.find(fn => fn.name === 'sn'), {
             callCheck: signature => check.isAny(signature),
             returnTypeCheck: returns => check.isAny(returns),
-            parameterCheck: ({members}) => members.length === 0           
+            parameterCheck: ({full, args}) => full === 'Record' 
+                && checkKeyword(args[0], 'never') 
+                && checkKeyword(args[1], 'never')
         })
         checkFunction(actions.type.members.find(fn => fn.name === 'sx'), {
             callCheck: signature => check.isAny(signature),
@@ -164,4 +168,11 @@ describe('Actions', () => {
         })
     })
 
+    test ('Empty .actions typed as empty Record', async () => {
+        const { type } = astwUnbound.getAspectProperty('_NoActionAspect', 'actions')
+        expect(type.full === 'Record' 
+            && checkKeyword(type.args[0], 'never')
+            && checkKeyword(type.args[1], 'never')
+        ).toBe(true)
+    })
 })
