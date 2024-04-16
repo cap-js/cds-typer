@@ -37,3 +37,8 @@ action free4 () returns {
     foo: ExternalType2
 };
 
+entity NoActions {}
+entity ParameterlessActions {}
+    actions {
+        action a()
+    }
