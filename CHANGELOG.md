@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Importing an enum into a service will now generate an alias to the original enum, instead of incorrectly duplicating the definition
 - Returning entities from actions/ functions and using them as parameters will now properly use the singular inflection instead of returning an array thereof
 - Aspects are now consistently named and called in their singular form
+- Only detect inflection clash if singular and plural share the same namespace. This also no longer reports `sap.common` as erroneous during type creation 
 
 ## Version 0.19.0 - 2024-03-28
 ### Added
