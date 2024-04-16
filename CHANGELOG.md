@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Types for actions and functions now expose a `.kind` property which holds the string `'function'` or `'action'` respectively
 - Added the CdsDate, CdsDateTime, CdsTime, CdsTimestamp types, which are each represented as a `string`.
 
+### Changed
+- Empty `.actions` properties and operations without parameters are now typed as `Record<never, never>` to make it clear they contain nothing and also to satisfy overzealous linters
+
 ### Fixed
 - Composition of aspects now properly resolve implicit `typeof` references in their properties
 - Importing an enum into a service will now generate an alias to the original enum, instead of incorrectly duplicating the definition
