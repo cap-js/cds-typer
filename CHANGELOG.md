@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.20.0 - TBD
 ### Added
+- Types for actions and functions now expose a `.kind` property which holds the string `'function'` or `'action'` respectively
 - Added the CdsDate, CdsDateTime, CdsTime, CdsTimestamp types, which are each represented as a `string`.
 
 ### Fixed
