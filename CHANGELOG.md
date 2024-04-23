@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 - Types for actions and functions now expose a `.kind` property which holds the string `'function'` or `'action'` respectively
 - Added the CdsDate, CdsDateTime, CdsTime, CdsTimestamp types, which are each represented as a `string`.
+- Plural types can now also contain an optional numeric `$count` property
 
 ### Changed
 - Empty `.actions` properties and operations without parameters are now typed as `Record<never, never>` to make it clear they contain nothing and also to satisfy overzealous linters
