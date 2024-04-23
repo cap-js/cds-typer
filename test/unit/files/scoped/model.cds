@@ -10,5 +10,5 @@ entity Name.SomethingElse {
 
 entity Name {
     key something: String;
-    somethingElse: Association to Name.SomethingElse
+    somethingElse: Association to Name.SomethingElse;
 }
