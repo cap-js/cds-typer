@@ -11,10 +11,13 @@ describe('Count', () => {
     )
 
     test('Plural type has $count property', async () => {
-        const node = ast.find(n => n.name === 'Books')
-        const countMember = node.members.find(m => m.name === '$count')
+        const singular = ast.find(n => n.name === 'Book')
+        const plural = ast.find(n => n.name === 'Books')
+        const countMember = plural.members.find(m => m.name === '$count')
 
-        expect(node).toBeTruthy()
+        expect(singular).toBeTruthy()
+        expect(singular.members.find(m => m.name === '$count')).toBeFalsy()
+        expect(plural).toBeTruthy()
         expect(countMember).toBeTruthy()
         expect(countMember.optional).toBeTruthy()
         expect(countMember.type.keyword).toBe('number')
