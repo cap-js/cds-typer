@@ -6,6 +6,7 @@ const { fail } = require('assert')
 const os = require('os')
 const typer = require('../lib/compile')
 const { ASTWrapper } = require('./ast')
+const { checkTranspilation } = require('./tscheck')
 
 /**
  * @typedef {{[key: string]: string[]}} ClassBody
@@ -347,6 +348,9 @@ async function prepareUnitTest(model, outputDirectory, typerOptions = {}, fileSe
     const paths = await cds2ts(model, options)
         // eslint-disable-next-line no-console
         .catch(err => console.error(err))
+    
+    const tsFiles = paths.map(p => path.join(p, 'index.ts'))
+    await checkTranspilation(tsFiles)
     return { astw: new ASTWrapper(path.join(fileSelector(paths), 'index.ts')), paths }
 }
 
