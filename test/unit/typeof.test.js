@@ -38,7 +38,11 @@ describe('Typeof Syntax', () => {
     })
 
     test('Flat', async () => {
-        const astw = (await prepareUnitTest('typeof/model.cds', locations.testOutput('typeof_flat'), { inlineDeclarations: 'flat' })).astw
+        const astw = (await prepareUnitTest(
+            'typeof/model.cds',
+            locations.testOutput('typeof_flat'),
+            { typerOptions: { inlineDeclarations: 'flat' } }
+        )).astw
         expect(astw.exists('_BarAspect', 'ref_a', 
             m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'a'])
         )).toBeTruthy()

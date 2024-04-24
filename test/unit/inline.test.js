@@ -26,7 +26,11 @@ describe('Inline Type Declarations', () => {
     })
 
     test('Flat', async () => {
-        const astw = (await prepareUnitTest('inline/model.cds', locations.testOutput('inline_test_flat'), { inlineDeclarations: 'flat' })).astw
+        const astw = (await prepareUnitTest(
+            'inline/model.cds',
+            locations.testOutput('inline_test_flat'),
+            { typerOptions: { inlineDeclarations: 'flat' } }
+        )).astw
         expect(astw.exists('_BarAspect', 'x_a_b', ({type}) => check.isNullable(type, [check.isNumber]))).toBeTruthy() 
         expect(astw.exists('_BarAspect', 'x_y', ({type}) => check.isNullable(type, [check.isString]))).toBeTruthy() 
         expect(astw.exists('_BarAspect', 'x_a_c', ({type}) => check.isNullable(type, [m => m.name === 'to' && m.args[0].full === 'Foo' ]))).toBeTruthy()

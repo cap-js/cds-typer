@@ -324,6 +324,11 @@ const locations = {
         base: path.normalize('./test/unit/'),
         files: suffix => path.normalize(`./test/unit/files/${suffix}`)
     },
+    smoke: {
+        base: path.normalize('./test/smoke/'),
+        // models are the same as in unit tests
+        files: suffix => path.normalize(`./test/unit/files/${suffix}`)
+    },
     integration: {
         base: path.normalize('./test/integration/'),
         files: suffix => path.normalize(`./test/integration/files/${suffix}`),
@@ -337,21 +342,36 @@ const cds2ts = async (cdsFile, options = {}) => typer.compileFromFile(
 )
 
 /**
- * @param model {string} the path to the model file to be processed
- * @param outputDirectory {string} the path to the output directory
- * @param [typerOptions] {object} options to be passed to the typer
- * @param [fileSelector] {(paths: string[]) => string} a function to select the file to be processed from the generated files
+ * @typedef PrepareUnitTestParameters
+ * @property {object} typerOptions options to be passed to the typer
+ * @property {(paths: string[]) => string} fileSelector a function to select the file to be processed from the generated files
+ * @property {boolean} transpilationCheck whether to check the transpilation of the generated files
  */
-async function prepareUnitTest(model, outputDirectory, typerOptions = {}, fileSelector = paths => paths.find(p => !p.endsWith('_'))) {
-    const options = {...{ outputDirectory: outputDirectory, inlineDeclarations: 'structured' }, ...typerOptions}
+
+/**
+ * @param {string} model the path to the model file to be processed
+ * @param {string} outputDirectory the path to the output directory
+ * @param {PrepareUnitTestParameters} parameters
+ */
+async function prepareUnitTest(model, outputDirectory, parameters = {}) {
+    const defaults = {
+        typerOptions: {},
+        fileSelector: paths => paths.find(p => !p.endsWith('_')),
+        transpilationCheck: false
+    }
+    parameters = { ...defaults, ...parameters }
+
+    const options = {...{ outputDirectory: outputDirectory, inlineDeclarations: 'structured' }, ...parameters.typerOptions}
     //await unlink(outputDirectory).catch(() => {})
     const paths = await cds2ts(model, options)
         // eslint-disable-next-line no-console
         .catch(err => console.error(err))
     
-    const tsFiles = paths.map(p => path.join(p, 'index.ts'))
-    await checkTranspilation(tsFiles)
-    return { astw: new ASTWrapper(path.join(fileSelector(paths), 'index.ts')), paths }
+    if (parameters.transpilationCheck) {
+        const tsFiles = paths.map(p => path.join(p, 'index.ts'))
+        await checkTranspilation(tsFiles)
+    }
+    return { astw: new ASTWrapper(path.join(parameters.fileSelector(paths), 'index.ts')), paths }
 }
 
 module.exports = {

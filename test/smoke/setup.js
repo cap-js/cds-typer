@@ -2,7 +2,7 @@ const { fs } = require('@sap/cds/lib/utils/cds-utils')
 const util = require('../util')
 
 module.exports = () => {
-    const base = util.locations.unit.base
+    const base = util.locations.smoke.base
 
     try {
         fs.unlinkSync(base)
