@@ -360,7 +360,7 @@ async function prepareUnitTest(model, outputDirectory, parameters = {}) {
         fileSelector: paths => paths.find(p => !p.endsWith('_')),
         transpilationCheck: false
     }
-    parameters = { ...defaults, parameters }
+    parameters = { ...defaults, ...parameters }
 
     const options = {...{ outputDirectory: outputDirectory, inlineDeclarations: 'structured' }, ...parameters.typerOptions}
     //await unlink(outputDirectory).catch(() => {})
