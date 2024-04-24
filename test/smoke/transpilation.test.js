@@ -2,10 +2,8 @@
 
 const fs = require('fs')
 const path = require('path')
-const { describe, beforeAll, test, expect } = require('@jest/globals')
-const { checkFunction, check, ASTWrapper, checkKeyword } = require('../ast')
+const { describe, test } = require('@jest/globals')
 const { locations, prepareUnitTest } = require('../util')
-
 
 const modelDirs = fs.readdirSync(locations.smoke.files(''))
     .map(dir => {
@@ -17,16 +15,16 @@ const modelDirs = fs.readdirSync(locations.smoke.files(''))
             ? undefined
             : { 
                 name: dir,
-                root: path.join(dir, files.find(f => f === 'model.cds') ?? files[0])
+                rootFile: path.join(dir, files.find(f => f === 'model.cds') ?? files[0])
             }
     })
     .filter(Boolean)
 
 describe('smoke', () => {
     describe('transpilation', () => {
-        test.each(modelDirs)('$name', ({ name, root }) => {
-            prepareUnitTest(
-                root,
+        test.each(modelDirs)('$name', async ({ name, rootFile }) => {
+            await prepareUnitTest(
+                rootFile,
                 locations.testOutput(name),
                 { transpilationCheck: true }
             )
