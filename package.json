@@ -15,8 +15,9 @@
   "scripts": {
     "test:unit": "jest --projects test/unit.jest.config.js",
     "test:integration": "jest --projects test/int.jest.config.js",
+    "test:smoke": "jest --projects test/smoke.jest.config.js",
     "test:all": "jest",
-    "test": "npm run test:unit",
+    "test": "npm run test:smoke && npm run test:unit",
     "lint": "npx eslint .",
     "cli": "node lib/cli.js",
     "doc:clean": "rm -rf ./doc",
@@ -49,6 +50,7 @@
   },
   "jest": {
     "projects": [
+      "test/smoke.jest.config.js",
       "test/unit.jest.config.js"
     ]
   }
