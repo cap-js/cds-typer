@@ -23,6 +23,7 @@ jobs:
         npm run test:smoke  
 
   unit-tests:
+    needs: smoke-tests # to avoid writing over each others output
     strategy:
       matrix:
         version: [20, 18]
