@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.21.0 - TBD
 
-## Version 0.21.1 - 2024-04-24
+## Version 0.20.1 - 2024-04-24
 ### Fixed
 - Void actions no longer crash the type generation process
 
