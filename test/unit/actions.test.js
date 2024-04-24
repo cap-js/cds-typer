@@ -88,6 +88,14 @@ describe('Actions', () => {
         })
     })
 
+    test('Void action returning void', async () => {
+        checkFunction(astwUnbound.tree.find(node => node.name === 'freevoid'), {
+            modifiersCheck: (modifiers = []) => !modifiers.some(check.isStatic),
+            callCheck: type => check.isNullable(type, [check.isVoid]),
+            returnTypeCheck: type => check.isNullable(type, [check.isVoid])
+        })
+    })
+
     test('Bound Expecting $self Arguments', async () => {
         const actions = astwBound.getAspectProperty('_EAspect', 'actions')
         expect(actions.modifiers.some(check.isStatic)).toBeTruthy()

@@ -459,6 +459,7 @@ const check = {
      */
     isArray: (node, of = undefined) => node?.full === 'Array' && (!of || of(node.args)),
     isAny: node => checkKeyword(node, 'any'),
+    isVoid: node => checkKeyword(node, 'void'),
     isStatic: node => checkKeyword(node, 'static'),
     isIndexedAccessType: node => checkKeyword(node, 'indexedaccesstype'),
     isNull: node => checkKeyword(node, 'literaltype') && checkKeyword(node.literal, 'null'),
