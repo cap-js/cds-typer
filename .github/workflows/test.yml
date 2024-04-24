@@ -24,9 +24,9 @@ jobs:
     - name: Run Unit Tests
       run: |
         npm install
-        npm run test
+        npm run test:unit
 
-    # - name: Run Integration Tests
-    #  run: |
-    #    npm install
-    #    npm run test:integration
+    - name: Run Smoke Tests
+     run: |
+       npm install
+       npm run test:smoke
