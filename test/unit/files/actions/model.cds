@@ -32,6 +32,7 @@ service S {
 action free (param: String) returns { a: Integer; b: String } ;
 action free2 () returns ExternalType;
 action free3 () returns ExternalInRoot;
+action freevoid ();
 
 action free4 () returns {
     foo: ExternalType2
