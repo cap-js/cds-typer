@@ -356,7 +356,7 @@ const cds2ts = async (cdsFile, options = {}) => typer.compileFromFile(
 async function prepareUnitTest(model, outputDirectory, parameters = {}) {
     const defaults = {
         typerOptions: {},
-        fileSelector: paths => paths.find(p => !p.endsWith('_')),
+        fileSelector: paths => (paths ?? []).find(p => !p.endsWith('_')),
         transpilationCheck: false
     }
     parameters = { ...defaults, ...parameters }
