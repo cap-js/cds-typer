@@ -12,8 +12,8 @@ describe('Actions', () => {
 
     beforeAll(async () => {
         paths = (await prepareUnitTest('actions/model.cds', locations.testOutput('actions_test'))).paths
-        astwBound = new ASTWrapper(path.join(paths[1], 'index.ts'))
-        astwUnbound = new ASTWrapper(path.join(paths[2], 'index.ts'))
+        astwBound = new ASTWrapper(path.join(paths.find(p => p.endsWith('S')), 'index.ts'))
+        astwUnbound = new ASTWrapper(path.join(paths.find(p => p.endsWith('actions_test')), 'index.ts'))
     })
 
     test('Bound', async () => {
@@ -182,5 +182,14 @@ describe('Actions', () => {
             && checkKeyword(type.args[0], 'never')
             && checkKeyword(type.args[1], 'never')
         ).toBe(true)
+    })
+
+    test ('typeof Parameter Referring to Correct Type', async () => {
+        checkFunction(astwUnbound.tree.find(node => node.name === 'freetypeof'), {
+            modifiersCheck: (modifiers = []) => !modifiers.some(check.isStatic),
+            callCheck: type => check.isNullable(type, [check.isVoid]),
+            returnTypeCheck: type => check.isNullable(type, [check.isVoid]),
+            parameterCheck: ({members: [fst]}) => check.isNullable(fst.type, [check.isIndexedAccessType])
+        })
     })
 })
