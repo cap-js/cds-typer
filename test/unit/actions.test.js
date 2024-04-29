@@ -12,8 +12,8 @@ describe('Actions', () => {
 
     beforeAll(async () => {
         paths = (await prepareUnitTest('actions/model.cds', locations.testOutput('actions_test'))).paths
-        astwBound = new ASTWrapper(path.join(paths[1], 'index.ts'))
-        astwUnbound = new ASTWrapper(path.join(paths[2], 'index.ts'))
+        astwBound = new ASTWrapper(path.join(paths.find(p => p.endsWith('actions_test/S')), 'index.ts'))
+        astwUnbound = new ASTWrapper(path.join(paths.find(p => p.endsWith('actions_test')), 'index.ts'))
     })
 
     test('Bound', async () => {
@@ -89,7 +89,7 @@ describe('Actions', () => {
     })
 
     test('Void action returning void', async () => {
-        checkFunction(astwBound.tree.find(node => node.name === 'freevoid'), {
+        checkFunction(astwUnbound.tree.find(node => node.name === 'freevoid'), {
             modifiersCheck: (modifiers = []) => !modifiers.some(check.isStatic),
             callCheck: type => check.isNullable(type, [check.isVoid]),
             returnTypeCheck: type => check.isNullable(type, [check.isVoid])
@@ -185,7 +185,7 @@ describe('Actions', () => {
     })
 
     test ('typeof Parameter Referring to Correct Type', async () => {
-        checkFunction(astwBound.tree.find(node => node.name === 'freetypeof'), {
+        checkFunction(astwUnbound.tree.find(node => node.name === 'freetypeof'), {
             modifiersCheck: (modifiers = []) => !modifiers.some(check.isStatic),
             callCheck: type => check.isNullable(type, [check.isVoid]),
             returnTypeCheck: type => check.isNullable(type, [check.isVoid]),
