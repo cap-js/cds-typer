@@ -12,7 +12,7 @@ describe('Actions', () => {
 
     beforeAll(async () => {
         paths = (await prepareUnitTest('actions/model.cds', locations.testOutput('actions_test'))).paths
-        astwBound = new ASTWrapper(path.join(paths.find(p => p.endsWith('actions_test/S')), 'index.ts'))
+        astwBound = new ASTWrapper(path.join(paths.find(p => p.endsWith('S')), 'index.ts'))
         astwUnbound = new ASTWrapper(path.join(paths.find(p => p.endsWith('actions_test')), 'index.ts'))
     })
 
