@@ -89,7 +89,7 @@ describe('Actions', () => {
     })
 
     test('Void action returning void', async () => {
-        checkFunction(astwUnbound.tree.find(node => node.name === 'freevoid'), {
+        checkFunction(astwBound.tree.find(node => node.name === 'freevoid'), {
             modifiersCheck: (modifiers = []) => !modifiers.some(check.isStatic),
             callCheck: type => check.isNullable(type, [check.isVoid]),
             returnTypeCheck: type => check.isNullable(type, [check.isVoid])
@@ -182,5 +182,14 @@ describe('Actions', () => {
             && checkKeyword(type.args[0], 'never')
             && checkKeyword(type.args[1], 'never')
         ).toBe(true)
+    })
+
+    test ('typeof Parameter Referring to Correct Type', async () => {
+        checkFunction(astwBound.tree.find(node => node.name === 'freetypeof'), {
+            modifiersCheck: (modifiers = []) => !modifiers.some(check.isStatic),
+            callCheck: type => check.isNullable(type, [check.isVoid]),
+            returnTypeCheck: type => check.isNullable(type, [check.isVoid]),
+            parameterCheck: ({members: [fst]}) => check.isNullable(fst.type, [check.isIndexedAccessType])
+        })
     })
 })

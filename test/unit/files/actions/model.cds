@@ -3,6 +3,10 @@ using elsewhere.ExternalType from './elsewhere';
 using elsewhere.ExternalType2 from './elsewhere';
 using ExternalInRoot from './root';
 
+entity Foo {
+    bar: Integer;
+}
+
 service S {
     entity E {}
         actions {
@@ -33,6 +37,7 @@ action free (param: String) returns { a: Integer; b: String } ;
 action free2 () returns ExternalType;
 action free3 () returns ExternalInRoot;
 action freevoid ();
+action freetypeof (p: Foo:bar);
 
 action free4 () returns {
     foo: ExternalType2
