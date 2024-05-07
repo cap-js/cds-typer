@@ -176,3 +176,29 @@ describe('Imported Enums', () => {
         expect(enumExampleNodes.find(n => n.nodeType === 'typeAliasDeclaration')).toBeTruthy()
     })
 })
+
+describe('Enums of typeof', () => {
+    /* FIXME: these should actually be inline-defined enums of the referenced type with explicit values
+     * ```cds
+     * entity X { y: String };
+     * type T: X:y { a }  // should produce a string enum with value `a`
+     * ```
+     * but as a first step, they'll be just a value of the referenced type
+     */
+    let astw
+
+    beforeAll(async () => {
+        const paths = (await prepareUnitTest('enums/enumtyperef.cds', locations.testOutput('enums_test'))).paths
+        astw = new ASTWrapper(path.join(paths[2], 'index.ts'))
+    })
+    
+    test('it works', () => {
+        // FIXME: returntypecheck currently broken: cds-typer can currently only deal with refs
+        // that contain exactly one element. Type refs are of guise { ref: ['n.A', 'p'] }
+        // so right now the property type reference is incorrectly resolved to n.A
+        checkFunction(astw.tree.find(node => node.name === 'EnumInParamAndReturn'), {
+            //returnTypeCheck: type =>  check.isNullable(type, [check.isIndexedAccessType]),
+            parameterCheck: ({members: [fst]}) => check.isNullable(fst.type, [check.isIndexedAccessType])
+        })
+    })
+})
