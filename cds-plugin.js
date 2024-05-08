@@ -1,11 +1,13 @@
 /* eslint-disable @stylistic/js/indent */
 const cds = require('@sap/cds')
 const { fs, path } = cds.utils
+const util = require('util')
+const exec = util.promisify(require('child_process').exec)
+const { readdir, stat } = require('fs/promises')
+
 // requires @sap/cds-dk version >= 7.5.0
 cds.build?.register?.('typer', class TyperBuildPlugin extends cds.build.Plugin {
-  
   static taskDefaults = { src: '.' }
-  
   static hasTask() { return fs.existsSync('tsconfig.json') }
 
   init() {
@@ -14,15 +16,21 @@ cds.build?.register?.('typer', class TyperBuildPlugin extends cds.build.Plugin {
   }
 
   async build() {
-    const model = await this.model()
-    if (!model) return
-
-    const promises = []
-    promises.push(this.write(cds.compile.to.json(model)).to('csn.json'))
-
-    if (fs.existsSync(path.join(this.task.src, 'types'))) {
-      promises.push(this.copy('types').to('types'))
+    async function rmTsFiles (dir) {
+      const files = await readdir(dir)
+      for (const file of files) {
+        const filePath = path.join(dir, file)
+        if ((await stat(filePath)).isDirectory()) {
+          rmTsFiles(filePath)
+        } else if (file.endsWith('.ts')) {
+          fs.unlinkSync(filePath)
+        }
+      }
     }
-    return Promise.all(promises)
+
+    const buildDirCdsModels = path.join(this.task.dest, '@cds-models')
+    await exec(`tsc --outDir ${this.task.dest}`)
+    await this.copy('@cds-models').to(buildDirCdsModels)
+    rmTsFiles(buildDirCdsModels)
   }
 })
