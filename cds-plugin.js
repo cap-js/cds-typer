@@ -16,17 +16,17 @@ cds.build?.register?.('typer', class TyperBuildPlugin extends cds.build.Plugin {
   }
 
   async build() {
-    async function rmTsFiles (dir) {
-      const files = await readdir(dir)
-      for (const file of files) {
-        const filePath = path.join(dir, file)
-        if ((await stat(filePath)).isDirectory()) {
-          rmTsFiles(filePath)
-        } else if (file.endsWith('.ts')) {
-          fs.unlinkSync(filePath)
-        }
-      }
-    }
+    const rmTsFiles = async dir => Promise.all(
+      (await readdir(dir))
+        .map(async file => {
+          const filePath = path.join(dir, file)
+          if ((await stat(filePath)).isDirectory()) {
+            rmTsFiles(filePath)
+          } else if (file.endsWith('.ts')) {
+            fs.unlinkSync(filePath)
+          }
+        })
+    )
 
     const buildDirCdsModels = path.join(this.task.dest, '@cds-models')
     await exec(`tsc --outDir ${this.task.dest}`)
