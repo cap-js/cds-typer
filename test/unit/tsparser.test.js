@@ -1,5 +1,6 @@
 'use strict'
 
+const { describe, test, expect } = require('@jest/globals')
 const { ASTWrapper } = require('../ast')
 const { locations } = require('../util')
 

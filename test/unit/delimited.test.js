@@ -1,5 +1,6 @@
 'use strict'
 
+const { describe, beforeAll, test, expect } = require('@jest/globals')
 const { locations, prepareUnitTest } = require('../util')
 
 describe('Delimited Identifiers', () => {

@@ -1,5 +1,6 @@
 'use strict'
 
+const { beforeAll, describe, test, expect } = require('@jest/globals')
 const { locations, prepareUnitTest } = require('../util')
 
 describe('Foreign Keys', () => {

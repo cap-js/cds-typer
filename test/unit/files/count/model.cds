@@ -1,0 +1,3 @@
+entity Books {
+    title : String;
+}

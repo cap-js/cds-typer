@@ -1,5 +1,6 @@
 'use strict'
 
+const { beforeAll, describe, test, expect } = require('@jest/globals')
 const { check } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 
@@ -23,7 +24,7 @@ describe('View Entities', () => {
 
     test('Combining * and Explicit Selection', () => { () => 
         expect(astw.exists('_FooView2Aspect', 'id', ({type}) => check.isNullable(type, [check.isNumber]))).toBeTruthy()
-        expect(astw.exists('_FooView2Aspect', 'id2', ({type}) => check.isNullable(type, [check.isNumber]))).toBeTruthy()
-        expect(astw.exists('_FooView2Aspect', 'code', ({type}) => check.isNullable(type, [check.isString]))).toBeTruthy()
+    expect(astw.exists('_FooView2Aspect', 'id2', ({type}) => check.isNullable(type, [check.isNumber]))).toBeTruthy()
+    expect(astw.exists('_FooView2Aspect', 'code', ({type}) => check.isNullable(type, [check.isString]))).toBeTruthy()
     })
 })

@@ -4,7 +4,40 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.19.0 - TBD
+## Version 0.21.0 - TBD
+
+## Version 0.20.2 - 2024-04-29
+### Fixed
+- Referring to a property's type in a function/ action parameter no longer refers to the enclosing entity
+
+## Version 0.20.1 - 2024-04-24
+### Fixed
+- Void actions no longer crash the type generation process
+
+## Version 0.20.0 - 2024-04-23
+### Added
+- Types for actions and functions now expose a `.kind` property which holds the string `'function'` or `'action'` respectively
+- Added the CdsDate, CdsDateTime, CdsTime, CdsTimestamp types, which are each represented as a `string`.
+- Plural types can now also contain an optional numeric `$count` property
+
+### Changed
+- Empty `.actions` properties and operations without parameters are now typed as `Record<never, never>` to make it clear they contain nothing and also to satisfy overzealous linters
+
+### Fixed
+- Composition of aspects now properly resolve implicit `typeof` references in their properties
+- Importing an enum into a service will now generate an alias to the original enum, instead of incorrectly duplicating the definition
+- Returning entities from actions/ functions and using them as parameters will now properly use the singular inflection instead of returning an array thereof
+- Aspects are now consistently named and called in their singular form
+- Only detect inflection clash if singular and plural share the same namespace. This also no longer reports `sap.common` as erroneous during type creation 
+
+## Version 0.19.0 - 2024-03-28
+### Added
+- Support for `cds.Vector`, which will be represented as `string`
+
+## Version 0.18.2 - 2024-03-21
+### Fixed
+- Resolving `@sap/cds` will now look in the CWD first to ensure a consistent use the same CDS version across different setups
+- Types of function parameters starting with `cds.` are not automatically considered builtin anymore and receive a more thorough check against an allow-list
 
 
 ## Version 0.18.1 - 2024-03-13

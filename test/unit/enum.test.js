@@ -1,7 +1,8 @@
 'use strict'
 
 const path = require('path')
-const { check, JSASTWrapper, checkFunction } = require('../ast')
+const { beforeAll, describe, test, expect } = require('@jest/globals')
+const { check, JSASTWrapper, checkFunction, ASTWrapper } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 
 // FIXME: missing: inline enums (entity Foo { bar: String enum { ... }})
@@ -72,12 +73,12 @@ describe('Enum Types', () => {
                 && n.initializer.expression.female === 'female'
                 && n.initializer.expression.male === 'male'
                 && n.initializer.expression.non_binary === 'non-binary'))
-                .toBeTruthy())
+                    .toBeTruthy())
 
             test('Referring Property', async () =>
                 expect(astw.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
                 && members?.find(member => member.name === 'gender' && check.isNullable(member.type, [t => t?.full === 'InlineEnum_gender']))))
-                .toBeTruthy())
+                    .toBeTruthy())
 
         })
 
@@ -88,12 +89,12 @@ describe('Enum Types', () => {
                 && n.initializer.expression.fulfilled === 2
                 && n.initializer.expression.canceled === -1
                 && n.initializer.expression.shipped === 42))
-                .toBeTruthy())
+                    .toBeTruthy())
 
             test('Referring Property', async () =>
                 expect(astw.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
                 && members?.find(member => member.name === 'status' && check.isNullable(member.type, [t => t?.full === 'InlineEnum_status']))))
-                .toBeTruthy())
+                    .toBeTruthy())
         })
 
         describe('Mixed Enum', () => {
@@ -103,12 +104,12 @@ describe('Enum Types', () => {
                 && n.initializer.expression.no === false
                 && n.initializer.expression.yes === true
                 && n.initializer.expression.yesnt === false))
-                .toBeTruthy())
+                    .toBeTruthy())
 
             test('Referring Property', async () =>
                 expect(astw.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
                 && members?.find(member => member.name === 'yesno' &&  check.isNullable(member.type, [t => t?.full === 'InlineEnum_yesno']))))
-                .toBeTruthy())
+                    .toBeTruthy())
         })
     })
 
@@ -119,12 +120,12 @@ describe('Enum Types', () => {
                 && n.initializer.expression.female === 'female'
                 && n.initializer.expression.male === 'male'
                 && n.initializer.expression.non_binary === 'non-binary'))
-                .toBeTruthy())
+                    .toBeTruthy())
 
             test('Type Alias', async () =>
                 expect(astw.getTypeAliasDeclarations().find(n => n.name === 'Gender'
                 && ['male', 'female', 'non-binary'].every(t => n.types.includes(t))))
-                .toBeTruthy())
+                    .toBeTruthy())
         })
 
         describe('Int Enum', () => {
@@ -133,12 +134,12 @@ describe('Enum Types', () => {
                 && n.initializer.expression.submitted === 1
                 && n.initializer.expression.unknown === 0
                 && n.initializer.expression.cancelled === -1))
-                .toBeTruthy())
+                    .toBeTruthy())
 
             test('Type Alias', async () =>
                 expect(astw.getTypeAliasDeclarations().find(n => n.name === 'Status'
                 && [-1, 0, 1].every(t => n.types.includes(t))))
-                .toBeTruthy())
+                    .toBeTruthy())
         })
 
         describe('Mixed Enum', () => {
@@ -152,7 +153,52 @@ describe('Enum Types', () => {
             test('Type Alias', async () =>
                 expect(astw.getTypeAliasDeclarations().find(n => n.name === 'Truthy'
                 && [true, false, 42].every(t => n.types.includes(t))))
-                .toBeTruthy())
+                    .toBeTruthy())
+        })
+    })
+})
+
+describe('Imported Enums', () => {
+    let paths
+
+    beforeAll(async () => paths = (await prepareUnitTest('enums/importing/service.cds', locations.testOutput('enums_test'))).paths)
+    
+    test('Is Type Alias in Service', () => {
+        const service = new ASTWrapper(path.join(paths[1], 'index.ts')).tree
+        expect(check.isTypeAliasDeclaration(service.find(n => n.name === 'EnumExample'))).toBeTruthy()
+    })
+
+    test('Is Enum Declaration in Schema', () => {
+        const schema = new ASTWrapper(path.join(paths[2], 'index.ts')).tree
+        const enumExampleNodes = schema.filter(n => n.name === 'EnumExample')
+        expect(enumExampleNodes.length).toBe(2)
+        expect(enumExampleNodes.find(n => n.nodeType === 'variableStatement')).toBeTruthy()
+        expect(enumExampleNodes.find(n => n.nodeType === 'typeAliasDeclaration')).toBeTruthy()
+    })
+})
+
+describe('Enums of typeof', () => {
+    /* FIXME: these should actually be inline-defined enums of the referenced type with explicit values
+     * ```cds
+     * entity X { y: String };
+     * type T: X:y { a }  // should produce a string enum with value `a`
+     * ```
+     * but as a first step, they'll be just a value of the referenced type
+     */
+    let astw
+
+    beforeAll(async () => {
+        const paths = (await prepareUnitTest('enums/enumtyperef.cds', locations.testOutput('enums_test'))).paths
+        astw = new ASTWrapper(path.join(paths[2], 'index.ts'))
+    })
+    
+    test('it works', () => {
+        // FIXME: returntypecheck currently broken: cds-typer can currently only deal with refs
+        // that contain exactly one element. Type refs are of guise { ref: ['n.A', 'p'] }
+        // so right now the property type reference is incorrectly resolved to n.A
+        checkFunction(astw.tree.find(node => node.name === 'EnumInParamAndReturn'), {
+            //returnTypeCheck: type =>  check.isNullable(type, [check.isIndexedAccessType]),
+            parameterCheck: ({members: [fst]}) => check.isNullable(fst.type, [check.isIndexedAccessType])
         })
     })
 })
