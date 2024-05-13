@@ -5,14 +5,22 @@ const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 const { readdir, stat } = require('fs/promises')
 
+const tsConfigExists = () => fs.existsSync('tsconfig.json')
+
 // requires @sap/cds-dk version >= 7.5.0
 cds.build?.register?.('typer', class TyperBuildPlugin extends cds.build.Plugin {
   static taskDefaults = { src: '.' }
-  static hasTask() { return fs.existsSync('tsconfig.json') }
+  static hasTask() { return tsConfigExists() }
 
   init() {
     // different from the default build output structure
     this.task.dest = path.join(cds.root, cds.env.build.target !== '.' ? cds.env.build.target : 'gen', 'typer')
+  }
+
+  get #modelDirectoryName () {
+    // FIXME: dynamically retrieve the model directory name from tsconfig.
+    // This would require us to be able to consume jsonc, as tsconfigs can contain comments.
+    return '@cds-models'
   }
 
   async build() {
@@ -21,15 +29,19 @@ cds.build?.register?.('typer', class TyperBuildPlugin extends cds.build.Plugin {
         .map(async file => {
           const filePath = path.join(dir, file)
           if ((await stat(filePath)).isDirectory()) {
-            rmTsFiles(filePath)
+            return rmTsFiles(filePath)
           } else if (file.endsWith('.ts')) {
             fs.unlinkSync(filePath)
           }
         })
     )
 
-    const buildDirCdsModels = path.join(this.task.dest, '@cds-models')
-    await exec(`tsc --outDir ${this.task.dest}`)
+    const buildDirCdsModels = path.join(this.task.dest, this.#modelDirectoryName)
+    try {
+      await exec(`tsc --outDir ${this.task.dest}`)
+    } catch (e) {
+      throw new Error(e.stdout)
+    }
     await this.copy('@cds-models').to(buildDirCdsModels)
     rmTsFiles(buildDirCdsModels)
   }
