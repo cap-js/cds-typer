@@ -192,7 +192,7 @@ describe('Enums of typeof', () => {
         astw = new ASTWrapper(path.join(paths[2], 'index.ts'))
     })
     
-    test('it works', () => {
+    test('Enum References in Parameters', () => {
         // FIXME: returntypecheck currently broken: cds-typer can currently only deal with refs
         // that contain exactly one element. Type refs are of guise { ref: ['n.A', 'p'] }
         // so right now the property type reference is incorrectly resolved to n.A
