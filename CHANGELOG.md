@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Version 0.21.0 - TBD
 ### Changed
 - Types representing CDS events are now only `declare`d to avoid having to make their properties optional
+- Singular forms in generated _index.js_ files now contain a `.is_singular` property as marker for distinguished handling of singular and plural in the runtime
 
 ## Version 0.20.2 - 2024-04-29
 ### Fixed
