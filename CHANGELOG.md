@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Types representing CDS events are now only `declare`d to avoid having to make their properties optional
 - Singular forms in generated _index.js_ files now contain a `.is_singular` property as marker for distinguished handling of singular and plural in the runtime
 
+### Fixed
+- Entities ending with an "s" are no longer incorrectly truncated within `extends`-clauses
+
 ## Version 0.20.2 - 2024-04-29
 ### Fixed
 - Referring to a property's type in a function/ action parameter no longer refers to the enclosing entity
