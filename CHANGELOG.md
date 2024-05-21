@@ -5,6 +5,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.21.0 - TBD
+### Added
+- Added `IEEE754Compatible` flag which, when set to `true`, generates decimal fields as `(number | string)` instead of `number`. This flag will be removed in the long run
+
 ### Changed
 - Types representing CDS events are now only `declare`d to avoid having to make their properties optional
 - Singular forms in generated _index.js_ files now contain a `.is_singular` property as marker for distinguished handling of singular and plural in the runtime
