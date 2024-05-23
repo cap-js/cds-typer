@@ -42,17 +42,17 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
     return '@cds-models'
   }
 
-  createBuildTSConfig () {
-    if (fs.existsSync(BUILD_CONFIG)) return
-    const tsConfig = {
-      'extends': './tsconfig.json',
-      'compilerOptions': {
-        'outDir': 'gen'
-      },
-      'exclude': ['gen', 'app']
-    }
-    fs.writeFileSync(BUILD_CONFIG, JSON.stringify(tsConfig, null, 2))
-  }
+  // createBuildTSConfig () {
+  //   if (fs.existsSync(BUILD_CONFIG)) return
+  //   const tsConfig = {
+  //     'extends': './tsconfig.json',
+  //     'compilerOptions': {
+  //       'outDir': 'gen'
+  //     },
+  //     'exclude': ['gen', 'app']
+  //   }
+  //   fs.writeFileSync(BUILD_CONFIG, JSON.stringify(tsConfig, null, 2))
+  // }
 
   async #runCdsTyper () {
     DEBUG?.('running cds-typer')
@@ -89,12 +89,10 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
     await rmFiles(this.task.dest, ['.js', '.ts'])
 
     try {
-      if (buildConfigExists()) {
-        await this.#buildWithConfig()
-      }
-      else {
-        await this.#buildWithoutConfig()
-      }
+      await (buildConfigExists() 
+        ? this.#buildWithConfig() 
+        : this.#buildWithoutConfig()
+      )
     } catch (error) {
       throw error.stdout
         ? new Error(error.stdout)
