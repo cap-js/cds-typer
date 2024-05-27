@@ -6,7 +6,7 @@ const exec = util.promisify(require('child_process').exec)
 
 const { fs, path } = cds.utils
 const DEBUG = cds.debug('cli|build')
-const BUILD_CONFIG = 'tsconfig.build.json'
+const BUILD_CONFIG = 'tsconfig.cdsbuild.json'
 
 /**
  * Check if a tsconfig file exists.
