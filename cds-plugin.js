@@ -79,7 +79,7 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
 
     async #runCdsTyper () {
         DEBUG?.('running cds-typer')
-        await exec('npx @cap-js/cds-typer "*" --outputDirectory @cds-models')
+        await exec(`npx @cap-js/cds-typer "*" --outputDirectory ${this.#modelDirectoryName}`)
     }
 
     async #buildWithConfig () {
