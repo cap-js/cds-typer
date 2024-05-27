@@ -83,7 +83,6 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
     }
 
     async #buildWithConfig () {
-    // FIXME: this is currently unused. We'd expect users to have a tsconfig.build.json,
     // possibly referencing their tsconfig.json via "extends", specifying the "compilerOptions.outDir" and
     // manually adding irrelevant folders (read: gen/ and app/) to the "exclude" array.
         DEBUG?.(`building with config ${BUILD_CONFIG}`)
