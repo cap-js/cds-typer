@@ -51,10 +51,8 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
     static taskDefaults = { src: '.' }
     static hasTask() { return tsConfigExists() }
 
-    // FIXME: hack to make sure dk does not complain about .priority != 1 on initial check, but runs after nodejs plugin regardless
-    // replace with just "return 0" asap
-    #priority = 1
-    get priority() { return this.#priority-- }
+    // lower priority than the nodejs task
+    get priority() { return -1 }
 
     get #appFolder () { return cds?.env?.folders?.app ?? 'app' }
 
