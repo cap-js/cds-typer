@@ -74,7 +74,6 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
     }
 
     init() {
-    // different from the default build output structure
         this.task.dest = path.join(cds.root, 'gen', 'srv')
     }
 
