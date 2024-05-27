@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Version 0.21.0 - TBD
 ### Added
 - Added `IEEE754Compatible` flag which, when set to `true`, generates decimal fields as `(number | string)` instead of `number`. This flag will be removed in the long run
+- Added a static `.kind` property for entities and types, which contains `'entity'` or `'type'` respectively
 
 ### Changed
 - Types representing CDS events are now only `declare`d to avoid having to make their properties optional

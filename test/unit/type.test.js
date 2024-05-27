@@ -35,4 +35,23 @@ describe('type Definitions', () => {
         expect(astw.tree.find(def => def.name === 'Refs')).toBeFalsy()
         expect(astw.tree.find(def => def.name === 'Ref_')).toBeFalsy()
     })
+
+    test('Type Has static .kind = "type" Property', async () => {
+        const members = astw.tree.find(def => def.name === '_PointsAspect').body[0].members
+        const kind = members.find(member => member.name === 'kind')
+        expect(kind).toBeTruthy()
+        expect(check.isStaticMember(kind)).toBeTruthy()
+        expect(check.isReadonlyMember(kind)).toBeTruthy()
+        expect(kind.initializer).toBe('type')
+    })
+
+    test('Entity Has static .kind = "entity" Property', async () => {
+        // FIXME: this test case might fit better elsewhere
+        const members = astw.tree.find(def => def.name === '_PersonAspect').body[0].members
+        const kind = members.find(member => member.name === 'kind')
+        expect(kind).toBeTruthy()
+        expect(check.isStaticMember(kind)).toBeTruthy()
+        expect(check.isReadonlyMember(kind)).toBeTruthy()
+        expect(kind.initializer).toBe('entity')
+    })
 })
