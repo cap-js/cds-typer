@@ -21,6 +21,7 @@ module.exports = [
             'constructor-super': 'error',
             'for-direction': 'error',
             'getter-return': 'error',
+            'linebreak-style': [ 'error', 'unix' ],
             'no-async-promise-executor': 'error',
             'no-await-in-loop': 'error',
             'no-class-assign': 'error',
