@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 - Entities ending with an "s" are no longer incorrectly truncated within `extends`-clauses
+- Entity names prefixed with their own namespace (e.g. `Name.Name`, `Name.NameAttachments`) are not stripped of their name prefix
 
 ## Version 0.20.2 - 2024-04-29
 ### Fixed
