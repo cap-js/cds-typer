@@ -14,6 +14,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Singular forms in generated _index.js_ files now contain a `.is_singular` property as marker for distinguished handling of singular and plural in the runtime
 - Parameters passed to the CLI now take precedence over configuration contained in the `typer` section of `cds.env`
 
+### Fixed
+- Entities ending with an "s" are no longer incorrectly truncated within `extends`-clauses
+- Entity names prefixed with their own namespace (e.g. `Name.Name`, `Name.NameAttachments`) are not stripped of their name prefix
+
 ## Version 0.20.2 - 2024-04-29
 ### Fixed
 - Referring to a property's type in a function/ action parameter no longer refers to the enclosing entity

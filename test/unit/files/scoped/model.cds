@@ -1,4 +1,4 @@
-namespace scoped;
+namespace Name;
 
 entity Name.Something {
     key something: String;
