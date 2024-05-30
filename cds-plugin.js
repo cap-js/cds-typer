@@ -3,6 +3,7 @@ const { normalize } = require('node:path')
 const cds = require('@sap/cds')
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
+const typer = require('./lib/compile')
 
 const { fs, path } = cds.utils
 const DEBUG = cds.debug('cli|build')
@@ -77,7 +78,7 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
 
     async #runCdsTyper () {
         DEBUG?.('running cds-typer')
-        await exec(`npx @cap-js/cds-typer "*" --outputDirectory ${this.#modelDirectoryName}`)
+        await typer.compileFromFile('*', { outputDirectory: this.#modelDirectoryName })
     }
 
     async #buildWithConfig () {
