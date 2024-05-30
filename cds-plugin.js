@@ -72,7 +72,7 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
     }
 
     init() {
-        this.task.dest = path.join(cds.root, 'gen', 'srv')
+        this.task.dest = path.join(cds.root, cds.env.build.target, cds.env.folders.srv)
     }
 
     async #runCdsTyper () {
@@ -92,7 +92,7 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
         // this will include gen/ that was created by the nodejs task
         // _within_ the project directory. So we need to remove it afterwards.
         await exec(`npx tsc --outDir ${this.task.dest}`)
-        rmDirIfExists(path.join(this.task.dest, 'gen'))
+        rmDirIfExists(path.join(this.task.dest, cds.env.build.target))
         rmDirIfExists(path.join(this.task.dest, this.#appFolder))
     }
 
