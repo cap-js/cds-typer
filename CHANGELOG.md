@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.21.0 - TBD
+## Version 0.22.0 - TBD
+
+## Version 0.21.0 - 2024-05-31
 ### Added
 - Added `IEEE754Compatible` flag which, when set to `true`, generates decimal fields as `(number | string)` instead of `number`. This flag will be removed in the long run
 - Added plugin to `cds build` TypeScript projects. Can be explicitly called using `cds build --for typescript`
