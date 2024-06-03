@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.22.0 - TBD
 
+## Version 0.21.1 - 2024-06-03
+### Fixed
+- Added missing _cds-plugin.js_ to exported files to properly enable calling `cds build --for typescript`
+
+
 ## Version 0.21.0 - 2024-05-31
 ### Added
 - Added `IEEE754Compatible` flag which, when set to `true`, generates decimal fields as `(number | string)` instead of `number`. This flag will be removed in the long run
