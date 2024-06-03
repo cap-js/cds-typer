@@ -67,7 +67,7 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
             const directory = alias.match(/(?:\.\/)?(.*)\/\*\/index\.ts/)[1]
             return normalize(directory)  // could contain forward slashes in tsconfig.json
         } catch {
-            DEBUG?.('tsconfig.json not found, not parsable, or unconclusive. Using default model directory name')
+            DEBUG?.('tsconfig.json not found, not parsable, or inconclusive. Using default model directory name')
         }
         return '@cds-models'
     }
