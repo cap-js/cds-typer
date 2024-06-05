@@ -108,10 +108,7 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
     }
 
     async build() {
-        if (!isAtLeastCds8) {
-            DEBUG?.('Skipping typescript build task because it requires @sap/cds-dk version >= 8.0.0')
-            return
-        }
+        if (!isAtLeastCds8) throw new Error('typescript build task requires @sap/cds-dk version >= 8.0.0')
 
         await this.#runCdsTyper()
         const buildDirCdsModels = path.join(this.task.dest, this.#modelDirectoryName)
