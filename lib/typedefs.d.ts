@@ -63,7 +63,7 @@ export module visitor {
         propertiesOptional: boolean,
         /**
          * `inlineDeclarations = 'structured'` -> @see {@link inline.StructuredInlineDeclarationResolver}
-         * `inlineDeclarations = 'flat'` -> @see inline.FlatInlineDeclarationResolver
+         * `inlineDeclarations = 'flat'` -> @see {@link inline.FlatInlineDeclarationResolver}
          */
         inlineDeclarations: 'flat' | 'structured',
     }
