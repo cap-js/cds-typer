@@ -83,6 +83,11 @@ module.exports = [
             '@stylistic/js/quotes': ['error', 'single'],
             '@stylistic/js/indent': ['error', 4],
             '@stylistic/js/semi': ['error', 'never', { 'beforeStatementContinuationChars': 'always'}],
+            'jsdoc/require-hyphen-before-param-description': ['error', 'always'],
+            'jsdoc/require-returns-type': 'off',
+            'jsdoc/require-returns-description': 'off',
+            'jsdoc/require-param-description': 'off',  // should be warn
+            'jsdoc/require-returns': 'off', // lsp can infer this most of the time, turn back on for doc extraction
         }
     }
 ]
