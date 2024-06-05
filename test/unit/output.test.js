@@ -101,11 +101,8 @@ describe('Compilation', () => {
     })
 
     describe('Builtin Types', () => {
-        let astw
-
-        beforeAll(async () => astw = (await prepareUnitTest('builtins/model.cds', locations.testOutput('output_test/builtin'))).astw)
-
-        test('Primitives', () => {
+        test('Primitives', async () => {
+            const astw = (await prepareUnitTest('builtins/model.cds', locations.testOutput('output_test/builtin'))).astw
             expect(astw.exists('_EAspect', 'uuid', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
             expect(astw.exists('_EAspect', 'str', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
             expect(astw.exists('_EAspect', 'bin', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
@@ -123,6 +120,38 @@ describe('Compilation', () => {
             expect(astw.exists('_EAspect', 'integer64', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
             expect(astw.exists('_EAspect', 'dec', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
             expect(astw.exists('_EAspect', 'doub', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
+            expect(astw.exists('_EAspect', 'd', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsDate')]))).toBeTruthy()
+            expect(astw.exists('_EAspect', 't', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTime')]))).toBeTruthy()
+            expect(astw.exists('_EAspect', 'dt', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsDateTime')]))).toBeTruthy()
+            expect(astw.exists('_EAspect', 'ts', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTimestamp')]))).toBeTruthy()
+        })
+
+        test('IEEE754', async () => {
+            // nothing should change compared to the previous test, except for the type of 'dec' and 'doub'
+            
+            // (number | string)
+            const ieee754 = m => check.isParenthesizedType(m, st => check.isUnionType(st, [check.isNumber, check.isString]))
+
+            const astw = (await prepareUnitTest('builtins/model.cds', locations.testOutput('output_test/builtin'), {
+                typerOptions: { IEEE754Compatible: true }
+            })).astw
+            expect(astw.exists('_EAspect', 'uuid', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
+            expect(astw.exists('_EAspect', 'str', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
+            expect(astw.exists('_EAspect', 'bin', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
+            // expect(astw.exists('_EAspect', 'vec', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
+            expect(astw.exists('_EAspect', 'lstr', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
+            expect(astw.exists('_EAspect', 'lbin', m => check.isUnionType(m.type, [
+                st => st.full === 'Buffer',
+                check.isString
+            ]))).toBeTruthy()
+            expect(astw.exists('_EAspect', 'integ', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
+            expect(astw.exists('_EAspect', 'uint8', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
+            expect(astw.exists('_EAspect', 'int16', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
+            expect(astw.exists('_EAspect', 'int32', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
+            expect(astw.exists('_EAspect', 'int64', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
+            expect(astw.exists('_EAspect', 'integer64', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
+            expect(astw.exists('_EAspect', 'dec', m => check.isNullable(m.type, [ieee754]))).toBeTruthy()
+            expect(astw.exists('_EAspect', 'doub', m => check.isNullable(m.type, [ieee754]))).toBeTruthy()
             expect(astw.exists('_EAspect', 'd', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsDate')]))).toBeTruthy()
             expect(astw.exists('_EAspect', 't', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTime')]))).toBeTruthy()
             expect(astw.exists('_EAspect', 'dt', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsDateTime')]))).toBeTruthy()

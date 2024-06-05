@@ -4,7 +4,26 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.21.0 - TBD
+## Version 0.22.0 - TBD
+
+## Version 0.21.1 - 2024-06-03
+### Fixed
+- Added missing _cds-plugin.js_ to exported files to properly enable calling `cds build --for typescript`
+
+
+## Version 0.21.0 - 2024-05-31
+### Added
+- Added `IEEE754Compatible` flag which, when set to `true`, generates decimal fields as `(number | string)` instead of `number`. This flag will be removed in the long run
+- Added plugin to `cds build` TypeScript projects. Can be explicitly called using `cds build --for typescript`
+
+### Changed
+- Types representing CDS events are now only `declare`d to avoid having to make their properties optional
+- Singular forms in generated _index.js_ files now contain a `.is_singular` property as marker for distinguished handling of singular and plural in the runtime
+- Parameters passed to the CLI now take precedence over configuration contained in the `typer` section of `cds.env`
+
+### Fixed
+- Entities ending with an "s" are no longer incorrectly truncated within `extends`-clauses
+- Entity names prefixed with their own namespace (e.g. `Name.Name`, `Name.NameAttachments`) are not stripped of their name prefix
 
 ## Version 0.20.2 - 2024-04-29
 ### Fixed
@@ -17,7 +36,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Version 0.20.0 - 2024-04-23
 ### Added
 - Types for actions and functions now expose a `.kind` property which holds the string `'function'` or `'action'` respectively
-- Added the CdsDate, CdsDateTime, CdsTime, CdsTimestamp types, which are each represented as a `string`.
+- Added the `CdsDate`, `CdsDateTime`, `CdsTime`, `CdsTimestamp` types, which are each represented as a `string`.
 - Plural types can now also contain an optional numeric `$count` property
 
 ### Changed
