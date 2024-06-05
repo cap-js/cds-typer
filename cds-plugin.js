@@ -59,7 +59,7 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
     static hasTask() { return tsConfigExists() }
 
     // lower priority than the nodejs task
-    get priority() { return  -1 }
+    get priority() { return -1 }
 
     get #appFolder () { return cds?.env?.folders?.app ?? 'app' }
 
