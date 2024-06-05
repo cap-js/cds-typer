@@ -4,6 +4,7 @@ module.exports = [
         ignores: ['**/test/integration/**'],
     },
     require('@eslint/js').configs.recommended,
+    require('eslint-plugin-jsdoc').configs['flat/recommended-typescript-flavor-error'],
     {
         languageOptions: {
             ecmaVersion: 'latest',
