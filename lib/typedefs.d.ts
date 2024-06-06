@@ -31,6 +31,18 @@ export module resolver {
         imports: Path[]
         inner: TypeResolveInfo
     }
+
+    // TODO: this will be completely replaced by EntityInfo
+    export type Untangled = {
+        // scope in case the entity is wrapped in another entity `a.b.C.D.E.f.g` -> `[C,D]`
+        scope: string[],
+        // name name of the leaf entity `a.b.C.D.E.f.g` -> `E`
+        name: string,
+        // property the property access path `a.b.C.D.E.f.g` -> `[f,g]`
+        property: string[],
+        // namespace the cds namespace of the entity `a.b.C.D.E.f.g` -> `a.b`
+        namespace: Path
+    }
 }
 
 export module util {
