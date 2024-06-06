@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.22.0 - TBD
+
+## Version 0.21.2 - 2024-06-06
 ### Fixed
 - The typescript build task will no longer attempt to run unless at least cds 8 is installed
 
