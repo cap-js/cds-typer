@@ -47,6 +47,12 @@ const rmFiles = async (dir, exts) => fs.existsSync(dir)
     )
     : undefined
 
+// FIXME: remove once cds7 has been phased out
+if (!cds?.version || cds.version < '8.0.0') {
+    DEBUG?.('typescript build task requires @sap/cds-dk version >= 8.0.0, skipping registration')
+    return
+}
+
 // requires @sap/cds-dk version >= 7.5.0
 cds.build?.register?.('typescript', class extends cds.build.Plugin {
     static taskDefaults = { src: '.' }
