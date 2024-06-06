@@ -4,6 +4,7 @@ module.exports = [
         ignores: ['**/test/integration/**'],
     },
     require('@eslint/js').configs.recommended,
+    require('eslint-plugin-jsdoc').configs['flat/recommended-typescript-flavor-error'],
     {
         languageOptions: {
             ecmaVersion: 'latest',
@@ -82,6 +83,11 @@ module.exports = [
             '@stylistic/js/quotes': ['error', 'single'],
             '@stylistic/js/indent': ['error', 4],
             '@stylistic/js/semi': ['error', 'never', { 'beforeStatementContinuationChars': 'always'}],
+            'jsdoc/require-hyphen-before-param-description': ['error', 'always'],
+            'jsdoc/require-returns-type': 'off',
+            'jsdoc/require-returns-description': 'off',
+            'jsdoc/require-param-description': 'warn',
+            'jsdoc/require-returns': 'off', // lsp can infer this most of the time, turn back on for doc extraction
         }
     }
 ]

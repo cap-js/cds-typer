@@ -21,7 +21,7 @@ const tsConfigExists = () => fs.existsSync('tsconfig.json')
 const buildConfigExists = () => fs.existsSync(BUILD_CONFIG)
 
 /**
- * @param {string} dir The directory to remove.
+ * @param {string} dir - The directory to remove.
  */
 const rmDirIfExists = dir => {
     try { fs.rmSync(dir, { recursive: true }) } catch { /* ignore */ }
@@ -29,8 +29,8 @@ const rmDirIfExists = dir => {
 
 /**
  * Remove files with given extensions from a directory recursively.
- * @param {string} dir The directory to start from.
- * @param {string[]} exts The extensions to remove.
+ * @param {string} dir - The directory to start from.
+ * @param {string[]} exts - The extensions to remove.
  * @returns {Promise<void>}
  */
 const rmFiles = async (dir, exts) => fs.existsSync(dir) 
@@ -46,6 +46,12 @@ const rmFiles = async (dir, exts) => fs.existsSync(dir)
             })
     )
     : undefined
+
+// FIXME: remove once cds7 has been phased out
+if (!cds?.version || cds.version < '8.0.0') {
+    DEBUG?.('typescript build task requires @sap/cds-dk version >= 8.0.0, skipping registration')
+    return
+}
 
 // requires @sap/cds-dk version >= 7.5.0
 cds.build?.register?.('typescript', class extends cds.build.Plugin {
