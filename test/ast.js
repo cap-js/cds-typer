@@ -21,7 +21,8 @@ const kinds = {
     Keyword: 'keyword',
     VariableStatement: 'variableStatement',
     TypeAliasDeclaration: 'typeAliasDeclaration',
-    ModuleDeclaration: 'moduleDeclaration'
+    ModuleDeclaration: 'moduleDeclaration',
+    CallExpression: 'callExpression'
 }
 
 /*
@@ -39,7 +40,7 @@ function resolveKeyword(node) {
     // the TS AST packs a lot of information into keyword tokens, depending on their
     // actual keyword. We therefore try to resolve all the intersting fields
     // and then delete the ones that have not been filled in.
-   return Object.fromEntries(Object.entries({
+    return Object.fromEntries(Object.entries({
         keyword: ts.SyntaxKind[node.kind]?.replace('Keyword', '').toLowerCase(),
         nodeType: kinds.Keyword,
         name: visit(node.name),
@@ -59,6 +60,7 @@ const visitors = [
     // so it has to be added after more specific checks.
     [ts.isModuleDeclaration, visitModuleDeclaration],
     [ts.isObjectLiteralExpression, visitObjectLiteralExpression],
+    [ts.isCallExpression, visitCallExpression],
     [ts.isClassDeclaration, visitClassDeclaration],
     [ts.isFunctionDeclaration, visitFunctionDeclaration],
     [ts.isVariableStatement, visitVariableStatement],
@@ -77,12 +79,24 @@ const visitors = [
     [n => [ts.SyntaxKind.TrueKeyword, ts.SyntaxKind.FalseKeyword].includes(n.kind), visitBooleanLiteral],
     [n => n.kind === ts.SyntaxKind.NumericLiteral, visitNumericLiteral],
     [isKeyword, resolveKeyword],
+    // eslint-disable-next-line no-console
     [() => true, node => console.error(`unhandled node type: ${JSON.stringify(node, null, 2)}`)]
 ]
 
 /**
+ * @param {ts.CallExpression} node
+ */
+function visitCallExpression(node) {
+    return {
+        nodeType: kinds.CallExpression,
+        expression: visit(node.expression),
+        arguments: node.arguments.map(visit)
+    }
+}
+
+/**
  * @typedef {{name: string, body: any[]}} ModuleDeclaration
- * @param node {ts.ModuleDeclaration}
+ * @param {ts.ModuleDeclaration} node
  * @returns {ModuleDeclaration}
  */
 function visitModuleDeclaration(node) {
@@ -263,6 +277,7 @@ function visitFunctionDeclaration(node) {
 
 /** @param node {ts.Node} */
 function errorHandler(node) {
+    // eslint-disable-next-line no-console
     console.error(`unhandled node type ${node.kind}`)
 }
 
@@ -275,8 +290,8 @@ function visit(node) {
 
 class ASTWrapper {
     constructor(file) {
-        const program = ts.createProgram([file], { allowJs: true });
-        const sourceFile = program.getSourceFile(file);
+        const program = ts.createProgram([file], { allowJs: true })
+        const sourceFile = program.getSourceFile(file)
         this.tree = []
         sourceFile.forEachChild(c => { 
             const slim = visit(c)
@@ -387,7 +402,7 @@ class JSASTWrapper {
     }
 
     constructor(code) {
-        this.programm = acorn.parse(code, { ecmaVersion: 'latest'})
+        this.program = acorn.parse(code, { ecmaVersion: 'latest'})
     }
 
     exportsAre(expected) {
@@ -402,7 +417,7 @@ class JSASTWrapper {
     }
 
     getExports() {
-        return this.exports ??= this.programm.body.filter(node => {
+        return this.exports ??= this.program.body.filter(node => {
             if (node.type !== 'ExpressionStatement') return false
             if (node.expression.left.type !== 'MemberExpression') return false
             const { object, property } = node.expression.left.object
@@ -432,12 +447,19 @@ const checkFunction = (fnNode, {callCheck, parameterCheck, returnTypeCheck, modi
 }
 
 const checkKeyword = (node, expected) => node?.keyword === expected
+const checkNodeType = (node, expected) => node?.nodeType === expected
 
 const check = {
     isString: node => checkKeyword(node, 'string'),
     isNumber: node => checkKeyword(node, 'number'),
     isBoolean: node => checkKeyword(node, 'boolean'),
+    /**
+     * @param {any} node
+     * @param {[(args: object[]) => boolean]} of
+     */
+    isArray: (node, of = undefined) => node?.full === 'Array' && (!of || of(node.args)),
     isAny: node => checkKeyword(node, 'any'),
+    isVoid: node => checkKeyword(node, 'void'),
     isStatic: node => checkKeyword(node, 'static'),
     isIndexedAccessType: node => checkKeyword(node, 'indexedaccesstype'),
     isNull: node => checkKeyword(node, 'literaltype') && checkKeyword(node.literal, 'null'),
@@ -445,6 +467,42 @@ const check = {
         && of.reduce((acc, predicate) => acc && node.subtypes.some(st => predicate(st)), true),
     isNullable: (node, of = []) => check.isUnionType(node, of.concat([check.isNull])),
     isLiteral: (node, literal = undefined) => checkKeyword(node, 'literaltype') && (literal === undefined || node.literal === literal),
+    isTypeReference: (node, full = undefined) => checkNodeType(node, 'typeReference') && (!full || node.full === full),
+    isTypeAliasDeclaration: node => checkNodeType(node, 'typeAliasDeclaration'),
+    isCallExpression: (node, expression) => checkNodeType(node, 'callExpression') && (!expression || node.expression === expression),
+    isPropertyAccessExpression: (node, expression, name) => checkKeyword(node, 'propertyaccessexpression') && (!expression || node.expression === expression) && (!name || node.name === name),
+}
+
+/**
+ * @param {object} node - the node to check (class definition)
+ * @param {string[]} ancestors - fully qualified names of ancestors
+ * @returns {boolean} - true iff node extends all ancestors
+ */
+const checkInheritance = (node, ancestors) => {
+    function checkPropertyAccessExpression (fq, node) {
+        if (check.isPropertyAccessExpression(node)) {
+            const [from, property] = fq.split('.')
+            if (check.isPropertyAccessExpression(node, from, property)) return true
+            if (inherits(fq, node.arguments)) return true
+        }
+        return false
+    }
+
+    function inherits (name, [ancestor] = []) {
+        if (!ancestor) return false
+        // A: B, C, D
+        if (check.isCallExpression(ancestor)) {
+            if (check.isCallExpression(ancestor, name)) return true
+            if (inherits(name, ancestor.arguments)) return true
+            // A: _.B, _.C, _.D
+            const isPropertyAccess = checkPropertyAccessExpression(name, ancestor.expression)
+            if (isPropertyAccess) return isPropertyAccess
+        }
+        // Entity (innermost)
+        return checkPropertyAccessExpression(name, ancestor)
+    }
+    const ancestry = [node.heritage[0].types[0].expression]
+    return ancestors.reduce((acc, ancestor) => acc && inherits(ancestor, ancestry), true)
 }
 
 
@@ -452,5 +510,7 @@ module.exports = {
     ASTWrapper,
     JSASTWrapper,
     checkFunction,
+    checkInheritance,
+    checkKeyword,
     check: check
 }

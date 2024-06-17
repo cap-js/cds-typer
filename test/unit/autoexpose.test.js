@@ -1,18 +1,14 @@
 'use strict'
 
-const fs = require('fs').promises
-const path = require('path')
-const { ASTWrapper } = require('../ast')
-const { locations, cds2ts } = require('../util')
-
-const dir = locations.testOutput('autoexpose_test')
+const { describe, beforeAll, test, expect } = require('@jest/globals')
+const { locations, prepareUnitTest } = require('../util')
 
 describe('Autoexpose', () => {
-    beforeEach(async () => await fs.unlink(dir).catch(() => {}))
+    let ast
+
+    beforeAll(async () => ast = (await prepareUnitTest('autoexpose/service.cds', locations.testOutput('autoexpose_test'))).astw.tree)
 
     test('Autoexposed Composition Target Present in Service', async () => {
-        const paths = await cds2ts('autoexpose/service.cds', { outputDirectory: dir, inlineDeclarations: 'structured' })
-        const ast = new ASTWrapper(path.join(paths[1], 'index.ts')).tree
         expect(ast.find(n => n.name === 'Books')).toBeTruthy()
     })
 })

@@ -4,7 +4,65 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.16.0 - TBD
+## Version 0.21.0 - TBD
+
+## Version 0.20.2 - 2024-04-29
+### Fixed
+- Referring to a property's type in a function/ action parameter no longer refers to the enclosing entity
+
+## Version 0.20.1 - 2024-04-24
+### Fixed
+- Void actions no longer crash the type generation process
+
+## Version 0.20.0 - 2024-04-23
+### Added
+- Types for actions and functions now expose a `.kind` property which holds the string `'function'` or `'action'` respectively
+- Added the CdsDate, CdsDateTime, CdsTime, CdsTimestamp types, which are each represented as a `string`.
+- Plural types can now also contain an optional numeric `$count` property
+
+### Changed
+- Empty `.actions` properties and operations without parameters are now typed as `Record<never, never>` to make it clear they contain nothing and also to satisfy overzealous linters
+
+### Fixed
+- Composition of aspects now properly resolve implicit `typeof` references in their properties
+- Importing an enum into a service will now generate an alias to the original enum, instead of incorrectly duplicating the definition
+- Returning entities from actions/ functions and using them as parameters will now properly use the singular inflection instead of returning an array thereof
+- Aspects are now consistently named and called in their singular form
+- Only detect inflection clash if singular and plural share the same namespace. This also no longer reports `sap.common` as erroneous during type creation 
+
+## Version 0.19.0 - 2024-03-28
+### Added
+- Support for `cds.Vector`, which will be represented as `string`
+
+## Version 0.18.2 - 2024-03-21
+### Fixed
+- Resolving `@sap/cds` will now look in the CWD first to ensure a consistent use the same CDS version across different setups
+- Types of function parameters starting with `cds.` are not automatically considered builtin anymore and receive a more thorough check against an allow-list
+
+
+## Version 0.18.1 - 2024-03-13
+### Fix
+- Remove faulty plural for CDS `type` definitions from the generated _index.js_ files
+
+## Version 0.18.0 - 2024-03-12
+### Added
+- Improved support for projections, including projections on inline definitions, and on views, as well as support for explicit exclusion and selection of properties
+
+### Changed
+- [breaking] CDS `type` definitions will not be inflected. Whatever inflection you define them in will be assumed treated as a singular form and will not receive a plural form anymore
+
+## Version 0.17.0 - 2024-03-05
+### Fixed
+- Fixed a bug where refering to an externally defined enum via the `typeof` syntax would crash the type generation
+
+## Version 0.16.0 - 2024-02-01
+### Changed
+- Changed default log level from `NONE` to `ERROR`. See the doc to manually pass in another log level for cds-typer runs
+- Name collisions between automatically generated foreign key fields (`.…_ID`, `.…_code`, etc.) with explicitly named fields will now raise an error
+- Generate CDS types that are actually structured types as if they were entities. This allows the correct representation of mixing aspects and types in CDS inheritance, and also fixes issues with inline enums in such types
+
+### Fixed
+- Externally defined enums can now be used as parameter types in actions
 
 ## Version 0.15.0 - 2023-12-21
 ### Added

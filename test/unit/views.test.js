@@ -1,35 +1,30 @@
 'use strict'
 
-const fs = require('fs').promises
-const path = require('path')
-const cds2ts = require('../../lib/compile')
-const { ASTWrapper, check } = require('../ast')
-const { locations } = require('../util')
-
-const dir = locations.testOutput('views_test')
+const { beforeAll, describe, test, expect } = require('@jest/globals')
+const { check } = require('../ast')
+const { locations, prepareUnitTest } = require('../util')
 
 describe('View Entities', () => {
     let astw
 
-    beforeEach(async () => await fs.unlink(dir).catch(() => {}))
-    beforeAll(async () => {
-        const paths = await cds2ts
-            .compileFromFile(locations.unit.files('views/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
-        astw = new ASTWrapper(path.join(paths[1], 'index.ts'))
-    })
+    beforeAll(async () => astw = (await prepareUnitTest('views/model.cds', locations.testOutput('views_test'))).astw)
 
-    test('View Entity Present', () => {
-        astw.exists('_FooViewAspect')
-    })
+    test('View Entity Present', () => expect(astw.exists('_FooViewAspect')).toBeTruthy())
 
     test('Expected Properties Present', () => {
-        astw.exists('_FooViewAspect', 'id', ({type}) => check.isNullable(type, [check.isNumber]))
-        astw.exists('_FooViewAspect', 'code', ({type}) => check.isNullable(type, [check.isString]))
+        expect(astw.exists('_FooViewAspect', 'id', ({type}) => check.isNullable(type, [check.isNumber]))).toBeTruthy()
+        expect(astw.exists('_FooViewAspect', 'code', ({type}) => check.isNullable(type, [check.isString]))).toBeTruthy()
         // including alias
-        astw.exists('_FooViewAspect', 'alias', ({type}) => check.isNullable(type, [check.isString]))
+        expect(astw.exists('_FooViewAspect', 'alias', ({type}) => check.isNullable(type, [check.isString]))).toBeTruthy()
     })
 
-    test('Unselected Field Not Present', () => {
-        expect(() => astw.exists('_FooViewAspect', 'flag', ({type}) => check.isNullable(type, [check.isString]))).toThrow(Error)
+    test('Unselected Field Not Present', () => { expect(() => 
+        expect(astw.exists('_FooViewAspect', 'flag', ({type}) => check.isNullable(type, [check.isString]))).toThrow(Error)).toBeTruthy()
+    })
+
+    test('Combining * and Explicit Selection', () => { () => 
+        expect(astw.exists('_FooView2Aspect', 'id', ({type}) => check.isNullable(type, [check.isNumber]))).toBeTruthy()
+    expect(astw.exists('_FooView2Aspect', 'id2', ({type}) => check.isNullable(type, [check.isNumber]))).toBeTruthy()
+    expect(astw.exists('_FooView2Aspect', 'code', ({type}) => check.isNullable(type, [check.isString]))).toBeTruthy()
     })
 })

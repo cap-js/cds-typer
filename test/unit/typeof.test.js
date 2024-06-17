@@ -1,62 +1,56 @@
 'use strict'
 
-const fs = require('fs').promises
-const path = require('path')
-const cds2ts = require('../../lib/compile')
-const { ASTWrapper, check } = require('../ast')
-const { locations } = require('../util')
+const { describe, test, expect } = require('@jest/globals')
+const { check } = require('../ast')
+const { locations, prepareUnitTest } = require('../util')
 
-const dir = locations.testOutput('typeof')
-
-// compilation produces semantically complete Typescript
 describe('Typeof Syntax', () => {
-    beforeEach(async () => await fs.unlink(dir).catch(() => {})) //console.log('INFO', `Unable to unlink '${dir}' (${err}). This may not be an issue.`)
+    test('External', async () => {
+        const astw = (await prepareUnitTest('typeof/model.cds', locations.testOutput('typeof_structured_external'))).astw
+        expect(astw.exists('_BazAspect', 'ref', m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'status']))).toBeTruthy()
+    })
+
+
+    test('Deep Required', async () => {
+        const astw = (await prepareUnitTest('typeof/deep.cds', locations.testOutput('typeof_deep'))).astw
+        expect(astw.exists('_UserRoleAspect', 'users',
+            m => check.isTypeReference(m.type) && check.isIndexedAccessType(m.type.args.at(0)) && check.isLiteral(m.type.args.at(0).indexType, 'roles')
+        )).toBeTruthy()
+        expect(astw.exists('_UserRoleGroupAspect', 'users',
+            m => check.isNullable(m.type, [
+                st => check.isTypeReference(st) && check.isIndexedAccessType(st.args[0]) && check.isLiteral(st.args[0].indexType, 'roleGroups')
+            ]))).toBeTruthy()
+    })
 
     test('Structured', async () => {
-        const paths = await cds2ts
-            .compileFromFile(locations.unit.files('typeof/model.cds'), { outputDirectory: dir, inlineDeclarations: 'structured' })
-            // eslint-disable-next-line no-console
-            .catch((err) => console.error(err))
-        const ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
-        expect(ast.exists('_BarAspect', 'ref_a', 
+        const astw = (await prepareUnitTest('typeof/model.cds', locations.testOutput('typeof_structured'))).astw
+        expect(astw.exists('_BarAspect', 'ref_a', 
             m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'a'])
         )).toBeTruthy()
-        expect(ast.exists('_BarAspect', 'ref_b', 
+        expect(astw.exists('_BarAspect', 'ref_b', 
             m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'b'])
         )).toBeTruthy()
         // meh, this is not exactly correct, as I apparently did not retrieve the chained type accesses properly,
         // but it's kinda good enough
-        expect(ast.exists('_BarAspect', 'ref_c', 
+        expect(astw.exists('_BarAspect', 'ref_c', 
             m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'x'])
         )).toBeTruthy()
     })
 
     test('Flat', async () => {
-        const paths = await cds2ts
-            .compileFromFile(locations.unit.files('typeof/model.cds'), { outputDirectory: dir })
-            // eslint-disable-next-line no-console
-            .catch((err) => console.error(err))
-        const ast = new ASTWrapper(path.join(paths[1], 'index.ts'))
-        expect(ast.exists('_BarAspect', 'ref_a', 
-        m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'a'])
+        const astw = (await prepareUnitTest(
+            'typeof/model.cds',
+            locations.testOutput('typeof_flat'),
+            { typerOptions: { inlineDeclarations: 'flat' } }
+        )).astw
+        expect(astw.exists('_BarAspect', 'ref_a', 
+            m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'a'])
         )).toBeTruthy()
-        expect(ast.exists('_BarAspect', 'ref_b', 
-        m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'b'])
+        expect(astw.exists('_BarAspect', 'ref_b', 
+            m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'b'])
         )).toBeTruthy()
-        expect(ast.exists('_BarAspect', 'ref_c', 
-        m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'c_x'])
+        expect(astw.exists('_BarAspect', 'ref_c', 
+            m => check.isNullable(m.type, [st => check.isIndexedAccessType(st) && st.indexType.literal === 'c_x'])
         )).toBeTruthy()
-              /*
-                && m.type.members.length === 2
-                && m.type.members[0].name === 'a'
-                    && m.type.members[0].type.members.length === 2
-                    && m.type.members[0].type.members[0].name === 'b'
-                    && m.type.members[0].type.members[0].type.keyword === 'number'
-                    && m.type.members[0].type.members[1].name === 'c'
-                    && m.type.members[0].type.members[1].type.nodeType === 'typeReference'
-                    && m.type.members[0].type.members[1].type.args[0].full === 'Foo'
-                && m.type.members[1].name === 'y'
-                    && m.type.members[1].type.keyword === 'string'
-                */
     })
 })

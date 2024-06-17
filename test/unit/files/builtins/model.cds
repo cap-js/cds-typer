@@ -4,6 +4,7 @@ entity E {
     uuid: UUID;
     str: String;
     bin: Binary;
+    // vec: Vector(123);
     lstr: LargeString;
     lbin: LargeBinary;
     integ: Integer;
@@ -15,6 +16,7 @@ entity E {
     dec: Decimal;
     doub: Double;
     d: Date;
+    t: Time;
     dt: DateTime;
     ts: Timestamp;
 }

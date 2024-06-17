@@ -1,18 +1,16 @@
 'use strict'
 
-const fs = require('fs').promises
 const path = require('path')
-const cds2ts = require('../../lib/compile')
+const { describe, beforeAll, test, expect } = require('@jest/globals')
 const { ASTWrapper } = require('../ast')
-const { locations } = require('../util')
+const { locations, prepareUnitTest } = require('../util')
 
-const dir = locations.testOutput('draft_test')
 const draftable_ = (entity, ast) => ast.find(n => n.name === entity && n.members.find(({name}) => name === 'drafts'))
 const draftable = (entity, ast, plural = e => `${e}_`) => draftable_(entity, ast) && draftable_(plural(entity), ast)
 
 describe('bookshop', () => {
     test('Projections Up and Down', async () => {
-        const paths = await cds2ts.compileFromFile(locations.unit.files('draft/catalog-service.cds'), { outputDirectory: dir })
+        const paths = (await prepareUnitTest('draft/catalog-service.cds', locations.testOutput('bookshop_projection'))).paths
         const service = new ASTWrapper(path.join(paths[1], 'index.ts')).tree
         const model = new ASTWrapper(path.join(paths[2], 'index.ts')).tree
         
@@ -26,12 +24,7 @@ describe('bookshop', () => {
 describe('@odata.draft.enabled', () => {
     let ast
 
-    beforeAll(async () => {
-        await fs.unlink(dir).catch(() => {})
-        const paths = await cds2ts
-            .compileFromFile(locations.unit.files('draft/model.cds'), { outputDirectory: dir })
-        ast = new ASTWrapper(path.join(paths[1], 'index.ts')).tree
-    })
+    beforeAll(async () => ast = (await prepareUnitTest('draft/model.cds', locations.testOutput('draft_test'))).astw.tree)
 
     test('Direct Annotation', async () => expect(draftable('A', ast)).toBeTruthy())
 

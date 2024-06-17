@@ -1,4 +1,4 @@
-name: Unit Tests
+name: Tests
 
 on:
   pull_request:
@@ -8,7 +8,22 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  smoke-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+          node-version: 20
+
+    - name: Run Smoke Tests
+      run: |
+        npm install
+        npm run test:smoke  
+
+  unit-tests:
+    needs: smoke-tests # to avoid writing over each others output
     strategy:
       matrix:
         version: [20, 18]
@@ -24,9 +39,4 @@ jobs:
     - name: Run Unit Tests
       run: |
         npm install
-        npm run test
-
-    - name: Run Integration Tests
-      run: |
-        npm install
-        npm run test:integration
+        npm run test:unit
