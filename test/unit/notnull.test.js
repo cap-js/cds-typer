@@ -63,6 +63,39 @@ describe('Not Null', () => {
         })
     })
 
+    describe('cuid', () => {
+        test('Not Null', async () => {
+            // This checks the absence of a very specific bug (#219):
+            // Having an association to an entity that extended cuid caused
+            // the key to be nullable. It was not when it was not associated from anywhere.
+            // The root cause for this was the order in which entities were visited.
+            // Entities would sometimes modify the .isRefNotNull property of their referred
+            // Entitiy before/ after the referred entity was visited, which would lead to variying types.
+            // This cause mismatches in projections, where the key was correctly not nullable.
+            // So we need to test with two separate models here:
+            // A, where there is such an association, B, where there is none
+            // To ensure they behave identically.
+            const path = require('path')
+            /**
+             * @param {string} top - top level entity name
+             */
+            async function getTopLevelASTW (top) {
+                const topLevel = path.join(dir, top)
+                return (await prepareUnitTest(`notnull/nonnullablekeys/${top}.cds`, topLevel, {
+                    fileSelector: paths => paths.find(p => p.endsWith(topLevel))
+                })).astw
+            }
+
+            const astwA = await getTopLevelASTW('A')
+            const astwB = await getTopLevelASTW('B')
+
+            const cuidA = astwA.getAspectProperty('_cuidAspect', 'ID')
+            const cuidB = astwB.getAspectProperty('_cuidAspect', 'ID')
+
+            expect(check.isNullable(cuidA.type)).toBe(check.isNullable(cuidB.type))
+            expect(check.isString(cuidA.type)).toBe(check.isString(cuidB.type))
+        })
+    })
 
     
 })
