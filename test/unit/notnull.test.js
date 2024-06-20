@@ -76,6 +76,9 @@ describe('Not Null', () => {
             // A, where there is such an association, B, where there is none
             // To ensure they behave identically.
             const path = require('path')
+            /**
+             * @param {string} top - top level entity name
+             */
             async function getTopLevelASTW (top) {
                 const topLevel = path.join(dir, top)
                 return (await prepareUnitTest(`notnull/nonnullablekeys/${top}.cds`, topLevel, {
