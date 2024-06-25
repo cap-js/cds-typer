@@ -482,6 +482,7 @@ const check = {
     isLiteral: (node, literal = undefined) => checkKeyword(node, 'literaltype') && (literal === undefined || node.literal === literal),
     isTypeReference: (node, full = undefined) => checkNodeType(node, 'typeReference') && (!full || node.full === full),
     isTypeAliasDeclaration: node => checkNodeType(node, 'typeAliasDeclaration'),
+    isVariableDeclaration: node => checkNodeType(node, 'variableStatement'),
     isCallExpression: (node, expression) => checkNodeType(node, 'callExpression') && (!expression || node.expression === expression),
     isPropertyAccessExpression: (node, expression, name) => checkKeyword(node, 'propertyaccessexpression') && (!expression || node.expression === expression) && (!name || node.name === name),
 }
