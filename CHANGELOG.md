@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 - Declaring a type alias on an enum in cds now also exports it on value level in the resulting type 
 
+### Fixed
+- Plurals no longer have `is_singular` attached in the resulting .js files
+
+
 ## Version 0.22.0 - 2024-06-20
 ### Fixed
 - Fixed a bug where keys would sometimes inconsistently become nullable
