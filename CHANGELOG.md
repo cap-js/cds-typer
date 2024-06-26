@@ -5,8 +5,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.23.0 - TBD
+### Added
+- Declaring a type alias on an enum in cds now also exports it on value level in the resulting type 
+
 ### Fixed
 - Plurals no longer have `is_singular` attached in the resulting .js files
+
 
 ## Version 0.22.0 - 2024-06-20
 ### Fixed
