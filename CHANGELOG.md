@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 - Fixed a bug where keys would sometimes inconsistently become nullable
 
+### Changed
+- Logging now internally uses `cds.log` and pipes output into the `cds-typer` logger. Users now have to use the levels defined in [`cds.log.levels`](https://cap.cloud.sap/docs/node.js/cds-log#log-levels). The formerly valid levels `WARNING`, `CRITICAL`, and `NONE` are now deprecated and automatically mapped to valid levels for now.
+
 ## Version 0.21.2 - 2024-06-06
 ### Fixed
 - The typescript build task will no longer attempt to run unless at least cds 8 is installed
