@@ -1,7 +1,7 @@
 const fs = require('fs')
 // const { unlink } = require('fs').promises
 const path = require('path')
-const { error, warn } = require('../lib/logging')
+const { LOG } = require('../lib/logging')
 const { fail } = require('assert')
 const os = require('os')
 const typer = require('../lib/compile')
@@ -240,7 +240,7 @@ class TSParser {
             openScopes += line.match(/\{/g)?.length ?? 0
             openScopes -= line.match(/\}/g)?.length ?? 0
             if (openScopes < 0) {
-                error('Detected dangling closing brace.')
+                LOG.error('Detected dangling closing brace.')
             } else if (openScopes === 0) {
                 currentNamespace = namespaces.top
             }
@@ -272,7 +272,7 @@ class TSParser {
                 // Empty line.
                 // Catch in own case anyway to avoid logging in else case.
             } else {
-                warn(`unexpected line: ${line}`)
+                LOG.warn(`unexpected line: ${line}`)
             }
         }
         return { imports, namespaces }
