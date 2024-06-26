@@ -4,7 +4,18 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.22.0 - TBD
+## Version 0.23.0 - TBD
+### Fixed
+- Plurals no longer have `is_singular` attached in the resulting .js files
+
+## Version 0.22.0 - 2024-06-20
+### Fixed
+- Fixed a bug where keys would sometimes inconsistently become nullable
+
+### Changed
+- Logging now internally uses `cds.log` and pipes output into the `cds-typer` logger, which can be configured via `cds.env` in addition to explicitly passing a `--logLevel` parameter to CLI. Users now have to use the levels defined in [`cds.log.levels`](https://cap.cloud.sap/docs/node.js/cds-log#log-levels). The formerly valid levels `WARNING`, `CRITICAL`, and `NONE` are now deprecated and automatically mapped to valid levels for now.
+
+## Version 0.21.2 - 2024-06-06
 ### Fixed
 - The typescript build task will no longer attempt to run unless at least cds 8 is installed
 

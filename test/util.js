@@ -1,7 +1,7 @@
 const fs = require('fs')
 // const { unlink } = require('fs').promises
 const path = require('path')
-const { Logger } = require('../lib/logging')
+const { LOG } = require('../lib/logging')
 const { fail } = require('assert')
 const os = require('os')
 const typer = require('../lib/compile')
@@ -180,9 +180,6 @@ const validateDTSTypes = (base, ignores = {}) => {
  * subset of TS, we can work with RegEx here.
  */
 class TSParser {
-    constructor(logger = null) {
-        this.logger = logger ?? new Logger()
-    }
 
     /**
      * @param {string} line
@@ -243,7 +240,7 @@ class TSParser {
             openScopes += line.match(/\{/g)?.length ?? 0
             openScopes -= line.match(/\}/g)?.length ?? 0
             if (openScopes < 0) {
-                this.logger.error('Detected dangling closing brace.')
+                LOG.error('Detected dangling closing brace.')
             } else if (openScopes === 0) {
                 currentNamespace = namespaces.top
             }
@@ -275,7 +272,7 @@ class TSParser {
                 // Empty line.
                 // Catch in own case anyway to avoid logging in else case.
             } else {
-                this.logger.warning(`unexpected line: ${line}`)
+                LOG.warn(`unexpected line: ${line}`)
             }
         }
         return { imports, namespaces }
@@ -356,7 +353,7 @@ const cds2ts = async (cdsFile, options = {}) => typer.compileFromFile(
 async function prepareUnitTest(model, outputDirectory, parameters = {}) {
     const defaults = {
         typerOptions: {},
-        fileSelector: paths => paths.find(p => !p.endsWith('_')),
+        fileSelector: paths => (paths ?? []).find(p => !p.endsWith('_')),
         transpilationCheck: false
     }
     parameters = { ...defaults, ...parameters }
