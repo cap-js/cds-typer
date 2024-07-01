@@ -71,7 +71,7 @@ module.exports = [
             'no-unsafe-negation': [ 'error', { enforceForOrderingRelations: true } ],
             'no-unsafe-optional-chaining': [ 'error', { disallowArithmeticOperators: true } ],
             'no-unused-private-class-members': 'warn',
-            'no-unused-vars': [ 'warn', { ignoreRestSiblings: true, varsIgnorePattern: '^_' } ],
+            'no-unused-vars': [ 'warn', { ignoreRestSiblings: true, argsIgnorePattern: '^_' } ],
             'no-use-before-define': ['error', {classes: false, functions: false}],
             'no-useless-assignment': 'error',
             'no-useless-backreference': 'error',
