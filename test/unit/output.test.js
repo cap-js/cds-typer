@@ -38,7 +38,7 @@ describe('Compilation', () => {
         })
 
         test('Generated Paths', () => expect(paths).toHaveLength(2)) // the one module [1] + baseDefinitions [0]
-        
+
         test('Aspects', () => {
             const aspects = astw.getAspects()
             const expected = [
@@ -128,7 +128,7 @@ describe('Compilation', () => {
 
         test('IEEE754', async () => {
             // nothing should change compared to the previous test, except for the type of 'dec' and 'doub'
-            
+
             // (number | string)
             const ieee754 = m => check.isParenthesizedType(m, st => check.isUnionType(st, [check.isNumber, check.isString]))
 
@@ -195,7 +195,7 @@ describe('Compilation', () => {
             // So _three_ exports per entity. If we ever choose to remove this third one,
             // then this test has to reflect that.
         })
-        
+
         test('Aspects', () => {
             const aspects = astw.getAspects()
             const expected = [

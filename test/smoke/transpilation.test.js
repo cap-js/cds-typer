@@ -10,10 +10,10 @@ const modelDirs = fs.readdirSync(locations.smoke.files(''))
         const absolute = locations.unit.files(dir)
         const files = fs.readdirSync(absolute)
             .filter(f => f.endsWith('.cds'))
-        
+
         return files.length === 0  // ts test only contains .ts files
             ? undefined
-            : { 
+            : {
                 name: dir,
                 rootFile: path.join(dir, files.find(f => f === 'model.cds') ?? files[0])
             }

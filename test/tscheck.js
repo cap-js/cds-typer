@@ -7,7 +7,7 @@ const ts = require('typescript')
 function checkProgram (program) {
     const emitResult = program.emit()
     const diagnostics = ts.getPreEmitDiagnostics(program).concat(emitResult.diagnostics)
-  
+
     const errors = diagnostics.map(diag => {
         const message = ts.flattenDiagnosticMessageText(diag.messageText, '\n')
         // ignore errors that were caused by dependencies
@@ -17,7 +17,7 @@ function checkProgram (program) {
         }
         return undefined
     }).filter(Boolean)
-  
+
     if (errors.length) {
         throw new Error(`Several errors occurred during the compilation of the generated types:\n${errors.join('\n')}`)
     }
