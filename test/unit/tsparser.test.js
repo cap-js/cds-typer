@@ -21,8 +21,8 @@ describe('TS AST Check', () => {
         const props = [
             ['foo', 'Foo'],
             ['aNumber', 'number'],
-            ['manyNumbers', ({type: t}) => t.keyword === 'arraytype' 
-                && t.elementType.keyword === 'number' 
+            ['manyNumbers', ({type: t}) => t.keyword === 'arraytype'
+                && t.elementType.keyword === 'number'
             ],
             ['text', 'string'],
             ['texts', 'ManyStrings'],
@@ -54,7 +54,7 @@ describe('TS AST Check', () => {
         const ast = getWrapped()
         const cls = ast.getAspects().find(c => c.name === 'FooWithNestedTypes')
         expect(cls).toBeTruthy()
-        expect(ast.exists('FooWithNestedTypes', 'foo', 
+        expect(ast.exists('FooWithNestedTypes', 'foo',
             m => m.name === 'foo'
                 && m.type.members.length === 2
                 && m.type.members[0].name === 'bar'

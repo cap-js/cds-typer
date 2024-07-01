@@ -63,13 +63,13 @@ const toExactlyHave = (module, props) => {
 
 const toHavePropertyOfType = (clazz, property, types) => {
     const prop = clazz[property]
-    
+
     if (!prop) {
         return {
             message: () => `no property '${property}' in class '${clazz}'`,
             pass: false
         }
-    } 
+    }
     if (prop.length !== types.length || !types.every(t => prop.includes(t))) {
         return {
             message: () => `actual type of property ${property} '${prop}' does not match expected type '${types}'`,
@@ -134,7 +134,7 @@ const locations = {
 }
 
 const cds2ts = async (cdsFile, options = {}) => typer.compileFromFile(
-    locations.unit.files(cdsFile), 
+    locations.unit.files(cdsFile),
     options
 )
 
@@ -163,7 +163,7 @@ async function prepareUnitTest(model, outputDirectory, parameters = {}) {
     const paths = await cds2ts(model, options)
         // eslint-disable-next-line no-console
         .catch(err => console.error(err))
-    
+
     if (parameters.transpilationCheck) {
         const tsFiles = paths.map(p => path.join(p, 'index.ts'))
         await checkTranspilation(tsFiles)
