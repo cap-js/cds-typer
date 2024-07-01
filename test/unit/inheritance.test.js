@@ -10,19 +10,25 @@ describe('Inheritance', () => {
     beforeAll(async () => ast = (await prepareUnitTest('inheritance/model.cds', locations.testOutput('inheritance_test'))).astw.tree)
 
     test('Entity, Type <- Entity', async () => {
-        const leaf = ast.find(n => n.name === 'LeafEntity')
+        const leafAspect = ast.find(n => n.name === '_LeafEntityAspect').body[0]
+        const leaf = ast.find(n => n.name === 'LeafEntity')//'LeafEntity')
         // inherit from singular aspects
-        expect(checkInheritance(leaf, ['_AAspect', '_BAspect', '_TAspect', '_._ExtEAspect', '_._ExtTAspect', '_LeafEntityAspect'])).toBe(true)
+        expect(checkInheritance(leafAspect, ['_AAspect', '_BAspect', '_TAspect', '_._ExtEAspect', '_._ExtTAspect'])).toBe(true)
         // not from plural
-        expect(checkInheritance(leaf, ['_AAspects'])).toBe(false)
+        expect(checkInheritance(leafAspect, ['_AAspects'])).toBe(false)
+        // class only extends the aspect
+        expect(checkInheritance(leaf, ['_LeafEntityAspect'])).toBe(true)
     })
 
     test('Entity, Type <- Type', async () => {
+        const leafAspect = ast.find(n => n.name === '_LeafTypeAspect').body[0]
         const leaf = ast.find(n => n.name === 'LeafType')
         // inherit from singular aspects
-        expect(checkInheritance(leaf, ['_AAspect', '_BAspect', '_TAspect', '_._ExtEAspect', '_._ExtTAspect', '_LeafTypeAspect'])).toBe(true)
+        expect(checkInheritance(leafAspect, ['_AAspect', '_BAspect', '_TAspect', '_._ExtEAspect', '_._ExtTAspect'])).toBe(true)
         // not from plural
-        expect(checkInheritance(leaf, ['_AAspects'])).toBe(false)
+        expect(checkInheritance(leafAspect, ['_AAspects'])).toBe(false)
+        // class only extends the aspect
+        expect(checkInheritance(leaf, ['_LeafTypeAspect'])).toBe(true)
     })
 
 
