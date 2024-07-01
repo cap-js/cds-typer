@@ -33,4 +33,9 @@ describe('Inheritance', () => {
     test('Extends Own Aspect (-s, No Annotation)', async () => 
         expect(checkInheritance(ast.find(n => n.name === 'Abys'), ['_AbysAspect'])).toBe(true)
     )
+
+    test('Multilevel Inheritance', async () => {
+        const ast = (await prepareUnitTest('inheritance/multilevel.cds', locations.testOutput('inheritance_test'))).astw.tree
+        console.log(ast)
+    })
 })
