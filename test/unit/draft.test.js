@@ -13,7 +13,7 @@ describe('bookshop', () => {
         const paths = (await prepareUnitTest('draft/catalog-service.cds', locations.testOutput('bookshop_projection'))).paths
         const service = new ASTWrapper(path.join(paths[1], 'index.ts')).tree
         const model = new ASTWrapper(path.join(paths[2], 'index.ts')).tree
-        
+
         expect(draftable('Book', service, () => 'Books')).toBeTruthy()
         expect(draftable('Publisher', service, () => 'Publishers')).toBeTruthy()
         expect(draftable('Book', model, () => 'Books')).toBeTruthy()

@@ -19,6 +19,7 @@
     "test:all": "jest",
     "test": "npm run test:smoke && npm run test:unit",
     "lint": "npx eslint .",
+    "lint:fix": "npx eslint . --fix",
     "cli": "node lib/cli.js",
     "doc:clean": "rm -rf ./doc",
     "doc:prepare": "npm run doc:clean && mkdir -p doc/types",

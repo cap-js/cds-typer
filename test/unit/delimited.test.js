@@ -7,7 +7,7 @@ describe('Delimited Identifiers', () => {
     let astw
 
     beforeAll(async () => astw = (await prepareUnitTest('delimident/model.cds', locations.testOutput('delimident_test'))).astw)
-    
+
     test('Properties in Aspect Present', () => {
         expect(astw.getAspectProperty('_FooAspect', 'sap-icon://a')).toBeTruthy()
         const nested = astw.getAspectProperty('_FooAspect', 'sap-icon://b')

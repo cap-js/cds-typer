@@ -26,11 +26,11 @@ describe('Inheritance', () => {
     })
 
 
-    test('Extends Own Aspect (-s, Explicit Annotation)', async () => 
+    test('Extends Own Aspect (-s, Explicit Annotation)', async () =>
         expect(checkInheritance(ast.find(n => n.name === 'Circus'), ['_CircusAspect'])).toBe(true)
     )
 
-    test('Extends Own Aspect (-s, No Annotation)', async () => 
+    test('Extends Own Aspect (-s, No Annotation)', async () =>
         expect(checkInheritance(ast.find(n => n.name === 'Abys'), ['_AbysAspect'])).toBe(true)
     )
 })
