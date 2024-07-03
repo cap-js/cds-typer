@@ -239,7 +239,8 @@ function visitPropertyDeclaration(node) {
 function visitClassExpression(node) {
     const name = visit(node.name)
     const members = node.members.map(visit)
-    return { name, members, nodeType: kinds.ClassExpression }
+    const heritage = node.heritageClauses?.map(visit) ?? []
+    return { name, members, nodeType: kinds.ClassExpression, heritage }
 }
 
 /** @param {ts.Statement} node - the node to visit */
