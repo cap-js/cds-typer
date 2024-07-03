@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Version 0.23.0 - TBD
 ### Fixed
 - Plurals no longer have `is_singular` attached in the resulting .js files
+- Properties are properly propagated beyond just one level of inheritance
 
 ## Version 0.22.0 - 2024-06-20
 ### Fixed
