@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.23.0 - TBD
+## Version 0.24.0 - TBD
+
+## Version 0.23.0 - 2024-07-04
 ### Fixed
 - Plurals no longer have `is_singular` attached in the resulting .js files
 - Properties are properly propagated beyond just one level of inheritance
