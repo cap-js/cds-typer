@@ -5,6 +5,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.24.0 - TBD
+### Fixed
+- Suppressed an error that would incorrectly point out naming clashes when an entity was named in singular inflection in the model
+
 
 ## Version 0.23.0 - 2024-07-04
 ### Fixed
