@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 - Suppressed an error that would incorrectly point out naming clashes when an entity was named in singular inflection in the model
 
+### Changed
+- Aspects generate named classes again so that tooltips will show more meaningful provenance for properties
 
 ## Version 0.23.0 - 2024-07-04
 ### Fixed
