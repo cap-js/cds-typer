@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 - Suppressed an error that would incorrectly point out naming clashes when an entity was named in singular inflection in the model
 
+### Changed
+- The TypeScript task for `cds build` no longer looks for tsconfig.json to determine if the project has TS nature and instead checks the dependencies in the project's package.json for an occurrence of `typescript`
 
 ## Version 0.23.0 - 2024-07-04
 ### Fixed
