@@ -16,7 +16,7 @@ const BUILD_CONFIG = 'tsconfig.cdsbuild.json'
 const isTypeScriptProject = () => {
     if (!fs.existsSync('package.json')) return false
     const pkg = require(path.resolve('package.json'))
-    return pkg.devDependencies?.typescript || pkg.dependencies?.typescript
+    return Boolean(pkg.devDependencies?.typescript || pkg.dependencies?.typescript)
 }
 
 /**
