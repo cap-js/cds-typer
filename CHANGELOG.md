@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.24.0 - TBD
+## Version 0.25.0 - TBD
+
+## Version 0.24.0 - 2024-07-18
 ### Fixed
 - Suppressed an error that would incorrectly point out naming clashes when an entity was named in singular inflection in the model
 - CDS aspects now also generate a aspect-function in singular inflection, similar to how entities do
