@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 - Aspects generate named classes again so that tooltips will show more meaningful provenance for properties
+- The TypeScript task for `cds build` no longer looks for tsconfig.json to determine if the project has TS nature and instead checks the dependencies in the project's package.json for an occurrence of `typescript`
 
 ## Version 0.23.0 - 2024-07-04
 ### Fixed
