@@ -10,9 +10,14 @@ const DEBUG = cds.debug('cli|build')
 const BUILD_CONFIG = 'tsconfig.cdsbuild.json'
 
 /**
- * Check if a tsconfig file exists.
+ * Check if the project is a TypeScript project by looking for a dependency on TypeScript.
+ * @returns {boolean}
  */
-const tsConfigExists = () => fs.existsSync('tsconfig.json')
+const isTypeScriptProject = () => {
+    if (!fs.existsSync('package.json')) return false
+    const pkg = require(path.resolve('package.json'))
+    return Boolean(pkg.devDependencies?.typescript || pkg.dependencies?.typescript)
+}
 
 /**
  * Check if separate tsconfig file that is used for building the project.
@@ -56,7 +61,7 @@ if (!cds?.version || cds.version < '8.0.0') {
 // requires @sap/cds-dk version >= 7.5.0
 cds.build?.register?.('typescript', class extends cds.build.Plugin {
     static taskDefaults = { src: '.' }
-    static hasTask() { return tsConfigExists() }
+    static hasTask() { return isTypeScriptProject() }
 
     // lower priority than the nodejs task
     get priority() { return -1 }
