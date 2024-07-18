@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Version 0.24.0 - TBD
 ### Fixed
 - Suppressed an error that would incorrectly point out naming clashes when an entity was named in singular inflection in the model
+- CDS aspects now also generate a aspect-function in singular inflection, similar to how entities do
 
 ### Changed
 - Aspects generate named classes again so that tooltips will show more meaningful provenance for properties
