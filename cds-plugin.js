@@ -10,9 +10,14 @@ const DEBUG = cds.debug('cli|build')
 const BUILD_CONFIG = 'tsconfig.cdsbuild.json'
 
 /**
- * Check if a tsconfig file exists.
+ * Check if the project is a TypeScript project by looking for a dependency on TypeScript.
+ * @returns {boolean}
  */
-const tsConfigExists = () => fs.existsSync('tsconfig.json')
+const isTypeScriptProject = () => {
+    if (!fs.existsSync('package.json')) return false
+    const pkg = require(path.resolve('package.json'))
+    return Boolean(pkg.devDependencies?.typescript || pkg.dependencies?.typescript)
+}
 
 /**
  * Check if separate tsconfig file that is used for building the project.
@@ -33,7 +38,7 @@ const rmDirIfExists = dir => {
  * @param {string[]} exts - The extensions to remove.
  * @returns {Promise<void>}
  */
-const rmFiles = async (dir, exts) => fs.existsSync(dir) 
+const rmFiles = async (dir, exts) => fs.existsSync(dir)
     ? Promise.all(
         (await readdir(dir))
             .map(async file => {
@@ -56,7 +61,7 @@ if (!cds?.version || cds.version < '8.0.0') {
 // requires @sap/cds-dk version >= 7.5.0
 cds.build?.register?.('typescript', class extends cds.build.Plugin {
     static taskDefaults = { src: '.' }
-    static hasTask() { return tsConfigExists() }
+    static hasTask() { return isTypeScriptProject() }
 
     // lower priority than the nodejs task
     get priority() { return -1 }
@@ -66,7 +71,7 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
     get #modelDirectoryName () {
         try {
             // expected format: { '#cds-models/*': [ './@cds-models/*/index.ts' ] }
-            //                                       ^^^^^^^^^^^^^^^ 
+            //                                       ^^^^^^^^^^^^^^^
             //                             relevant part - may be changed by user
             const config = JSON.parse(fs.readFileSync ('tsconfig.json', 'utf8'))
             const alias = config.compilerOptions.paths['#cds-models/*'][0]
@@ -118,8 +123,8 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
         await rmFiles(this.task.dest, ['.js', '.ts'])
 
         try {
-            await (buildConfigExists() 
-                ? this.#buildWithConfig() 
+            await (buildConfigExists()
+                ? this.#buildWithConfig()
                 : this.#buildWithoutConfig()
             )
         } catch (error) {

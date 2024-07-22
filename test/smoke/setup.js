@@ -6,6 +6,6 @@ module.exports = () => {
 
     try {
         fs.unlinkSync(base)
-    // eslint-disable-next-line no-unused-vars        
+    // eslint-disable-next-line no-unused-vars
     } catch (_) { /* also fails on permissions, but still ignore */ }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@cap-js/cds-typer",
-  "version": "0.22.0",
+  "version": "0.24.0",
   "description": "Generates .ts files for a CDS model to receive code completion in VS Code",
   "main": "index.js",
   "repository": "github:cap-js/cds-typer",
@@ -19,6 +19,7 @@
     "test:all": "jest",
     "test": "npm run test:smoke && npm run test:unit",
     "lint": "npx eslint .",
+    "lint:fix": "npx eslint . --fix",
     "cli": "node lib/cli.js",
     "doc:clean": "rm -rf ./doc",
     "doc:prepare": "npm run doc:clean && mkdir -p doc/types",

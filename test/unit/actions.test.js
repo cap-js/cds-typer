@@ -24,8 +24,8 @@ describe('Actions', () => {
         })
         checkFunction(actions.type.members.find(fn => fn.name === 'g'), {
             parameterCheck: ({members: [fst, snd]}) => {
-                const fstCorrect = fst.name === 'a' 
-                    && fst.type.subtypes[0].members[0].name === 'x' 
+                const fstCorrect = fst.name === 'a'
+                    && fst.type.subtypes[0].members[0].name === 'x'
                     && check.isNullable(fst.type.subtypes[0].members[0].type, [check.isNumber])
                     && fst.type.subtypes[0].members[1].name === 'y' && check.isNullable(fst.type.subtypes[0].members[1].type, [check.isNumber])
                 const sndCorrect = snd.name === 'b' && check.isNullable(snd.type, [check.isNumber])
@@ -38,13 +38,13 @@ describe('Actions', () => {
         const ast = astwUnbound.tree
         checkFunction(ast.find(node => node.name === 'free'), {
             modifiersCheck: (modifiers = []) => !modifiers.some(check.isStatic),
-            callCheck: type => check.isNullable(type) 
+            callCheck: type => check.isNullable(type)
                 && type.subtypes[0].members[0].name === 'a'
                 && check.isNullable(type.subtypes[0].members[0].type, [check.isNumber])
                 && type.subtypes[0].members[1].name === 'b'
                 && check.isNullable(type.subtypes[0].members[1].type, [check.isString]),
             parameterCheck: ({members: [fst]}) => fst.name === 'param' && check.isNullable(fst.type, [check.isString]),
-            returnTypeCheck: type => check.isNullable(type) 
+            returnTypeCheck: type => check.isNullable(type)
                 && type.subtypes[0].members[0].name === 'a'
                 && check.isNullable(type.subtypes[0].members[0].type, [check.isNumber])
                 && type.subtypes[0].members[1].name === 'b'
@@ -74,7 +74,7 @@ describe('Actions', () => {
 
     test('Unbound Returning External Type', async () => {
         const ast = astwUnbound.tree
-        
+
         checkFunction(ast.find(node => node.name === 'free2'), {
             modifiersCheck: (modifiers = []) => !modifiers.some(check.isStatic),
             callCheck: type => check.isNullable(type, [t => t?.full === '_elsewhere.ExternalType']),
@@ -103,15 +103,15 @@ describe('Actions', () => {
         checkFunction(actions.type.members.find(fn => fn.name === 's1'), {
             callCheck: signature => check.isAny(signature),
             returnTypeCheck: returns => check.isAny(returns),
-            parameterCheck: ({full, args}) => full === 'Record' 
-                && checkKeyword(args[0], 'never') 
+            parameterCheck: ({full, args}) => full === 'Record'
+                && checkKeyword(args[0], 'never')
                 && checkKeyword(args[1], 'never')
         })
         checkFunction(actions.type.members.find(fn => fn.name === 'sn'), {
             callCheck: signature => check.isAny(signature),
             returnTypeCheck: returns => check.isAny(returns),
-            parameterCheck: ({full, args}) => full === 'Record' 
-                && checkKeyword(args[0], 'never') 
+            parameterCheck: ({full, args}) => full === 'Record'
+                && checkKeyword(args[0], 'never')
                 && checkKeyword(args[1], 'never')
         })
         checkFunction(actions.type.members.find(fn => fn.name === 'sx'), {
@@ -178,7 +178,7 @@ describe('Actions', () => {
 
     test ('Empty .actions typed as empty Record', async () => {
         const { type } = astwUnbound.getAspectProperty('_NoActionAspect', 'actions')
-        expect(type.full === 'Record' 
+        expect(type.full === 'Record'
             && checkKeyword(type.args[0], 'never')
             && checkKeyword(type.args[1], 'never')
         ).toBe(true)

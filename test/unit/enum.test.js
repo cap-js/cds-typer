@@ -10,7 +10,7 @@ describe('Enum Action Parameters', () => {
     let astw
 
     beforeAll(async () => astw = (await prepareUnitTest('enums/actions.cds', locations.testOutput('enums_test'))).astw)
-    
+
     test('Coalescing Assignment Present', () => {
         const actions = astw.getAspectProperty('_FoobarAspect', 'actions')
         checkFunction(actions.type.members.find(fn => fn.name === 'f'), {
@@ -27,7 +27,7 @@ describe('Enum Action Parameters', () => {
         checkFunction(actions.type.members.find(fn => fn.name === 'g'), {
             parameterCheck: ({members: [fst]}) => fst.name === 'p'
                 && check.isNullable(fst.type, [t => check.isTypeReference(t, 'EnumFoo')])
-        })       
+        })
     })
 })
 
@@ -47,7 +47,7 @@ describe('Nested Enums', () => {
         const { left } = enm.expression
         // not checking the entire object chain here...
         expect(left.property.name).toBe('someEnumProperty')
-    }) 
+    })
 })
 
 
@@ -68,8 +68,8 @@ describe('Enum Types', () => {
         })
 
         describe('String Enum', () => {
-            test('Definition Present', async () => 
-                expect(astw.tree.find(n => n.name === 'InlineEnum_gender' 
+            test('Definition Present', async () =>
+                expect(astw.tree.find(n => n.name === 'InlineEnum_gender'
                 && n.initializer.expression.female === 'female'
                 && n.initializer.expression.male === 'male'
                 && n.initializer.expression.non_binary === 'non-binary'))
@@ -83,8 +83,8 @@ describe('Enum Types', () => {
         })
 
         describe('Int Enum', () => {
-            test('Definition Present', async () => 
-                expect(astw.tree.find(n => n.name === 'InlineEnum_status' 
+            test('Definition Present', async () =>
+                expect(astw.tree.find(n => n.name === 'InlineEnum_status'
                 && n.initializer.expression.submitted === 1
                 && n.initializer.expression.fulfilled === 2
                 && n.initializer.expression.canceled === -1
@@ -116,7 +116,7 @@ describe('Enum Types', () => {
     describe('Named', () => {
         describe('String Enum', () => {
             test('Values', async () =>
-                expect(astw.tree.find(n => n.name === 'Gender' 
+                expect(astw.tree.find(n => n.name === 'Gender'
                 && n.initializer.expression.female === 'female'
                 && n.initializer.expression.male === 'male'
                 && n.initializer.expression.non_binary === 'non-binary'))
@@ -130,7 +130,7 @@ describe('Enum Types', () => {
 
         describe('Int Enum', () => {
             test('Values', async () =>
-                expect(astw.tree.find(n => n.name === 'Status' 
+                expect(astw.tree.find(n => n.name === 'Status'
                 && n.initializer.expression.submitted === 1
                 && n.initializer.expression.unknown === 0
                 && n.initializer.expression.cancelled === -1))
@@ -144,7 +144,7 @@ describe('Enum Types', () => {
 
         describe('Mixed Enum', () => {
             test('Values', async () =>
-                astw.tree.find(n => n.name === 'Truthy' 
+                astw.tree.find(n => n.name === 'Truthy'
                 && n.yes === true
                 && n.no === false
                 && n.yesnt === false
@@ -162,7 +162,7 @@ describe('Imported Enums', () => {
     let paths
 
     beforeAll(async () => paths = (await prepareUnitTest('enums/importing/service.cds', locations.testOutput('enums_test'))).paths)
-    
+
     test('Is Type Alias and Constant in Service', () => {
         const service = new ASTWrapper(path.join(paths[1], 'index.ts')).tree
         const decls = service.filter(n => n.name === 'EnumExample')
@@ -193,7 +193,7 @@ describe('Enums of typeof', () => {
         const paths = (await prepareUnitTest('enums/enumtyperef.cds', locations.testOutput('enums_test'))).paths
         astw = new ASTWrapper(path.join(paths[2], 'index.ts'))
     })
-    
+
     test('Enum References in Parameters', () => {
         // FIXME: returntypecheck currently broken: cds-typer can currently only deal with refs
         // that contain exactly one element. Type refs are of guise { ref: ['n.A', 'p'] }

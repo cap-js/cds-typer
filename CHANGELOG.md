@@ -4,17 +4,32 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.23.0 - TBD
+## Version 0.25.0 - TBD
 ### Added
 - Declaring a type alias on an enum in cds now also exports it on value level in the resulting type 
 
+## Version 0.24.0 - 2024-07-18
+### Fixed
+- Suppressed an error that would incorrectly point out naming clashes when an entity was named in singular inflection in the model
+- CDS aspects now also generate a aspect-function in singular inflection, similar to how entities do
+
+### Changed
+- Aspects generate named classes again so that tooltips will show more meaningful provenance for properties
+- The TypeScript task for `cds build` no longer looks for tsconfig.json to determine if the project has TS nature and instead checks the dependencies in the project's package.json for an occurrence of `typescript`
+
+## Version 0.23.0 - 2024-07-04
+
 ### Fixed
 - Plurals no longer have `is_singular` attached in the resulting .js files
+- Properties are properly propagated beyond just one level of inheritance
 
 
 ## Version 0.22.0 - 2024-06-20
 ### Fixed
 - Fixed a bug where keys would sometimes inconsistently become nullable
+
+### Changed
+- Logging now internally uses `cds.log` and pipes output into the `cds-typer` logger, which can be configured via `cds.env` in addition to explicitly passing a `--logLevel` parameter to CLI. Users now have to use the levels defined in [`cds.log.levels`](https://cap.cloud.sap/docs/node.js/cds-log#log-levels). The formerly valid levels `WARNING`, `CRITICAL`, and `NONE` are now deprecated and automatically mapped to valid levels for now.
 
 ## Version 0.21.2 - 2024-06-06
 ### Fixed
