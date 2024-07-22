@@ -163,9 +163,11 @@ describe('Imported Enums', () => {
 
     beforeAll(async () => paths = (await prepareUnitTest('enums/importing/service.cds', locations.testOutput('enums_test'))).paths)
 
-    test('Is Type Alias in Service', () => {
+    test('Is Type Alias and Constant in Service', () => {
         const service = new ASTWrapper(path.join(paths[1], 'index.ts')).tree
-        expect(check.isTypeAliasDeclaration(service.find(n => n.name === 'EnumExample'))).toBeTruthy()
+        const decls = service.filter(n => n.name === 'EnumExample')
+        expect(decls.some(check.isTypeAliasDeclaration)).toBe(true)
+        expect(decls.some(check.isVariableDeclaration)).toBe(true)
     })
 
     test('Is Enum Declaration in Schema', () => {

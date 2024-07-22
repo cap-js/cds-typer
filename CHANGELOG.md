@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.25.0 - TBD
+### Added
+- Declaring a type alias on an enum in cds now also exports it on value level in the resulting type 
 
 ## Version 0.24.0 - 2024-07-18
 ### Fixed
@@ -16,9 +18,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - The TypeScript task for `cds build` no longer looks for tsconfig.json to determine if the project has TS nature and instead checks the dependencies in the project's package.json for an occurrence of `typescript`
 
 ## Version 0.23.0 - 2024-07-04
+
 ### Fixed
 - Plurals no longer have `is_singular` attached in the resulting .js files
 - Properties are properly propagated beyond just one level of inheritance
+
 
 ## Version 0.22.0 - 2024-06-20
 ### Fixed
