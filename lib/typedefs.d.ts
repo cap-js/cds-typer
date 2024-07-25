@@ -4,7 +4,9 @@ export module resolver {
     }
 
     export type CSN = {
-        definitions?: { [key: string]: EntityCSN }
+        definitions?: { [key: string]: EntityCSN },
+        kind?: string,
+        doc?: string
     }
 
     /**
@@ -29,7 +31,8 @@ export module resolver {
         path?: Path,
         csn?: CSN,
         imports: Path[]
-        inner: TypeResolveInfo
+        inner: TypeResolveInfo,
+        structuredType?: {[key: string]: TypeResolveInfo}  // FIXME: same as inner?
     }
 
     // TODO: this will be completely replaced by EntityInfo
