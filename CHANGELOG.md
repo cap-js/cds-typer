@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Version 0.25.0 - TBD
 ### Added
 - Declaring a type alias on an enum in cds now also exports it on value level in the resulting type
+- Apps need to provide `@sap/cds` version `8.2` or higher.
+- Apps need to provide `@cap-js/cds-types` version `0.6.4` or higher.
 
 ### Fixed
 - Classes representing views and projections will no longer carry ancestry to avoid clashes thereof with aliases fields
@@ -83,7 +85,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Importing an enum into a service will now generate an alias to the original enum, instead of incorrectly duplicating the definition
 - Returning entities from actions/ functions and using them as parameters will now properly use the singular inflection instead of returning an array thereof
 - Aspects are now consistently named and called in their singular form
-- Only detect inflection clash if singular and plural share the same namespace. This also no longer reports `sap.common` as erroneous during type creation 
+- Only detect inflection clash if singular and plural share the same namespace. This also no longer reports `sap.common` as erroneous during type creation
 
 ## Version 0.19.0 - 2024-03-28
 ### Added
