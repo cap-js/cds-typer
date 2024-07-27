@@ -434,18 +434,13 @@ class JSASTWrapper {
     }
 
     hasExport(lhs, rhs) {
-        return this.getExports().find(exp => exp.lhs === lhs && (exp.rhs === rhs || exp.rhs.name === rhs))
+        return this.getExports().find(exp => exp.lhs === lhs && exp.rhs === rhs)
     }
 
     /**
      * @returns {{ lhs: string, rhs: string | { singular: boolean, name: string }}}
      */
     getExports() {
-        const processObjectLiteral = ({properties}) => ({
-            singular: properties.find(p => p.key.name === 'is_singular' && p.value.value),
-            name: properties.find(p => p.key.name === '__proto__')?.value.property.name
-        })
-        this.program.body[2].expression.right.properties[1].value.property
         return this.exports ??= this.program.body.filter(node => {
             if (node.type !== 'ExpressionStatement') return false
             if (node.expression.left.type !== 'MemberExpression') return false
@@ -454,7 +449,8 @@ class JSASTWrapper {
         }).map(node => (
             {
                 lhs: node.expression.left.property.name,
-                rhs: node.expression.right.property?.name ?? processObjectLiteral(node.expression.right)
+                // CallExpression, where second argument is the original entity name
+                rhs: node.expression.right.arguments[1].value
             }
         ))
     }
