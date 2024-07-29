@@ -8,7 +8,8 @@ export module resolver {
     export type CSN = {
         definitions?: { [key: string]: EntityCSN },
         kind?: string,
-        doc?: string
+        doc?: string,
+        parent?: CSN
     }
 
     /**
