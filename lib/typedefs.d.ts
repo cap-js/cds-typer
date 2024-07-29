@@ -1,4 +1,6 @@
 export module resolver {
+    export type PropertyModifier = 'override' | 'declare'
+
     export type EntityCSN = {
         cardinality?: { max?: '*' | number }
     }
