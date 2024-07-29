@@ -480,6 +480,7 @@ const check = {
     isUnionType: (node, of = []) => checkKeyword(node, 'uniontype')
         && of.reduce((acc, predicate) => acc && node.subtypes.some(st => predicate(st)), true),
     isNullable: (node, of = []) => check.isUnionType(node, of.concat([check.isNull])),
+    hasDeclareModifier: node => node?.modifiers?.some(mod => checkKeyword(mod, 'declare')),
     isLiteral: (node, literal = undefined) => checkKeyword(node, 'literaltype') && (literal === undefined || node.literal === literal),
     isTypeReference: (node, full = undefined) => checkNodeType(node, 'typeReference') && (!full || node.full === full),
     isTypeAliasDeclaration: node => checkNodeType(node, 'typeAliasDeclaration'),
