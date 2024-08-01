@@ -6,7 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.25.0 - TBD
 ### Added
-- Declaring a type alias on an enum in cds now also exports it on value level in the resulting type 
+- Declaring a type alias on an enum in cds now also exports it on value level in the resulting type
+
+### Fixed
+- Classes representing views and projections will no longer carry ancestry to avoid clashes thereof with aliases fields
 
 ## Version 0.24.0 - 2024-07-18
 ### Fixed
