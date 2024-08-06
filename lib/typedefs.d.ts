@@ -10,6 +10,7 @@ export module resolver {
         kind?: string,
         doc?: string,
         parent?: CSN
+        actions?: CSN[]
     }
 
     /**
