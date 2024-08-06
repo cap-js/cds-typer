@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 - Declaring a type alias on an enum in cds now also exports it on value level in the resulting type 
 
+### Changed
+- All properties are now preceeded with the `declare` modifier to pass strict tsconfigs using `useDefineForClassFields`
+- The static `actions` property of generated classes now includes the types from all inherited classes to also suggest actions defined in a base entity/aspect/type.
+
 ## Version 0.24.0 - 2024-07-18
 ### Fixed
 - Suppressed an error that would incorrectly point out naming clashes when an entity was named in singular inflection in the model
