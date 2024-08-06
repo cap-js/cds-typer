@@ -10,7 +10,8 @@ export module resolver {
         kind?: string,
         doc?: string,
         parent?: CSN
-        actions?: CSN[]
+        actions?: CSN[],
+        includes?: string[]
     }
 
     /**
@@ -38,6 +39,8 @@ export module resolver {
         inner: TypeResolveInfo,
         structuredType?: {[key: string]: TypeResolveInfo}  // FIXME: same as inner?
     }
+
+    export type EntityInfo = Exclude<ReturnType<import('../lib/resolution/entity').EntityRepository['getByFq']>, null>
 
     // TODO: this will be completely replaced by EntityInfo
     export type Untangled = {
