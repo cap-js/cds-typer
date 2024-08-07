@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 - Classes representing views and projections will no longer carry ancestry to avoid clashes thereof with aliases fields
 
+### Changed
+- All properties are now preceeded with the `declare` modifier to pass strict tsconfigs using `useDefineForClassFields` or `noImplicitOverride`
+- The static `actions` property of generated classes now includes the types from all inherited classes to also suggest actions defined in a base entity/aspect/type.
+
 ## Version 0.24.0 - 2024-07-18
 ### Fixed
 - Suppressed an error that would incorrectly point out naming clashes when an entity was named in singular inflection in the model
