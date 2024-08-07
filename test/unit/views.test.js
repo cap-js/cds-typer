@@ -27,4 +27,8 @@ describe('View Entities', () => {
     expect(astw.exists('_FooView2Aspect', 'id2', ({type}) => check.isNullable(type, [check.isNumber]))).toBeTruthy()
     expect(astw.exists('_FooView2Aspect', 'code', ({type}) => check.isNullable(type, [check.isString]))).toBeTruthy()
     })
+
+    test('View Has No Heritage', () => {
+        expect(astw.tree.find(({name}) => name === '_BazViewAspect').heritage).toBeUndefined()
+    })
 })

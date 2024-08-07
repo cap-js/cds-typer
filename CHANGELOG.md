@@ -6,10 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.25.0 - TBD
 ### Added
-- Declaring a type alias on an enum in cds now also exports it on value level in the resulting type 
+- Declaring a type alias on an enum in cds now also exports it on value level in the resulting type
+
+### Fixed
+- Classes representing views and projections will no longer carry ancestry to avoid clashes thereof with aliases fields
 
 ### Changed
-- All properties are now preceeded with the `declare` modifier to pass strict tsconfigs using `useDefineForClassFields`
+- All properties are now preceeded with the `declare` modifier to pass strict tsconfigs using `useDefineForClassFields` or `noImplicitOverride`
 - The static `actions` property of generated classes now includes the types from all inherited classes to also suggest actions defined in a base entity/aspect/type.
 
 ## Version 0.24.0 - 2024-07-18
