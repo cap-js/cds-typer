@@ -1,9 +1,15 @@
 export module resolver {
+    type ref = {
+        ref: string[],
+        as?: string
+    }
+
     export type PropertyModifier = 'override' | 'declare'
 
     export type EntityCSN = {
         actions?: OperationCSN[],
-        cardinality?: { max?: '*' | number }
+        cardinality?: { max?: '*' | string }
+        compositions?: { target: string }[]
         doc?: string,
         elements?: { [key: string]: EntityCSN }
         key?: string // custom!!
@@ -14,17 +20,26 @@ export module resolver {
         notNull?: boolean,  // custom!
         on?: string,
         parent?: EntityCSN
-        projection?: { from: { ref: string[] }}
+        projection?: { from: ref, columns: (ref | '*')[]}
         target?: string,
         type: string,
         name: string,
         '@odata.draft.enabled'?: boolean // custom!
+        _unresolved?: boolean
     }
 
     export type OperationCSN = EntityCSN & {
         params: {[key:string]: EntityCSN},
         returns?: any,
         kind: 'action' | 'function'
+    }
+
+    export type ProjectionCSN = EntityCSN & {
+        projection: any
+    }
+
+    export type ViewCSN = EntityCSN & {
+        query?: any
     }
 
 
