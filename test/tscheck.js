@@ -29,7 +29,7 @@ function checkProgram (program) {
  * @param {object} opts - the options to pass to the TS compiler
  */
 async function checkTranspilation (apiFiles, opts = {}) {
-    const options = {...{ noEmit: true }, ...opts}
+    const options = {...{ noEmit: true, esModuleInterop: true }, ...opts}
     const program = ts.createProgram({ rootNames: apiFiles, options })
     checkProgram(program)
 }

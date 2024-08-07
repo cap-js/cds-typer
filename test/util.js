@@ -145,7 +145,7 @@ const createProject = projDir => {
             '@sap/cds': 'file:' + require('@sap/cds').home,
             '@cap-js/cds-types': 'file:' + path.resolve(require.resolve('@cap-js/cds-types/package.json'), '..')
         }
-    }))
+    }, null, 2))
     // Avoid installing dependencies if they are already present. Speeds up tests quite a bit.
     if (!fs.existsSync(path.join(projDir, 'node_modules'))) {
         execSync('npm install', { cwd: projDir })
