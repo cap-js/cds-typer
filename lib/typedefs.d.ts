@@ -2,7 +2,7 @@ export module resolver {
     export type PropertyModifier = 'override' | 'declare'
 
     export type EntityCSN = {
-        actions?: ActionCSN[],
+        actions?: OperationCSN[],
         cardinality?: { max?: '*' | number }
         doc?: string,
         elements?: { [key: string]: EntityCSN }
@@ -10,6 +10,7 @@ export module resolver {
         keys?: { [key:string]: any }
         kind: string,
         includes?: string[]
+        items?: EntityCSN
         notNull?: boolean,  // custom!
         on?: string,
         parent?: EntityCSN
@@ -20,8 +21,8 @@ export module resolver {
         '@odata.draft.enabled'?: boolean // custom!
     }
 
-    export type ActionCSN = EntityCSN & {
-        params: [string, object][],
+    export type OperationCSN = EntityCSN & {
+        params: {[key:string]: EntityCSN},
         returns?: any,
         kind: 'action' | 'function'
     }
@@ -59,7 +60,8 @@ export module resolver {
         imports?: Path[]
         inner?: TypeResolveInfo,
         structuredType?: {[key: string]: TypeResolveInfo}  // FIXME: same as inner?
-        plainName: string
+        plainName?: string,
+        typeName?: string // FIXME: same as plainName?
     }
 
     export type EntityInfo = Exclude<ReturnType<import('../lib/resolution/entity').EntityRepository['getByFq']>, null>
