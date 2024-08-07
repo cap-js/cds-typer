@@ -1,10 +1,17 @@
 export module resolver {
+    export type PropertyModifier = 'override' | 'declare'
+
     export type EntityCSN = {
         cardinality?: { max?: '*' | number }
     }
 
     export type CSN = {
-        definitions?: { [key: string]: EntityCSN }
+        definitions?: { [key: string]: EntityCSN },
+        kind?: string,
+        doc?: string,
+        parent?: CSN
+        actions?: CSN[],
+        includes?: string[]
     }
 
     /**
@@ -29,8 +36,11 @@ export module resolver {
         path?: Path,
         csn?: CSN,
         imports: Path[]
-        inner: TypeResolveInfo
+        inner: TypeResolveInfo,
+        structuredType?: {[key: string]: TypeResolveInfo}  // FIXME: same as inner?
     }
+
+    export type EntityInfo = Exclude<ReturnType<import('../lib/resolution/entity').EntityRepository['getByFq']>, null>
 
     // TODO: this will be completely replaced by EntityInfo
     export type Untangled = {
