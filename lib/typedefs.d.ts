@@ -2,16 +2,37 @@ export module resolver {
     export type PropertyModifier = 'override' | 'declare'
 
     export type EntityCSN = {
+        actions?: ActionCSN[],
         cardinality?: { max?: '*' | number }
+        doc?: string,
+        elements?: { [key: string]: EntityCSN }
+        key?: string // custom!!
+        keys?: { [key:string]: any }
+        kind: string,
+        includes?: string[]
+        notNull?: boolean,  // custom!
+        on?: string,
+        parent?: EntityCSN
+        projection?: { from: { ref: string[] }}
+        target?: string,
+        type: string,
+        name: string,
+        '@odata.draft.enabled'?: boolean // custom!
+    }
+
+    export type ActionCSN = EntityCSN & {
+        params: [string, object][],
+        returns?: any,
+        kind: 'action' | 'function'
+    }
+
+
+    export type EnumCSN = EntityCSN & {
+        enum: {[key:name]: string}
     }
 
     export type CSN = {
-        definitions?: { [key: string]: EntityCSN },
-        kind?: string,
-        doc?: string,
-        parent?: CSN
-        actions?: CSN[],
-        includes?: string[]
+        definitions: { [key: string]: EntityCSN },
     }
 
     /**
@@ -26,18 +47,19 @@ export module resolver {
      * ```
      */
     export type TypeResolveInfo = {
-        isBuiltin: boolean,
-        isDeepRequire: boolean,
-        isNotNull: boolean,
-        isInlineDeclaration: boolean,
-        isForeignKeyReference: boolean,
-        isArray: boolean,
-        type: string,
+        isBuiltin?: boolean,
+        isDeepRequire?: boolean,
+        isNotNull?: boolean,
+        isInlineDeclaration?: boolean,
+        isForeignKeyReference?: boolean,
+        isArray?: boolean,
+        type?: string,
         path?: Path,
-        csn?: CSN,
-        imports: Path[]
-        inner: TypeResolveInfo,
+        csn?: EntityCSNCSN,
+        imports?: Path[]
+        inner?: TypeResolveInfo,
         structuredType?: {[key: string]: TypeResolveInfo}  // FIXME: same as inner?
+        plainName: string
     }
 
     export type EntityInfo = Exclude<ReturnType<import('../lib/resolution/entity').EntityRepository['getByFq']>, null>
