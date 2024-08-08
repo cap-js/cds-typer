@@ -117,6 +117,9 @@ export module visitor {
         outputDirectory: string,
         logLevel: number,
         jsConfigPath?: string,
+        inlineDeclarations: 'flat' | 'structured',
+        propertiesOptional: boolean,
+        IEEE754Compatible: boolean,
     }
 
     export type VisitorOptions = {
