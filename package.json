@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "@stylistic/eslint-plugin-js": "^1.6.3",
+    "@cap-js/cds-types": ">=0.6",
     "acorn": "^8.10.0",
     "eslint": "^9",
     "eslint-plugin-jsdoc": "^48.2.7",
