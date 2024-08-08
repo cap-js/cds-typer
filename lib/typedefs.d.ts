@@ -26,6 +26,7 @@ export module resolver {
         name: string,
         '@odata.draft.enabled'?: boolean // custom!
         _unresolved?: boolean
+        isRefNotNull?: boolean // custom!
     }
 
     export type OperationCSN = EntityCSN & {
@@ -75,7 +76,7 @@ export module resolver {
         imports?: Path[]
         inner?: TypeResolveInfo,
         structuredType?: {[key: string]: {typeName: string, typeInfo: TypeResolveInfo}}  // FIXME: same as inner?
-        plainName?: string,
+        plainName: string,
         typeName?: string // FIXME: same as plainName?
     }
 
