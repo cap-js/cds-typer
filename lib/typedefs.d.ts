@@ -21,8 +21,8 @@ export module resolver {
         on?: string,
         parent?: EntityCSN
         projection?: { from: ref, columns: (ref | '*')[]}
-        target?: string,
-        type: string,
+        target?: EntityCSN,
+        type: string | ref,
         name: string,
         '@odata.draft.enabled'?: boolean // custom!
         _unresolved?: boolean
@@ -78,6 +78,7 @@ export module resolver {
         structuredType?: {[key: string]: {typeName: string, typeInfo: TypeResolveInfo}}  // FIXME: same as inner?
         plainName: string,
         typeName?: string // FIXME: same as plainName?
+        inflection?: visitor.Inflection
     }
 
     export type EntityInfo = Exclude<ReturnType<import('../lib/resolution/entity').EntityRepository['getByFq']>, null>
@@ -134,7 +135,7 @@ export module visitor {
     }
 
     export type Inflection = {
-        typeName: string,
+        typeName?: string,
         singular: string,
         plural: string
     }
