@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Declaring a type alias on an enum in cds now also exports it on value level in the resulting type
 - Apps need to provide `@sap/cds` version `8.2` or higher.
 - Apps need to provide `@cap-js/cds-types` version `0.6.4` or higher.
+- Typed methods are now generated for calls of unbound actions. Named and positional call styles are supported, e.g. `service.action({one, two})` and `service.action(one, two)`.
 
 ### Fixed
 - Classes representing views and projections will no longer carry ancestry to avoid clashes thereof with aliases fields
