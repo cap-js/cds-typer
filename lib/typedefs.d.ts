@@ -74,7 +74,7 @@ export module resolver {
         csn?: EntityCSNCSN,
         imports?: Path[]
         inner?: TypeResolveInfo,
-        structuredType?: {[key: string]: TypeResolveInfo}  // FIXME: same as inner?
+        structuredType?: {[key: string]: {typeName: string, typeInfo: TypeResolveInfo}}  // FIXME: same as inner?
         plainName?: string,
         typeName?: string // FIXME: same as plainName?
     }
