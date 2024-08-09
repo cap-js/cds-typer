@@ -1,4 +1,4 @@
-const { fs } = require('@sap/cds/lib/utils/cds-utils')
+const { utils: { fs } } = require('@sap/cds')
 const util = require('../util')
 
 module.exports = () => {

@@ -52,9 +52,9 @@ describe('array of', () => {
         test('Returning array of String', async () => {
             //expect(func.type.type.full === 'Array' && func.type.type.args[0].keyword === 'string').toBeTruthy()
             expect(checkFunction(func, {
-                callCheck: signature => check.isString(signature.args?.[0]),
+                callCheck: signature => check.isString(signature.args?.[0].args?.[0]),
                 parameterCheck: params => params.members?.[0]?.name === 'xs',
-                returnTypeCheck: returns => check.isString(returns?.args[0])
+                returnTypeCheck: returns => check.isString(returns?.args[0]?.args[0])
             }))
         })
 

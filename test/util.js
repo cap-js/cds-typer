@@ -4,6 +4,7 @@ const os = require('os')
 const typer = require('../lib/compile')
 const { ASTWrapper } = require('./ast')
 const { checkTranspilation } = require('./tscheck')
+const { execSync } = require('child_process')
 
 /**
  * Hackish. When having code as string, we can either:
@@ -138,6 +139,19 @@ const cds2ts = async (cdsFile, options = {}) => typer.compileFromFile(
     options
 )
 
+const createProject = projDir => {
+    fs.writeFileSync(path.join(projDir, 'package.json'), JSON.stringify({
+        devDependencies: {
+            '@sap/cds': 'file:' + require('@sap/cds').home,
+            '@cap-js/cds-types': 'file:' + path.resolve(require.resolve('@cap-js/cds-types/package.json'), '..')
+        }
+    }, null, 2))
+    // Avoid installing dependencies if they are already present. Speeds up tests quite a bit.
+    if (!fs.existsSync(path.join(projDir, 'node_modules'))) {
+        execSync('npm install', { cwd: projDir })
+    }
+}
+
 /**
  * @typedef PrepareUnitTestParameters
  * @property {object} typerOptions options to be passed to the typer
@@ -166,9 +180,12 @@ async function prepareUnitTest(model, outputDirectory, parameters = {}) {
 
     if (parameters.transpilationCheck) {
         const tsFiles = paths.map(p => path.join(p, 'index.ts'))
+        // create a package.json w/ common dependencies in a higher dir so that they can be reused by many tests
+        createProject(path.resolve(outputDirectory, '../..'))
         await checkTranspilation(tsFiles)
     }
     return { astw: new ASTWrapper(path.join(parameters.fileSelector(paths), 'index.ts')), paths }
+
 }
 
 module.exports = {
