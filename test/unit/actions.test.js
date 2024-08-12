@@ -38,17 +38,17 @@ describe('Actions', () => {
         const ast = astwUnbound.tree
         checkFunction(ast.find(node => node.name === 'free'), {
             modifiersCheck: (modifiers = []) => !modifiers.some(check.isStatic),
-            callCheck: type => check.isNullable(type.args[0])
-                && type.args[0].subtypes[0].members[0].name === 'a'
-                && check.isNullable(type.args[0].subtypes[0].members[0].type, [check.isNumber])
-                && type.args[0].subtypes[0].members[1].name === 'b'
-                && check.isNullable(type.args[0].subtypes[0].members[1].type, [check.isString]),
+            callCheck: type => check.isNullable(type.subtypes[0].args[0])
+                && type.subtypes[0].args[0].subtypes[0].members[0].name === 'a'
+                && check.isNullable(type.subtypes[0].args[0].subtypes[0].members[0].type, [check.isNumber])
+                && type.subtypes[0].args[0].subtypes[0].members[1].name === 'b'
+                && check.isNullable(type.subtypes[0].args[0].subtypes[0].members[1].type, [check.isString]),
             parameterCheck: ({members: [fst]}) => fst.name === 'param' && check.isNullable(fst.type, [check.isString]),
-            returnTypeCheck: type => check.isNullable(type.args[0])
-                && type.args[0].subtypes[0].members[0].name === 'a'
-                && check.isNullable(type.args[0].subtypes[0].members[0].type, [check.isNumber])
-                && type.args[0].subtypes[0].members[1].name === 'b'
-                && check.isNullable(type.args[0].subtypes[0].members[1].type, [check.isString]),
+            returnTypeCheck: type => check.isNullable(type.subtypes[0].args[0])
+                && type.subtypes[0].args[0].subtypes[0].members[0].name === 'a'
+                && check.isNullable(type.subtypes[0].args[0].subtypes[0].members[0].type, [check.isNumber])
+                && type.subtypes[0].args[0].subtypes[0].members[1].name === 'b'
+                && check.isNullable(type.subtypes[0].args[0].subtypes[0].members[1].type, [check.isString]),
         })
     })
 
@@ -77,14 +77,14 @@ describe('Actions', () => {
 
         checkFunction(ast.find(node => node.name === 'free2'), {
             modifiersCheck: (modifiers = []) => !modifiers.some(check.isStatic),
-            callCheck: type => check.isNullable(type.args[0], [t => t?.full === '_elsewhere.ExternalType']),
-            returnTypeCheck: type => check.isNullable(type.args[0], [t => t?.full === '_elsewhere.ExternalType'])
+            callCheck: type => check.isNullable(type.subtypes[0].args[0], [t => t?.full === '_elsewhere.ExternalType']),
+            returnTypeCheck: type => check.isNullable(type.subtypes[0].args[0], [t => t?.full === '_elsewhere.ExternalType'])
         })
 
         checkFunction(ast.find(node => node.name === 'free3'), {
             modifiersCheck: (modifiers = []) => !modifiers.some(check.isStatic),
-            callCheck: type => check.isNullable(type.args[0], [t => t?.full === '_.ExternalInRoot']),
-            returnTypeCheck: type => check.isNullable(type.args[0], [t => t?.full === '_.ExternalInRoot'])
+            callCheck: type => check.isNullable(type.subtypes[0].args[0], [t => t?.full === '_.ExternalInRoot']),
+            returnTypeCheck: type => check.isNullable(type.subtypes[0].args[0], [t => t?.full === '_.ExternalInRoot'])
         })
     })
 
@@ -123,56 +123,56 @@ describe('Actions', () => {
 
     test ('Inflection on External Type in Function Type', async () => {
         checkFunction(astwBound.tree.find(fn => fn.name === 'getOneExternalType'), {
-            returnTypeCheck: returns => check.isNullable(returns.args[0], [st => check.isTypeReference(st, '_elsewhere.ExternalType')])
+            returnTypeCheck: returns => check.isNullable(returns.subtypes[0].args[0], [st => check.isTypeReference(st, '_elsewhere.ExternalType')])
         })
         checkFunction(astwBound.tree.find(fn => fn.name === 'getManyExternalTypes'), {
-            returnTypeCheck: returns => check.isArray(returns.args[0], ([arg]) => check.isTypeReference(arg, '_elsewhere.ExternalType'))
+            returnTypeCheck: returns => check.isArray(returns.subtypes[0].args[0], ([arg]) => check.isTypeReference(arg, '_elsewhere.ExternalType'))
         })
     })
 
     test ('Inflection in Parameters/ Return Type of Functions', async () => {
         checkFunction(astwBound.tree.find(fn => fn.name === 'fSingleParamSingleReturn'), {
             parameterCheck: ({members: [fst]}) => check.isNullable(fst.type, [arg => check.isTypeReference(arg, 'E')]),
-            returnTypeCheck: returns => check.isNullable(returns.args[0], [st => check.isTypeReference(st, 'E')])
+            returnTypeCheck: returns => check.isNullable(returns.subtypes[0].args[0], [st => check.isTypeReference(st, 'E')])
         })
         checkFunction(astwBound.tree.find(fn => fn.name === 'fSingleParamManyReturn'), {
             parameterCheck: ({members: [fst]}) => check.isNullable(fst.type, [arg => check.isTypeReference(arg, 'E')]),
-            returnTypeCheck: returns => check.isArray(returns.args[0], ([arg]) => check.isTypeReference(arg, 'E'))
+            returnTypeCheck: returns => check.isArray(returns.subtypes[0].args[0], ([arg]) => check.isTypeReference(arg, 'E'))
         })
         checkFunction(astwBound.tree.find(fn => fn.name === 'fManyParamSingleReturn'), {
             parameterCheck: ({members: [fst]}) => check.isArray(fst.type, ([arg]) => check.isTypeReference(arg, 'E')),
-            returnTypeCheck: returns => check.isNullable(returns.args[0], [st => check.isTypeReference(st, 'E')])
+            returnTypeCheck: returns => check.isNullable(returns.subtypes[0].args[0], [st => check.isTypeReference(st, 'E')])
         })
         checkFunction(astwBound.tree.find(fn => fn.name === 'fManyParamSingleReturn'), {
             parameterCheck: ({members: [fst]}) => check.isArray(fst.type, ([arg]) => check.isTypeReference(arg, 'E')),
-            returnTypeCheck: returns => check.isNullable(returns.args[0], [st => check.isTypeReference(st, 'E')])
+            returnTypeCheck: returns => check.isNullable(returns.subtypes[0].args[0], [st => check.isTypeReference(st, 'E')])
         })
         checkFunction(astwBound.tree.find(fn => fn.name === 'fManyParamManyReturn'), {
             parameterCheck: ({members: [fst]}) => check.isArray(fst.type, ([arg]) => check.isTypeReference(arg, 'E')),
-            returnTypeCheck: returns => check.isArray(returns.args[0], ([arg]) => check.isTypeReference(arg, 'E'))
+            returnTypeCheck: returns => check.isArray(returns.subtypes[0].args[0], ([arg]) => check.isTypeReference(arg, 'E'))
         })
     })
 
     test ('Inflection in Parameters/ Return Type of Actions', async () => {
         checkFunction(astwBound.tree.find(fn => fn.name === 'aSingleParamSingleReturn'), {
             parameterCheck: ({members: [fst]}) => check.isNullable(fst.type, [arg => check.isTypeReference(arg, 'E')]),
-            returnTypeCheck: returns => check.isNullable(returns.args[0], [st => check.isTypeReference(st, 'E')])
+            returnTypeCheck: returns => check.isNullable(returns.subtypes[0].args[0], [st => check.isTypeReference(st, 'E')])
         })
         checkFunction(astwBound.tree.find(fn => fn.name === 'aSingleParamManyReturn'), {
             parameterCheck: ({members: [fst]}) => check.isNullable(fst.type, [arg => check.isTypeReference(arg, 'E')]),
-            returnTypeCheck: returns => check.isArray(returns.args[0], ([arg]) => check.isTypeReference(arg, 'E'))
+            returnTypeCheck: returns => check.isArray(returns.subtypes[0].args[0], ([arg]) => check.isTypeReference(arg, 'E'))
         })
         checkFunction(astwBound.tree.find(fn => fn.name === 'aManyParamSingleReturn'), {
             parameterCheck: ({members: [fst]}) => check.isArray(fst.type, ([arg]) => check.isTypeReference(arg, 'E')),
-            returnTypeCheck: returns => check.isNullable(returns.args[0], [st => check.isTypeReference(st, 'E')])
+            returnTypeCheck: returns => check.isNullable(returns.subtypes[0].args[0], [st => check.isTypeReference(st, 'E')])
         })
         checkFunction(astwBound.tree.find(fn => fn.name === 'aManyParamSingleReturn'), {
             parameterCheck: ({members: [fst]}) => check.isArray(fst.type, ([arg]) => check.isTypeReference(arg, 'E')),
-            returnTypeCheck: returns => check.isNullable(returns.args[0], [st => check.isTypeReference(st, 'E')])
+            returnTypeCheck: returns => check.isNullable(returns.subtypes[0].args[0], [st => check.isTypeReference(st, 'E')])
         })
         checkFunction(astwBound.tree.find(fn => fn.name === 'aManyParamManyReturn'), {
             parameterCheck: ({members: [fst]}) => check.isArray(fst.type, ([arg]) => check.isTypeReference(arg, 'E')),
-            returnTypeCheck: returns => check.isArray(returns.args[0], ([arg]) => check.isTypeReference(arg, 'E'))
+            returnTypeCheck: returns => check.isArray(returns.subtypes[0].args[0], ([arg]) => check.isTypeReference(arg, 'E'))
         })
     })
 

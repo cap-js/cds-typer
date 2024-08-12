@@ -25,7 +25,7 @@ describe('type Definitions', () => {
 
     test('Referring to Nested Types Uses Singular', async () => {
         checkFunction(astw.tree.find(node => node.name === 'fn'), {
-            callCheck: ptype => check.isNullable(ptype.args[0], [st => check.isTypeReference(st, 'OuterType')])
+            callCheck: ptype => check.isNullable(ptype.subtypes[0].args[0], [st => check.isTypeReference(st, 'OuterType')])
         })
     })
 
