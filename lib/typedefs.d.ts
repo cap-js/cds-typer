@@ -21,7 +21,7 @@ export module resolver {
         on?: string,
         parent?: EntityCSN
         projection?: { from: ref, columns: (ref | '*')[]}
-        target?: EntityCSN,
+        target?: string,
         type: string | ref,
         name: string,
         '@odata.draft.enabled'?: boolean // custom!
