@@ -50,3 +50,8 @@ jobs:
         run: npm publish --tag beta --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Delete branch
+        run: |
+          BRANCH_NAME="prerelease-${{ steps.bump_version.outputs.prerelease_version }}"
+          git push origin --delete $BRANCH_NAME
