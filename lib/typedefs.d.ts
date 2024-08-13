@@ -1,17 +1,55 @@
 export module resolver {
+    type ref = {
+        ref: string[],
+        as?: string
+    }
+
     export type PropertyModifier = 'override' | 'declare'
 
     export type EntityCSN = {
-        cardinality?: { max?: '*' | number }
+        actions?: OperationCSN[],
+        cardinality?: { max?: '*' | string }
+        compositions?: { target: string }[]
+        doc?: string,
+        elements?: { [key: string]: EntityCSN }
+        key?: string // custom!!
+        keys?: { [key:string]: any }
+        kind: string,
+        includes?: string[]
+        items?: EntityCSN
+        notNull?: boolean,  // custom!
+        on?: string,
+        parent?: EntityCSN
+        projection?: { from: ref, columns: (ref | '*')[]}
+        target?: string,
+        type: string | ref,
+        name: string,
+        '@odata.draft.enabled'?: boolean // custom!
+        _unresolved?: boolean
+        isRefNotNull?: boolean // custom!
+    }
+
+    export type OperationCSN = EntityCSN & {
+        params: {[key:string]: EntityCSN},
+        returns?: any,
+        kind: 'action' | 'function'
+    }
+
+    export type ProjectionCSN = EntityCSN & {
+        projection: any
+    }
+
+    export type ViewCSN = EntityCSN & {
+        query?: any
+    }
+
+
+    export type EnumCSN = EntityCSN & {
+        enum: {[key:name]: string}
     }
 
     export type CSN = {
-        definitions?: { [key: string]: EntityCSN },
-        kind?: string,
-        doc?: string,
-        parent?: CSN
-        actions?: CSN[],
-        includes?: string[]
+        definitions: { [key: string]: EntityCSN },
     }
 
     /**
@@ -26,18 +64,21 @@ export module resolver {
      * ```
      */
     export type TypeResolveInfo = {
-        isBuiltin: boolean,
-        isDeepRequire: boolean,
-        isNotNull: boolean,
-        isInlineDeclaration: boolean,
-        isForeignKeyReference: boolean,
-        isArray: boolean,
-        type: string,
+        isBuiltin?: boolean,
+        isDeepRequire?: boolean,
+        isNotNull?: boolean,
+        isInlineDeclaration?: boolean,
+        isForeignKeyReference?: boolean,
+        isArray?: boolean,
+        type?: string,
         path?: Path,
-        csn?: CSN,
-        imports: Path[]
-        inner: TypeResolveInfo,
-        structuredType?: {[key: string]: TypeResolveInfo}  // FIXME: same as inner?
+        csn?: EntityCSNCSN,
+        imports?: Path[]
+        inner?: TypeResolveInfo,
+        structuredType?: {[key: string]: {typeName: string, typeInfo: TypeResolveInfo}}  // FIXME: same as inner?
+        plainName: string,
+        typeName?: string // FIXME: same as plainName?
+        inflection?: visitor.Inflection
     }
 
     export type EntityInfo = Exclude<ReturnType<import('../lib/resolution/entity').EntityRepository['getByFq']>, null>
@@ -78,6 +119,9 @@ export module visitor {
         outputDirectory: string,
         logLevel: number,
         jsConfigPath?: string,
+        inlineDeclarations: 'flat' | 'structured',
+        propertiesOptional: boolean,
+        IEEE754Compatible: boolean,
     }
 
     export type VisitorOptions = {
@@ -91,7 +135,7 @@ export module visitor {
     }
 
     export type Inflection = {
-        typeName: string,
+        typeName?: string,
         singular: string,
         plural: string
     }
