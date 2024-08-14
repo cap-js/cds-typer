@@ -98,13 +98,14 @@ describe('Path', () => {
 describe('SourceFile', () => {
     test('addImport', () => {
         const sf = new SourceFile('.')
+        const impNo = sf.getImports().parts.length
         sf.addImport(new Path(['a', 'b']))
-        expect(sf.getImports().parts.length).toBe(1)
+        expect(sf.getImports().parts.length).toBe(impNo+1)
         sf.addImport(new Path(['a', 'b']))
-        expect(sf.getImports().parts.length).toBe(1)
+        expect(sf.getImports().parts.length).toBe(impNo+1)
         sf.addImport(new Path(['a', 'b', 'c']))
-        expect(sf.getImports().parts.length).toBe(2)
+        expect(sf.getImports().parts.length).toBe(impNo+2)
         sf.addImport(new Path([]))
-        expect(sf.getImports().parts.length).toBe(2)
+        expect(sf.getImports().parts.length).toBe(impNo+2)
     })
 })
