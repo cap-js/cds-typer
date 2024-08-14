@@ -15,8 +15,7 @@ describe('Builtin HANA Datatypes', () => {
 
     test('Import of HANA Types Present', () => {
         const imp = astw.getImports()
-        expect(imp.length).toBe(2)
-        expect(imp[0].as).toBe('_cds_hana')
+        expect(imp.map(i=>i.as)).toContain('_cds_hana')
     })
 
     test('Types Correct', () => {

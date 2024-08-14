@@ -447,12 +447,14 @@ class JSASTWrapper {
 
 const checkFunction = (fnNode, {callCheck, parameterCheck, returnTypeCheck, modifiersCheck}) => {
     if (!fnNode) throw new Error('the function does not exist (or was not properly accessed from the AST)')
-    const [callsignature, parameters, returnType] = fnNode?.type?.members ?? []
-    if (!callsignature || callsignature.keyword !== 'callsignature') throw new Error('callsignature is not present or of wrong type')
+    const [callsignature1, callsignature2, parameters, returnType] = fnNode?.type?.members ?? []
+    if (!callsignature1 || callsignature1.keyword !== 'callsignature') throw new Error('callsignature1 is not present or of wrong type')
+    if (!callsignature2 || callsignature2.keyword !== 'callsignature') throw new Error('callsignature2 is not present or of wrong type')
     if (!parameters || ts.unescapeLeadingUnderscores(parameters.name) !== '__parameters') throw new Error('__parameters property is missing or named incorrectly')
     if (!returnType || ts.unescapeLeadingUnderscores(returnType.name) !== '__returns') throw new Error('__returns property is missing or named incorrectly')
 
-    if (callCheck && !callCheck(callsignature.type)) throw new Error('callsignature is not matching expectations')
+    if (callCheck && !callCheck(callsignature1.type)) throw new Error('callsignature is not matching expectations')
+    if (callCheck && !callCheck(callsignature2.type)) throw new Error('callsignature is not matching expectations')
     if (parameterCheck && !parameterCheck(parameters.type)) throw new Error('parameter type is not matching expectations')
     if (returnTypeCheck && !returnTypeCheck(returnType.type)) throw new Error('return type is not matching expectations')
     if (modifiersCheck && !modifiersCheck(fnNode?.modifiers)) throw new Error('modifiers did not meet expectations')

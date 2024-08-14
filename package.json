@@ -1,6 +1,6 @@
 {
   "name": "@cap-js/cds-typer",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "description": "Generates .ts files for a CDS model to receive code completion in VS Code",
   "main": "index.js",
   "repository": "github:cap-js/cds-typer",
@@ -40,12 +40,14 @@
   "bin": {
     "cds-typer": "./lib/cli.js"
   },
-  "dependencies": {
-    "@sap/cds": ">=7.7"
+  "peerDependencies": {
+    "@cap-js/cds-types": ">=0.6.4",
+    "@sap/cds": ">=8"
   },
   "devDependencies": {
+    "@cap-js/cds-types": "^0",
+    "@sap/cds": "^8",
     "@stylistic/eslint-plugin-js": "^1.6.3",
-    "@cap-js/cds-types": ">=0.6",
     "acorn": "^8.10.0",
     "eslint": "^9",
     "eslint-plugin-jsdoc": "^48.2.7",
