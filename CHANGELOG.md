@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.25.0 - TBD
+## Version 0.26.0 - TBD
+
+## Version 0.25.0 - 2024-08-13
 ### Added
 - Declaring a type alias on an enum in cds now also exports it on value level in the resulting type
 - Apps need to provide `@sap/cds` version `8.2` or higher.

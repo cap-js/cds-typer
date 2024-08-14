@@ -9,6 +9,7 @@
       "noImplicitReturns": true,
       "alwaysStrict": true,
       "esModuleInterop": true,
+      "resolveJsonModule": true,
       "checkJs": true,
       "allowJs": true,
       "declaration": true,
