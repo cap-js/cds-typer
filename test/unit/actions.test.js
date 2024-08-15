@@ -176,6 +176,12 @@ describe('Actions', () => {
         })
     })
 
+    test ('Optional Action Params', async () => {
+        checkFunction(astwBound.tree.find(fn => fn.name === 'aOptionalParam'), {
+            parameterCheck: ({members: [first, second]}) => !check.isOptional(first) && check.isOptional(second)
+        })
+    })
+
     test ('Empty .actions typed as empty Record', async () => {
         const { type } = astwUnbound.getAspectProperty('_NoActionAspect', 'actions')
         expect(type.full === 'Record'

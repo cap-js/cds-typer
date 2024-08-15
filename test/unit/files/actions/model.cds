@@ -31,6 +31,12 @@ service S {
     action   aSingleParamManyReturn(val: E)          returns array of E;
     action   aManyParamManyReturn(val: array of E)   returns array of E;
     action   aManyParamSingleReturn(val: array of E) returns E;
+
+    action   aOptionalParam(
+        val: E,
+        @Core.OptionalParameter: {$Type : 'Core.OptionalParameterType'}
+        opt: E
+    ) returns E;
 }
 
 action free (param: String) returns { a: Integer; b: String } ;
