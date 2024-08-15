@@ -8,17 +8,18 @@ entity Foo {
 }
 
 service S {
-    entity E {}
-        actions {
-            action f (x: String);
-            function g (a: { x: Integer; y: Integer }, b: Integer) returns Integer;
-            action h () returns { a: Integer; b: String };
-            action k () returns ExternalType;
-            action l () returns ExternalInRoot;
-            action s1 (in: $self);
-            action sn (in: many $self);
-            action sx (in: $self, x: Int16);
-        }
+    entity E {
+        key e1:String
+    } actions {
+        action f (x: String);
+        function g (a: { x: Integer; y: Integer }, b: Integer) returns Integer;
+        action h () returns { a: Integer; b: String };
+        action k () returns ExternalType;
+        action l () returns ExternalInRoot;
+        action s1 (in: $self);
+        action sn (in: many $self);
+        action sx (in: $self, x: Int16);
+    }
     function getOneExternalType() returns ExternalType;
     function getManyExternalTypes() returns array of ExternalType;
 

@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "paths": {
+      "#cds-models/*": [
+        "../@cds-models/*"
+      ],
+      "#cds-models": [
+        "../@cds-models/"
+      ]
+    }
+  }
+}

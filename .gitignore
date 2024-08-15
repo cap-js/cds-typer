@@ -140,3 +140,4 @@ dist
 
 # cds-typer
 @cds-models/
+_out/
