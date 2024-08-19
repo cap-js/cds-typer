@@ -35,7 +35,8 @@ service S {
     action   aOptionalParam(
         val: E,
         @Core.OptionalParameter: {$Type : 'Core.OptionalParameterType'}
-        opt: E
+        opt: E,
+        val2: E
     ) returns E;
 }
 
