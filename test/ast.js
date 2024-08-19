@@ -18,6 +18,7 @@ const kinds = {
     FunctionDeclaration: 'functionDeclaration',
     ImportDeclaration: 'importDeclaration',
     PropertyDeclaration: 'propertyDeclaration',
+    PropertySignature: 'propertSignature',
     Keyword: 'keyword',
     VariableStatement: 'variableStatement',
     TypeAliasDeclaration: 'typeAliasDeclaration',
@@ -68,6 +69,7 @@ const visitors = [
     [ts.isBlock, visitBlock],
     [ts.isClassExpression, visitClassExpression],
     [ts.isPropertyDeclaration, visitPropertyDeclaration],
+    [ts.isPropertySignature, visitPropertySignature],
     [ts.isTypeReferenceNode, visitTypeReference],
     [ts.isStringLiteral, visitStringLiteral],
     [ts.isHeritageClause, visitHeritageClause],
@@ -229,6 +231,19 @@ function visitPropertyDeclaration(node) {
     const optional = !!node.questionToken
     const modifiers = node.modifiers?.map(visit) ?? []
     return { name, type, optional, nodeType: kinds.PropertyDeclaration, modifiers }
+}
+
+/**
+ * @typedef {{name: string, type: any, optional: boolean, nodeType: string, modifiers: object}} PropertySignature
+ * @param {ts.PropertySignature} node - the node to visit
+ * @returns {PropertySignature}
+ */
+function visitPropertySignature(node) {
+    const name = visit(node.name)
+    const type = visit(node.type)
+    const optional = !!node.questionToken
+    const modifiers = node.modifiers?.map(visit) ?? []
+    return { name, type, optional, nodeType: kinds.PropertySignature, modifiers }
 }
 
 /**
@@ -482,6 +497,7 @@ const check = {
     isUnionType: (node, of = []) => checkKeyword(node, 'uniontype')
         && of.reduce((acc, predicate) => acc && node.subtypes.some(st => predicate(st)), true),
     isNullable: (node, of = []) => check.isUnionType(node, of.concat([check.isNull])),
+    isOptional: node => node.optional,
     hasDeclareModifier: node => node?.modifiers?.some(mod => checkKeyword(mod, 'declare')),
     isLiteral: (node, literal = undefined) => checkKeyword(node, 'literaltype') && (literal === undefined || node.literal === literal),
     isTypeReference: (node, full = undefined) => checkNodeType(node, 'typeReference') && (!full || node.full === full),
