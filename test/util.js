@@ -193,7 +193,7 @@ async function prepareUnitTest(model, outputDirectory, parameters = {}) {
  * @param {string} outputDirectory - the path to the output directory
  * @param {PrepareUnitTestParameters} parameters - additional parameters
  */
-async function runTyperAndTranspile(model, testTsFile, outputDirectory, parameters = {}) {
+async function runTyperAndTsCheck(model, testTsFile, outputDirectory, parameters = {}) {
     const defaults = {
         typerOptions: {},
         fileSelector: paths => (paths ?? []).find(p => !p.endsWith('_')),
@@ -221,5 +221,5 @@ module.exports = {
     locations,
     cds2ts,
     prepareUnitTest,
-    runTyperAndTranspile
+    runTyperAndTsCheck
 }

@@ -15,6 +15,9 @@ import {
     getManyExternalTypes,
     getOneExternalType,
 } from '#cds-models/actions_test/S'
+
+import S2 from '#cds-models/actions_test/S2'
+
 import { ExternalType, ExternalType2 } from '#cds-models/elsewhere'
 import { ExternalInRoot } from '#cds-models';
 
@@ -49,6 +52,13 @@ class S extends cds.ApplicationService { async init(){
   this.on(freevoid,   req => { return undefined satisfies void })
   this.on(freetypeof, req => { req.data.p satisfies number })
   this.on(free4,      req => { return { extType2:1 } satisfies ExternalType2 })
+
+  // calling actions
+  const s2  = await cds.connect.to(S2)
+  await s2.a1({p1: '', p2: [ { extType2: 1 } ]}) satisfies ExternalType
+  await s2.a1('', [ { extType2: 1 } ]) satisfies ExternalType
+  await s2.a2({p1: '', p3: 1}) satisfies ExternalType
+  await s2.a2('', [], 1) satisfies ExternalType
 
   return super.init()
 }}

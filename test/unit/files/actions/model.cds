@@ -56,3 +56,9 @@ entity ParameterlessActions {}
     actions {
         action a()
     }
+
+service S2 {
+    entity E {};
+    action a1 (p1: String, p2: many ExternalType2) returns ExternalType;
+    action a2 (p1: String, @Core.OptionalParameter: {$Type : 'Core.OptionalParameterType'} p2: many ExternalType2, p3: Integer) returns ExternalType
+}
