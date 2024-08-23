@@ -2,6 +2,8 @@ import cds from '@sap/cds'
 
 import { free, free2, free3, free4, freetypeof, freevoid } from '#cds-models/actions_test'
 import {
+  aDocMoreLinesWithBadChar,
+  aDocOneLine,
     aManyParamManyReturn,
     aManyParamSingleReturn,
     aOptionalParam,
@@ -17,6 +19,7 @@ import {
 } from '#cds-models/actions_test/S'
 
 import S2 from '#cds-models/actions_test/S2'
+import S_ from '#cds-models/actions_test/S'
 
 import { ExternalType, ExternalType2 } from '#cds-models/elsewhere'
 import { ExternalInRoot } from '#cds-models';
@@ -26,6 +29,8 @@ type IsKeyOptional<T extends Record<string | number | symbol, unknown>, Keys ext
     {[Key in Keys]?: T[Key]} extends Pick<T, Keys> ? true : false;
 
 class S extends cds.ApplicationService { async init(){
+
+  const s_  = await cds.connect.to(S_)
 
   this.on(getOneExternalType,        req => { return {extType:1} satisfies ExternalType})
   this.on(getManyExternalTypes,      req => { return [{extType:1}] satisfies ExternalType[] })
@@ -44,6 +49,11 @@ class S extends cds.ApplicationService { async init(){
     false satisfies IsKeyOptional<typeof req.data, 'val2'>
     true satisfies IsKeyOptional<typeof req.data, 'opt'>
   })
+
+  this.on(aDocOneLine,    req => { const {val1, val2} = req.data; return {e1:val1[0].e1} satisfies E })
+  s_.aDocOneLine({val1: {}, val2: {}})
+  this.on(aDocMoreLinesWithBadChar, req => { const {val} = req.data; return {e1:val[0].e1} satisfies E })
+  s_.aDocMoreLinesWithBadChar({val: {}})
 
   this.on(free,       req => { const { param } = req.data; return { a:1, b:param } })
   this.on(free, async req => { const { param } = req.data; return Promise.resolve({ a:1, b:param }) })
