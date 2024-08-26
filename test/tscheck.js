@@ -2,7 +2,7 @@ const ts = require('typescript')
 
 /**
  * Checks a parsed TS program for error diagnostics.
- * @param {any} program
+ * @param {any} program - the parsed TS program
  */
 function checkProgram (program) {
     const emitResult = program.emit()
@@ -25,8 +25,8 @@ function checkProgram (program) {
 
 /**
  * Parses a list of .ts files, and checks them for errors.
- * @param {string[]} apiFiles
- * @param {object} opts
+ * @param {string[]} apiFiles - the list of .ts files to check
+ * @param {object} opts - the options to pass to the TS compiler
  */
 async function checkTranspilation (apiFiles, opts = {}) {
     const options = {...{ noEmit: true }, ...opts}

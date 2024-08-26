@@ -277,13 +277,13 @@ function visitFunctionDeclaration(node) {
     return { name, body, nodeType: kinds.FunctionDeclaration }
 }
 
-/** @param {ts.Node} node */
+/** @param {ts.Node} node - the node that was unsuccessfully handled */
 function errorHandler(node) {
     // eslint-disable-next-line no-console
     console.error(`unhandled node type ${node.kind}`)
 }
 
-/** @param {ts.Node} node */
+/** @param {ts.Node} node - the node to visit */
 function visit(node) {
     if (!node) return
     const [,handler] = visitors.find(([cond,]) => cond(node)) ?? [null, errorHandler]
@@ -336,7 +336,7 @@ class ASTWrapper {
     }
 
     /**
-     * @param {string} name
+     * @param {string} name - the name of the module to find
      * @returns {ModuleDeclaration | undefined}
      */
     getModuleDeclaration(name) {
@@ -467,8 +467,8 @@ const check = {
     isNumber: node => checkKeyword(node, 'number'),
     isBoolean: node => checkKeyword(node, 'boolean'),
     /**
-     * @param {any} node
-     * @param {[(args: object[]) => boolean]} of
+     * @param {any} node - the node to check
+     * @param {[(args: object[]) => boolean]} of - the predicates to check against
      */
     isArray: (node, of = undefined) => node?.full === 'Array' && (!of || of(node.args)),
     isAny: node => checkKeyword(node, 'any'),
@@ -497,8 +497,8 @@ const check = {
 const checkInheritance = (node, ancestors) => {
     /**
      *
-     * @param {string} fq
-     * @param {any} node
+     * @param {string} fq - fully qualified name to check for
+     * @param {any} node - the node to check
      */
     function checkPropertyAccessExpression (fq, node) {
         if (check.isPropertyAccessExpression(node)) {
@@ -511,8 +511,8 @@ const checkInheritance = (node, ancestors) => {
 
     /**
      *
-     * @param {string} name
-     * @param {object[]} [ancestor]
+     * @param {string} name - the name of the ancestor to check
+     * @param {object[]} [ancestor] - the ancestors to check against
      */
     function inherits (name, [ancestor] = []) {
         if (!ancestor) return false
