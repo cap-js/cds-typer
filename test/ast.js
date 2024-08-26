@@ -221,7 +221,7 @@ function visitTypeReference(node) {
 }
 
 /**
- * @typedef {{name: string, type: any, optional: boolean, nodeType: string, modifiers: object}} PropertyDeclaration
+ * @typedef {{name: string, type: any, optional: boolean, nodeType: string, modifiers: object, initializer?: object}} PropertyDeclaration
  * @param {ts.PropertyDeclaration} node - the node to visit
  * @returns {PropertyDeclaration}
  */
@@ -230,7 +230,8 @@ function visitPropertyDeclaration(node) {
     const type = visit(node.type)
     const optional = !!node.questionToken
     const modifiers = node.modifiers?.map(visit) ?? []
-    return { name, type, optional, nodeType: kinds.PropertyDeclaration, modifiers }
+    const initializer = visit(node.initializer)
+    return { name, type, optional, nodeType: kinds.PropertyDeclaration, modifiers, initializer }
 }
 
 /**
@@ -491,6 +492,8 @@ const check = {
     isAny: node => checkKeyword(node, 'any'),
     isVoid: node => checkKeyword(node, 'void'),
     isStatic: node => checkKeyword(node, 'static'),
+    isStaticMember: node => node?.modifiers?.find(m => checkKeyword(m, 'static')),
+    isReadonlyMember: node => node?.modifiers?.find(m => checkKeyword(m, 'readonly')),
     isIndexedAccessType: node => checkKeyword(node, 'indexedaccesstype'),
     isParenthesizedType: (node, of = undefined) => checkKeyword(node, 'parenthesizedtype') && (of === undefined || of(node.type)),
     isNull: node => checkKeyword(node, 'literaltype') && checkKeyword(node.literal, 'null'),
