@@ -2,8 +2,8 @@ import cds from '@sap/cds'
 
 import { free, free2, free3, free4, freetypeof, freevoid } from '#cds-models/actions_test'
 import {
-  aDocMoreLinesWithBadChar,
-  aDocOneLine,
+    aDocMoreLinesWithBadChar,
+    aDocOneLine,
     aManyParamManyReturn,
     aManyParamSingleReturn,
     aOptionalParam,

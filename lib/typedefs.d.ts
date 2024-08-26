@@ -143,6 +143,13 @@ export module visitor {
     export type Context = {
         entity: string
     }
+
+    export type ParamInfo = {
+        name: string,
+        modifier: '' | '?',
+        type: string,
+        doc?: string
+    }
 }
 
 export module file {
