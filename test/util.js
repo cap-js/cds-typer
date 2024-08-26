@@ -36,6 +36,7 @@ const { checkTranspilation } = require('./tscheck')
  *     it will load all definitions into the exports variable, potentially
  *     shadowing any previous content over multiple runs. Instead, we define
  *     a local variable to which the results of eval() will be bound.
+ * @param {any} code
  */
 const loadModule = code => {
     const exports = {}
@@ -289,9 +290,8 @@ class TSParser {
  * would clutter the namespace needlessly. So this method recursively walks
  * all imported files (starting from a specified base file), inspects all imports
  * and rewrites them if they contain a reference to an alias.
- *
- * @param file the file to check. Should be a valid .cds file
- * @param resolves and array of pairs:
+ * @param {string} file - the file to check. Should be a valid .cds file
+ * @param {[string, string][]} resolves - and array of pairs:
  *  [0]: expression to look for within the "from" part of imports.
  *  [1]: the absolute path to the file to replace them with.
  */
@@ -349,8 +349,8 @@ const cds2ts = async (cdsFile, options = {}) => typer.compileFromFile(
  */
 
 /**
- * @param {string} model the path to the model file to be processed
- * @param {string} outputDirectory the path to the output directory
+ * @param {string} model - the path to the model file to be processed
+ * @param {string} outputDirectory - the path to the output directory
  * @param {PrepareUnitTestParameters} parameters
  */
 async function prepareUnitTest(model, outputDirectory, parameters = {}) {

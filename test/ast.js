@@ -25,17 +25,18 @@ const kinds = {
     CallExpression: 'callExpression'
 }
 
-/*
-const keywords = {
-    ExpressionWithTypeArguments: 'expressionwithtypearguments',
-    HeritageClause: 'heritageclause'
-}
-*/
-
+/**
+ *
+ * @param {any} node
+ */
 function isKeyword(node) {
     return !!ts.SyntaxKind[node.kind]
 }
 
+/**
+ *
+ * @param {any} node
+ */
 function resolveKeyword(node) {
     // the TS AST packs a lot of information into keyword tokens, depending on their
     // actual keyword. We therefore try to resolve all the intersting fields
@@ -109,7 +110,7 @@ function visitModuleDeclaration(node) {
 
 /**
  * @typedef {{name: string, type: any[]}} TypeAliasDeclaration
- * @param node {ts.TypeAliasDeclaration}
+ * @param {ts.TypeAliasDeclaration} node
  * @returns {TypeAliasDeclaration}
  */
 function visitTypeAliasDeclaration(node) {
@@ -121,45 +122,45 @@ function visitTypeAliasDeclaration(node) {
     }
 }
 
-/** @param node { {text: string} } */
+/** @param { {text: string} } node - */
 function visitNumericLiteral(node) {
     return Number(node.text)
 }
-
-/** @param node {ts.Token} */
+ 
+/** @param {ts.Token} node */
 function visitBooleanLiteral(node) {
     // the literals "true" and "false" are very non-descriptive,
     // so we directly check for their kind to find them
     if (node.kind === ts.SyntaxKind.TrueKeyword) return true
     if (node.kind === ts.SyntaxKind.FalseKeyword) return false
 }
-
-/** @param node { {operator: number, operand: {}} } */
+ 
+/** @param { {operator: number, operand: {}} } node */
 function visitPrefixUnaryExpression(node) {
     if (node.operator === ts.SyntaxKind.MinusToken) return -visit(node.operand)
 }
-
-/** @param node {ts.ObjectLiteralExpression} */
+ 
+/** @param {ts.ObjectLiteralExpression} node */
 function visitObjectLiteralExpression(node) {
     return node.properties.reduce((o, {name, initializer}) => {
         o[visit(name)] = visit(initializer)
         return o
     }, {})
 }
-
-/** @param node {ts.Identifier} */
+ 
+/** @param {ts.Identifier} node */
 function visitIdentifier(node) {
     return node.escapedText
 } 
-
-/** @param node {ts.StringLiteral} */
+ 
+/** @param {ts.StringLiteral} node */ 
 function visitStringLiteral(node) {
     return node.text
 }
-
+ 
 /** 
  * @typedef {{}} HeritageClause
- * @param node {ts.HeritageClause}
+ * @param {ts.HeritageClause} node
  * @returns {HeritageClause}
  */
 function visitHeritageClause(node) {
@@ -170,7 +171,7 @@ function visitHeritageClause(node) {
 
 /**
  * @typedef {{name: string, type?: any, initializer?: any, nodeType: string}} VariableStatement
- * @param node {ts.VariableStatement} 
+ * @param {ts.VariableStatement} node 
  * @returns {VariableStatement}
  */
 function visitVariableStatement(node) {
@@ -184,7 +185,7 @@ function visitVariableStatement(node) {
 
 /**
  * @typedef {{module: any, as: string, nodeType: string}} ImportDeclaration 
- * @param node {ts.ImportDeclaration}
+ * @param {ts.ImportDeclaration} node
  * @returns {ImportDeclaration}
  */
 function visitImportDeclaration(node) {
@@ -195,7 +196,7 @@ function visitImportDeclaration(node) {
 
 /** 
  * @typedef {{as: string}} ImportClause
- * @param node {ts.ImportClause} 
+ * @param {ts.ImportClause} node
  * @returns {ImportClause}
  */
 function visitImportClause(node) {
@@ -206,7 +207,7 @@ function visitImportClause(node) {
 
 /**
  * @typedef {{namespace: string, name: string, full: string, args: any[], nodeType: string}} TypeReference
- * @param node {ts.TypeReference} 
+ * @param {ts.TypeReference} node 
  * @returns {TypeReference}
  */
 function visitTypeReference(node) {
@@ -218,8 +219,8 @@ function visitTypeReference(node) {
 }
 
 /**
- * @typedef {{name: string, type: any, optional: boolean, nodeType: string, modifiers: object[], initializer?: object}} PropertyDeclaration
- * @param node {ts.PropertyDeclaration}
+ * @typedef {{name: string, type: any, optional: boolean, nodeType: string, modifiers: object, initializer?: object}} PropertyDeclaration
+ * @param {ts.PropertyDeclaration} node
  * @returns {PropertyDeclaration}
  */
 function visitPropertyDeclaration(node) {
@@ -233,7 +234,7 @@ function visitPropertyDeclaration(node) {
 
 /**
  * @typedef {{name: string, members: PropertyDeclaration[], nodeType: string}} ClassExpression
- * @param node {ts.ClassExpression} 
+ * @param {ts.ClassExpression} node 
  * @returns {ClassExpression}
  */
 function visitClassExpression(node) {
@@ -242,19 +243,19 @@ function visitClassExpression(node) {
     return { name, members, nodeType: kinds.ClassExpression }
 }
 
-/** @param node {ts.Statement} */
+/** @param {ts.Statement} node - */
 function visitStatement(node) {
     return node.forEachChild(visit)
 }
-
-/** @param node {ts.Block} */
+ 
+/** @param {ts.Block} node */
 function visitBlock(node) {
     return node.statements.map(visit)
 }
-
+ 
 /**
  * @typedef {{name: string, typeParameters: any[], heritage: [], members: [], type: string}} ClassDeclaration
- * @param node {ts.ClassDeclaration} 
+ * @param {ts.ClassDeclaration} node 
  * @returns {ClassDeclaration}
  */
 function visitClassDeclaration(node) {
@@ -267,7 +268,7 @@ function visitClassDeclaration(node) {
 
 /** 
  * @typedef {{name: string, body: any[], nodeType: string}} FunctionDeclaration
- * @param node {ts.FunctionDeclaration} 
+ * @param {ts.FunctionDeclaration} node 
  * @returns {FunctionDeclaration}
  */
 function visitFunctionDeclaration(node) {
@@ -276,13 +277,13 @@ function visitFunctionDeclaration(node) {
     return { name, body, nodeType: kinds.FunctionDeclaration }
 }
 
-/** @param node {ts.Node} */
+/** @param {ts.Node} node */
 function errorHandler(node) {
     // eslint-disable-next-line no-console
     console.error(`unhandled node type ${node.kind}`)
 }
 
-/** @param node {ts.Node} */
+/** @param {ts.Node} node */
 function visit(node) {
     if (!node) return
     const [,handler] = visitors.find(([cond,]) => cond(node)) ?? [null, errorHandler]
@@ -334,7 +335,10 @@ class ASTWrapper {
             .filter(n => n.nodeType === kinds.ModuleDeclaration)
     }
 
-    /** @returns {ModuleDeclaration | undefined} */
+    /**
+     * @param {string} name
+     * @returns {ModuleDeclaration | undefined}
+     */
     getModuleDeclaration(name) {
         return this.getModuleDeclarations().find(m => m.name === name)
     }
@@ -418,7 +422,7 @@ class JSASTWrapper {
     }
 
     /**
-     * @returns {{ lhs: string, rhs: string | { singular: boolean, name: string }}
+     * @returns {{ lhs: string, rhs: string | { singular: boolean, name: string }}}
      */
     getExports() {
         const processObjectLiteral = ({properties}) => ({
@@ -491,6 +495,11 @@ const check = {
  * @returns {boolean} - true iff node extends all ancestors
  */
 const checkInheritance = (node, ancestors) => {
+    /**
+     *
+     * @param {string} fq
+     * @param {any} node
+     */
     function checkPropertyAccessExpression (fq, node) {
         if (check.isPropertyAccessExpression(node)) {
             const [from, property] = fq.split('.')
@@ -500,6 +509,11 @@ const checkInheritance = (node, ancestors) => {
         return false
     }
 
+    /**
+     *
+     * @param {string} name
+     * @param {object[]} [ancestor]
+     */
     function inherits (name, [ancestor] = []) {
         if (!ancestor) return false
         // A: B, C, D
