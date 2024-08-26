@@ -14,32 +14,32 @@ describe('array of', () => {
         beforeAll(async () => aspect = astw.tree.find(n => n.name === '_EAspect').body[0])
 
         test('array of String', async () => {
-            expect(aspect.members.find(m => m.name === 'stringz' 
-                && m.type.full === 'Array' 
+            expect(aspect.members.find(m => m.name === 'stringz'
+                && m.type.full === 'Array'
                 && check.isString(m.type.args[0]))).toBeTruthy()
         })
-    
+
         test('many Integer', async () => {
-            expect(aspect.members.find(m => m.name === 'numberz' 
-                && m.type.full === 'Array' 
+            expect(aspect.members.find(m => m.name === 'numberz'
+                && m.type.full === 'Array'
                 && check.isNumber(m.type.args[0]))).toBeTruthy()
         })
-    
+
         test('array of locally defined type', async () => {
-            expect(aspect.members.find(m => m.name === 'tz' 
-                && m.type.full === 'Array' 
+            expect(aspect.members.find(m => m.name === 'tz'
+                && m.type.full === 'Array'
                 && m.type.args[0].full === 'T')).toBeTruthy()
         })
-    
+
         test('array of externally defined type', async () => {
-            expect(aspect.members.find(m => m.name === 'extz' 
-                && m.type.full === 'Array' 
+            expect(aspect.members.find(m => m.name === 'extz'
+                && m.type.full === 'Array'
                 && m.type.args[0].full === '_elsewhere.ExternalType')).toBeTruthy()
         })
-    
+
         test('array of inline type type', async () => {
-            expect(aspect.members.find(m => m.name === 'inlinez' 
-                && m.type.full === 'Array' 
+            expect(aspect.members.find(m => m.name === 'inlinez'
+                && m.type.full === 'Array'
                 && m.type.args[0].keyword === 'typeliteral'
                 && m.type.args[0].members.length === 2)).toBeTruthy()
         })

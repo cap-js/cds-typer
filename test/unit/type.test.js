@@ -8,7 +8,7 @@ describe('type Definitions', () => {
     let astw
 
     beforeAll(async () => astw = (await prepareUnitTest('type/model.cds', locations.testOutput('type_test'))).astw)
-    
+
     test('All Definitions Present', () => {
         expect(astw.tree.find(({name, nodeType}) => name === 'IntAlias' && nodeType === 'typeAliasDeclaration')).toBeTruthy()
         expect(astw.tree.find(({name, nodeType}) => name === 'Points' && nodeType === 'classDeclaration')).toBeTruthy()

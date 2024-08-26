@@ -33,7 +33,7 @@ const rmDirIfExists = dir => {
  * @param {string[]} exts - The extensions to remove.
  * @returns {Promise<void>}
  */
-const rmFiles = async (dir, exts) => fs.existsSync(dir) 
+const rmFiles = async (dir, exts) => fs.existsSync(dir)
     ? Promise.all(
         (await readdir(dir))
             .map(async file => {
@@ -66,7 +66,7 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
     get #modelDirectoryName () {
         try {
             // expected format: { '#cds-models/*': [ './@cds-models/*/index.ts' ] }
-            //                                       ^^^^^^^^^^^^^^^ 
+            //                                       ^^^^^^^^^^^^^^^
             //                             relevant part - may be changed by user
             const config = JSON.parse(fs.readFileSync ('tsconfig.json', 'utf8'))
             const alias = config.compilerOptions.paths['#cds-models/*'][0]
@@ -118,8 +118,8 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
         await rmFiles(this.task.dest, ['.js', '.ts'])
 
         try {
-            await (buildConfigExists() 
-                ? this.#buildWithConfig() 
+            await (buildConfigExists()
+                ? this.#buildWithConfig()
                 : this.#buildWithoutConfig()
             )
         } catch (error) {
