@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.26.0 - TBD
 ### Added
+- Added a static `.kind` property for entities and types, which contains `'entity'` or `'type'` respectively
 - Apps need to provide `@sap/cds` version `8.2` or higher.
 - Apps need to provide `@cap-js/cds-types` version `0.6.4` or higher.
 - Typed methods are now generated for calls of unbound actions. Named and positional call styles are supported, e.g. `service.action({one, two})` and `service.action(one, two)`.
@@ -57,7 +58,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Version 0.21.0 - 2024-05-31
 ### Added
 - Added `IEEE754Compatible` flag which, when set to `true`, generates decimal fields as `(number | string)` instead of `number`. This flag will be removed in the long run
-- Added a static `.kind` property for entities and types, which contains `'entity'` or `'type'` respectively
 - Added plugin to `cds build` TypeScript projects. Can be explicitly called using `cds build --for typescript`
 
 ### Changed
