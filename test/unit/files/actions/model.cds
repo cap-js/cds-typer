@@ -51,14 +51,14 @@ action free4 () returns {
     foo: ExternalType2
 };
 
-entity NoActions {}
-entity ParameterlessActions {}
+entity NoActions {key id: Integer;}
+entity ParameterlessActions {key id: Integer;}
     actions {
         action a()
     }
 
 service S2 {
-    entity E {};
+    entity E {key id: Integer;};
     action a1 (p1: String, p2: many ExternalType2) returns ExternalType;
     action a2 (p1: String, @Core.OptionalParameter: {$Type : 'Core.OptionalParameterType'} p2: many ExternalType2, p3: Integer) returns ExternalType
 }

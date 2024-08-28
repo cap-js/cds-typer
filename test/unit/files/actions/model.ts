@@ -25,7 +25,7 @@ import { ExternalInRoot } from '#cds-models';
 type IsKeyOptional<T extends Record<string | number | symbol, unknown>, Keys extends keyof T> =
     {[Key in Keys]?: T[Key]} extends Pick<T, Keys> ? true : false;
 
-class S extends cds.ApplicationService { async init(){
+export class S extends cds.ApplicationService { async init(){
 
   this.on(getOneExternalType,        req => { return {extType:1} satisfies ExternalType})
   this.on(getManyExternalTypes,      req => { return [{extType:1}] satisfies ExternalType[] })
@@ -62,5 +62,3 @@ class S extends cds.ApplicationService { async init(){
 
   return super.init()
 }}
-
-module.exports = S
