@@ -19,8 +19,8 @@ jobs:
 
     - name: Run Smoke Tests
       run: |
-        npm install
-        npm run test:smoke  
+        npm ci
+        npm run test:smoke
 
   unit-tests:
     needs: smoke-tests # to avoid writing over each others output
@@ -38,5 +38,5 @@ jobs:
 
     - name: Run Unit Tests
       run: |
-        npm install
+        npm ci
         npm run test:unit
