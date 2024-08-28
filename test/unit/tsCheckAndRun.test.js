@@ -2,35 +2,20 @@ const {join} = require('path')
 const { describe, test } = require('@jest/globals')
 const { runTyperAndTsCheck } = require('../util')
 const cds = require('@sap/cds')
+const { fs } = cds.utils
+const { locations } = require('../util')
 
 describe('Generate, TS Check, Run ', () => {
 
-    test.each([
-        'actions',
-        // 'arrayof',
-        // 'aspects',
-        // 'autoexpose',
-        // 'bookshoplet',
-        // 'builtins',
-        // 'count',
-        // 'delimident',
-        // 'draft',
-        // 'enums',
-        // 'events',
-        // 'excluding',
-        // 'foreignkeys',
-        // 'hana',
-        // 'inflection',
-        // 'inheritance',
-        // 'inline',
-        // 'notnull',
-        // 'projection',
-        // 'references',
-        // 'scoped',
-        // 'type',
-        // 'typeof',
-        // 'views',
-    ])('%s', async (dir, modelFile='model.cds', testFile='model.ts') => {
+    const tsDirs = fs.readdirSync(locations.unit.files(''))
+        .map(dir => {
+            const absolute = locations.unit.files(dir)
+            const tsFiles = fs.readdirSync(absolute).some(f => f.endsWith('.ts') && !f.endsWith('d.ts'))
+            return tsFiles ? dir : undefined
+        })
+        .filter(Boolean)
+
+    test.each(tsDirs)('%s', async (dir, modelFile='model.cds', testFile='model.ts') => {
         const base = join(__dirname, 'files', dir, modelFile, '..')
         const modelPath = join(base, modelFile)
         const tsFile = join(base, testFile)
