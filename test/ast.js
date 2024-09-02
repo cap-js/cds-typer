@@ -18,6 +18,7 @@ const kinds = {
     FunctionDeclaration: 'functionDeclaration',
     ImportDeclaration: 'importDeclaration',
     PropertyDeclaration: 'propertyDeclaration',
+    PropertySignature: 'propertSignature',
     Keyword: 'keyword',
     VariableStatement: 'variableStatement',
     TypeAliasDeclaration: 'typeAliasDeclaration',
@@ -68,6 +69,7 @@ const visitors = [
     [ts.isBlock, visitBlock],
     [ts.isClassExpression, visitClassExpression],
     [ts.isPropertyDeclaration, visitPropertyDeclaration],
+    [ts.isPropertySignature, visitPropertySignature],
     [ts.isTypeReferenceNode, visitTypeReference],
     [ts.isStringLiteral, visitStringLiteral],
     [ts.isHeritageClause, visitHeritageClause],
@@ -219,7 +221,7 @@ function visitTypeReference(node) {
 }
 
 /**
- * @typedef {{name: string, type: any, optional: boolean, nodeType: string, modifiers: object}} PropertyDeclaration
+ * @typedef {{name: string, type: any, optional: boolean, nodeType: string, modifiers: object, initializer?: object}} PropertyDeclaration
  * @param {ts.PropertyDeclaration} node - the node to visit
  * @returns {PropertyDeclaration}
  */
@@ -228,7 +230,21 @@ function visitPropertyDeclaration(node) {
     const type = visit(node.type)
     const optional = !!node.questionToken
     const modifiers = node.modifiers?.map(visit) ?? []
-    return { name, type, optional, nodeType: kinds.PropertyDeclaration, modifiers }
+    const initializer = visit(node.initializer)
+    return { name, type, optional, nodeType: kinds.PropertyDeclaration, modifiers, initializer }
+}
+
+/**
+ * @typedef {{name: string, type: any, optional: boolean, nodeType: string, modifiers: object}} PropertySignature
+ * @param {ts.PropertySignature} node - the node to visit
+ * @returns {PropertySignature}
+ */
+function visitPropertySignature(node) {
+    const name = visit(node.name)
+    const type = visit(node.type)
+    const optional = !!node.questionToken
+    const modifiers = node.modifiers?.map(visit) ?? []
+    return { name, type, optional, nodeType: kinds.PropertySignature, modifiers }
 }
 
 /**
@@ -446,12 +462,14 @@ class JSASTWrapper {
 
 const checkFunction = (fnNode, {callCheck, parameterCheck, returnTypeCheck, modifiersCheck}) => {
     if (!fnNode) throw new Error('the function does not exist (or was not properly accessed from the AST)')
-    const [callsignature, parameters, returnType] = fnNode?.type?.members ?? []
-    if (!callsignature || callsignature.keyword !== 'callsignature') throw new Error('callsignature is not present or of wrong type')
+    const [callsignature1, callsignature2, parameters, returnType] = fnNode?.type?.members ?? []
+    if (!callsignature1 || callsignature1.keyword !== 'callsignature') throw new Error('callsignature1 is not present or of wrong type')
+    if (!callsignature2 || callsignature2.keyword !== 'callsignature') throw new Error('callsignature2 is not present or of wrong type')
     if (!parameters || ts.unescapeLeadingUnderscores(parameters.name) !== '__parameters') throw new Error('__parameters property is missing or named incorrectly')
     if (!returnType || ts.unescapeLeadingUnderscores(returnType.name) !== '__returns') throw new Error('__returns property is missing or named incorrectly')
 
-    if (callCheck && !callCheck(callsignature.type)) throw new Error('callsignature is not matching expectations')
+    if (callCheck && !callCheck(callsignature1.type)) throw new Error('callsignature is not matching expectations')
+    if (callCheck && !callCheck(callsignature2.type)) throw new Error('callsignature is not matching expectations')
     if (parameterCheck && !parameterCheck(parameters.type)) throw new Error('parameter type is not matching expectations')
     if (returnTypeCheck && !returnTypeCheck(returnType.type)) throw new Error('return type is not matching expectations')
     if (modifiersCheck && !modifiersCheck(fnNode?.modifiers)) throw new Error('modifiers did not meet expectations')
@@ -474,12 +492,15 @@ const check = {
     isAny: node => checkKeyword(node, 'any'),
     isVoid: node => checkKeyword(node, 'void'),
     isStatic: node => checkKeyword(node, 'static'),
+    isStaticMember: node => node?.modifiers?.find(m => checkKeyword(m, 'static')),
+    isReadonlyMember: node => node?.modifiers?.find(m => checkKeyword(m, 'readonly')),
     isIndexedAccessType: node => checkKeyword(node, 'indexedaccesstype'),
     isParenthesizedType: (node, of = undefined) => checkKeyword(node, 'parenthesizedtype') && (of === undefined || of(node.type)),
     isNull: node => checkKeyword(node, 'literaltype') && checkKeyword(node.literal, 'null'),
     isUnionType: (node, of = []) => checkKeyword(node, 'uniontype')
         && of.reduce((acc, predicate) => acc && node.subtypes.some(st => predicate(st)), true),
     isNullable: (node, of = []) => check.isUnionType(node, of.concat([check.isNull])),
+    isOptional: node => node.optional,
     hasDeclareModifier: node => node?.modifiers?.some(mod => checkKeyword(mod, 'declare')),
     isLiteral: (node, literal = undefined) => checkKeyword(node, 'literaltype') && (literal === undefined || node.literal === literal),
     isTypeReference: (node, full = undefined) => checkNodeType(node, 'typeReference') && (!full || node.full === full),

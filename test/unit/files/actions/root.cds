@@ -1,1 +1,1 @@
-type ExternalInRoot {};
+type ExternalInRoot {extRoot:Integer};

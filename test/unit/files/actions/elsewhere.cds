@@ -1,3 +1,3 @@
 namespace elsewhere;
-type ExternalType {}
-type ExternalType2 {}
+type ExternalType { extType: Integer; }
+type ExternalType2 { extType2: Integer; }

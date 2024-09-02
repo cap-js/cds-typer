@@ -26,10 +26,10 @@ function checkProgram (program) {
 /**
  * Parses a list of .ts files, and checks them for errors.
  * @param {string[]} apiFiles - the list of .ts files to check
- * @param {object} opts - the options to pass to the TS compiler
+ * @param {import('typescript').CompilerOptions} opts - the options to pass to the TS compiler
  */
 async function checkTranspilation (apiFiles, opts = {}) {
-    const options = {...{ noEmit: true }, ...opts}
+    const options = {...{ noEmit: true, esModuleInterop: true }, ...opts}
     const program = ts.createProgram({ rootNames: apiFiles, options })
     checkProgram(program)
 }
