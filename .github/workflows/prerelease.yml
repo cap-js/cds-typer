@@ -1,13 +1,10 @@
 name: Create Prerelease Branch and Publish to npm
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   create-prerelease:
-    if: "!contains(github.event.head_commit.message, '[skip prerelease]')"
     runs-on: ubuntu-latest
 
     steps:
@@ -46,7 +43,6 @@ jobs:
           git add package.json package-lock.json
           git commit -m "Bump version to ${{ steps.bump_version.outputs.prerelease_version }}"
           git push origin $BRANCH_NAME
-
       - name: Publish to npm
         run: npm publish --tag beta --access public
         env:
