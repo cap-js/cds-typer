@@ -18,8 +18,11 @@ import {
     getOneExternalType,
 } from '#cds-models/actions_test/S'
 
-import S2 from '#cds-models/actions_test/S2'
-import S_ from '#cds-models/actions_test/S'
+import S2_default from '#cds-models/actions_test/S2'
+import { S2 } from '#cds-models/actions_test/S2'
+S2_default === S2
+
+import { S as S_} from '#cds-models/actions_test/S'
 
 import { ExternalType, ExternalType2 } from '#cds-models/elsewhere'
 import { ExternalInRoot } from '#cds-models';
@@ -28,9 +31,7 @@ import { ExternalInRoot } from '#cds-models';
 type IsKeyOptional<T extends Record<string | number | symbol, unknown>, Keys extends keyof T> =
     {[Key in Keys]?: T[Key]} extends Pick<T, Keys> ? true : false;
 
-class S extends cds.ApplicationService { async init(){
-
-  const s_  = await cds.connect.to(S_)
+export class S extends cds.ApplicationService { async init(){
 
   this.on(getOneExternalType,        req => { return {extType:1} satisfies ExternalType})
   this.on(getManyExternalTypes,      req => { return [{extType:1}] satisfies ExternalType[] })
@@ -50,11 +51,6 @@ class S extends cds.ApplicationService { async init(){
     true satisfies IsKeyOptional<typeof req.data, 'opt'>
   })
 
-  this.on(aDocOneLine,    req => { const {val1, val2} = req.data; return {e1:val1[0].e1} satisfies E })
-  s_.aDocOneLine({val1: {}, val2: {}})
-  this.on(aDocMoreLinesWithBadChar, req => { const {val} = req.data; return {e1:val[0].e1} satisfies E })
-  s_.aDocMoreLinesWithBadChar({val: {}})
-
   this.on(free,       req => { const { param } = req.data; return { a:1, b:param } })
   this.on(free, async req => { const { param } = req.data; return Promise.resolve({ a:1, b:param }) })
   this.on(free2,      req => { return {extType:1} satisfies ExternalType })
@@ -70,7 +66,17 @@ class S extends cds.ApplicationService { async init(){
   await s2.a2({p1: '', p3: 1}) satisfies ExternalType
   await s2.a2('', [], 1) satisfies ExternalType
 
+  // docs -> hover over actions
+  const s_  = await cds.connect.to(S_)
+  // provider side
+  this.on(aDocOneLine,    req => { const {val1, val2} = req.data; return {e1:val1[0].e1} satisfies E })
+  // caller side
+  s_.aDocOneLine({val1: {}, val2: {}})
+  // provider side
+  this.on(aDocMoreLinesWithBadChar, req => { const {val} = req.data; return {e1:val[0].e1} satisfies E })
+  // caller side
+  s_.aDocMoreLinesWithBadChar({val: {}})
+
+
   return super.init()
 }}
-
-module.exports = S

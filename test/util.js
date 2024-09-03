@@ -185,30 +185,7 @@ async function prepareUnitTest(model, outputDirectory, parameters = {}) {
         await checkTranspilation(tsFiles)
     }
     return { astw: new ASTWrapper(path.join(parameters.fileSelector(paths), 'index.ts')), paths }
-}
 
-/**
- * @param {string} model - the path to the model file to be processed
- * @param {string} testTsFile - the path to a custom test .ts file
- * @param {string} outputDirectory - the path to the output directory
- * @param {PrepareUnitTestParameters} parameters - additional parameters
- */
-async function runTyperAndTsCheck(model, testTsFile, outputDirectory, parameters = {}) {
-    const defaults = {
-        typerOptions: {},
-        fileSelector: paths => (paths ?? []).find(p => !p.endsWith('_')),
-    }
-    parameters = { ...defaults, ...parameters }
-
-    const options = {...{ outputDirectory: outputDirectory, inlineDeclarations: 'structured' }, ...parameters.typerOptions}
-    const paths = await typer.compileFromFile(model, options)
-    const tsFiles = paths.map(p => path.join(p, 'index.ts'))
-    await checkTranspilation([testTsFile, ...tsFiles], {
-        paths: {
-            '#cds-models/*': [ path.join(outputDirectory, '/*/index.ts') ],
-            '#cds-models': [ path.join(outputDirectory, '/index.ts') ]
-        }
-    })
 }
 
 module.exports = {
@@ -220,6 +197,5 @@ module.exports = {
     toHavePropertyOfType,
     locations,
     cds2ts,
-    prepareUnitTest,
-    runTyperAndTsCheck
+    prepareUnitTest
 }
