@@ -16,7 +16,9 @@ import {
     getOneExternalType,
 } from '#cds-models/actions_test/S'
 
-import S2 from '#cds-models/actions_test/S2'
+import S2_default from '#cds-models/actions_test/S2'
+import { S2 } from '#cds-models/actions_test/S2'
+S2_default === S2
 
 import { ExternalType, ExternalType2 } from '#cds-models/elsewhere'
 import { ExternalInRoot } from '#cds-models';
