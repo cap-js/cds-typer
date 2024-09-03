@@ -9,6 +9,25 @@ Generates `.ts` files for a CDS model to receive code completion in VS Code.
 
 Exhaustive documentation can be found on [CAPire](https://cap.cloud.sap/docs/tools/cds-typer).
 
+## Known Restrictions
+
+Certain language features of CDS can not be represented in TypeScript.
+Trying to generate types for models using these features will therefore result in incorrect or broken TypeScript code.
+
+### Changing Types
+
+While the following is valid CDS, there is no TypeScript equivalent that would allow the type of an inherited property to change (TS2416).
+
+```cds
+entity A {
+  foo: Integer
+};
+
+entity B: A {
+  foo: String
+}
+```
+
 ## Support, Feedback, Contributing
 
 This project is open to feature requests/suggestions, bug reports etc. via [GitHub issues](https://github.com/cap-js/cds-typer/issues). Contribution and feedback are encouraged and always welcome. For more information about how to contribute, the project structure, as well as additional contribution information, see our [Contribution Guidelines](CONTRIBUTING.md).
