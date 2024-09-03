@@ -8,6 +8,7 @@ export module resolver {
 
     export type EntityCSN = {
         actions?: OperationCSN[],
+        operations?: OperationCSN[],
         cardinality?: { max?: '*' | string }
         compositions?: { target: string }[]
         doc?: string,
