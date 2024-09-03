@@ -2,6 +2,8 @@ import cds from '@sap/cds'
 
 import { free, free2, free3, free4, freetypeof, freevoid } from '#cds-models/actions_test'
 import {
+    aDocMoreLinesWithBadChar,
+    aDocOneLine,
     aManyParamManyReturn,
     aManyParamSingleReturn,
     aOptionalParam,
@@ -16,7 +18,11 @@ import {
     getOneExternalType,
 } from '#cds-models/actions_test/S'
 
-import S2 from '#cds-models/actions_test/S2'
+import S2_default from '#cds-models/actions_test/S2'
+import { S2 } from '#cds-models/actions_test/S2'
+S2_default === S2
+
+import { S as S_} from '#cds-models/actions_test/S'
 
 import { ExternalType, ExternalType2 } from '#cds-models/elsewhere'
 import { ExternalInRoot } from '#cds-models';
@@ -59,6 +65,18 @@ export class S extends cds.ApplicationService { async init(){
   await s2.a1('', [ { extType2: 1 } ]) satisfies ExternalType
   await s2.a2({p1: '', p3: 1}) satisfies ExternalType
   await s2.a2('', [], 1) satisfies ExternalType
+
+  // docs -> hover over actions
+  const s_  = await cds.connect.to(S_)
+  // provider side
+  this.on(aDocOneLine,    req => { const {val1, val2} = req.data; return {e1:val1[0].e1} satisfies E })
+  // caller side
+  s_.aDocOneLine({val1: {}, val2: {}})
+  // provider side
+  this.on(aDocMoreLinesWithBadChar, req => { const {val} = req.data; return {e1:val[0].e1} satisfies E })
+  // caller side
+  s_.aDocMoreLinesWithBadChar({val: {}})
+
 
   return super.init()
 }}

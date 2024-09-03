@@ -8,6 +8,7 @@ export module resolver {
 
     export type EntityCSN = {
         actions?: OperationCSN[],
+        operations?: OperationCSN[],
         cardinality?: { max?: '*' | string }
         compositions?: { target: string }[]
         doc?: string,
@@ -142,6 +143,13 @@ export module visitor {
 
     export type Context = {
         entity: string
+    }
+
+    export type ParamInfo = {
+        name: string,
+        modifier: '' | '?',
+        type: string,
+        doc?: string
     }
 }
 

@@ -39,6 +39,21 @@ service S {
         opt: E,
         val2: E
     ) returns E;
+
+    /** the action */
+    action aDocOneLine(/** v1 */val1: E, /** v1 */val2: E);
+
+    /**
+     * the
+     * action
+     */
+    action aDocMoreLinesWithBadChar(
+        /**
+         * line1
+         * line2 *\/
+         */
+        val: E
+    );
 }
 
 action free (param: String) returns { a: Integer; b: String } ;
