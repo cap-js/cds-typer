@@ -7,6 +7,7 @@ import {
     aManyParamManyReturn,
     aManyParamSingleReturn,
     aOptionalParam,
+    aRfcStyle,
     aSingleParamManyReturn,
     aSingleParamSingleReturn,
     E,
@@ -32,6 +33,8 @@ type IsKeyOptional<T extends Record<string | number | symbol, unknown>, Keys ext
     {[Key in Keys]?: T[Key]} extends Pick<T, Keys> ? true : false;
 
 export class S extends cds.ApplicationService { async init(){
+
+  const s_  = await cds.connect.to(S_)
 
   this.on(getOneExternalType,        req => { return {extType:1} satisfies ExternalType})
   this.on(getManyExternalTypes,      req => { return [{extType:1}] satisfies ExternalType[] })
@@ -66,8 +69,11 @@ export class S extends cds.ApplicationService { async init(){
   await s2.a2({p1: '', p3: 1}) satisfies ExternalType
   await s2.a2('', [], 1) satisfies ExternalType
 
+  await s_.aRfcStyle({INPUT: ''}) satisfies ExternalType
+  //@ts-expect-error
+  await s_.aRfcStyle('') // no positional call style allowed for RFC actions
+
   // docs -> hover over actions
-  const s_  = await cds.connect.to(S_)
   // provider side
   this.on(aDocOneLine,    req => { const {val1, val2} = req.data; return {e1:val1[0].e1} satisfies E })
   // caller side
