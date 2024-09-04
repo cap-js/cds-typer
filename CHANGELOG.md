@@ -42,6 +42,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 
 ## Version 0.22.0 - 2024-06-20
+
+### Added
+- Added a static `.keys` property in all entities. That property is dictionary which holds all properties as keys that are marked as `key` in CDS
+
 ### Fixed
 - Fixed a bug where keys would sometimes inconsistently become nullable
 
