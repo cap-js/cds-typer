@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Apps need to provide `@cap-js/cds-types` version `0.6.4` or higher.
 - Typed methods are now generated for calls of unbound actions. Named and positional call styles are supported, e.g. `service.action({one, two})` and `service.action(one, two)`.
 - Action parameters can be optional in the named call style (`service.action({one:1, ...})`).
+- Actions for ABAP RFC modules cannot be called with positional parameters, but only with named ones. They have 'parameter categories' (import/export/changing/tables) that cannot be called in a flat order.
 - Services now have their own export (named like the service itself). The current default export is not usable in some scenarios from CommonJS modules.
 - Operation parameters can have doc comments
 
