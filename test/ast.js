@@ -418,11 +418,12 @@ class ASTWrapper {
 }
 
 class JSASTWrapper {
-    static async initialise(file) {
-        return new JSASTWrapper(await fs.readFile(file, 'utf-8'))
+    static async initialise(file, proxyExports = false) {
+        return new JSASTWrapper(await fs.readFile(file, 'utf-8'), proxyExports)
     }
 
-    constructor(code) {
+    constructor(code, proxyExports) {
+        this.proxyExports = proxyExports
         this.program = acorn.parse(code, { ecmaVersion: 'latest'})
     }
 
@@ -433,26 +434,53 @@ class JSASTWrapper {
         }
     }
 
+    hasCdsEntitiesAccess() {
+        this.program.body.filter(node => {
+            if (node.type !== 'VariableDeclaration') return false
+            if (node.declarations[0].id !== 'csn') return false
+            return node.declarations[0].init?.callee.object.name === 'cds'
+                && node.declarations[0].init?.callee.property.name === 'entities'
+        }).length > 0
+    }
+
+    hasProxyExport(name, customProps) {
+        const proxyExport = this.getExports().find(exp => exp.lhs === name && exp.proxyArgs?.length)
+        if (!proxyExport) throw new Error(`missing module.exports for entities proxy with name ${name}`)
+        if (proxyExport.proxyArgs.length !== 2) throw new Error('proxy function called without additional options')
+
+        const property = proxyExport.proxyArgs[1].properties[1]
+        if (property?.key?.name !== 'customProps') throw new Error('customProps not found in proxy call arguments')
+
+        const propKeys = property.value.elements.map(e => e.value)
+        if (!customProps.every(c => propKeys.includes(c))) throw new Error('not all expected custom props found in argument')
+    }
+
     hasExport(lhs, rhs) {
-        return this.getExports().find(exp => exp.lhs === lhs && exp.rhs === rhs)
+        return this.getExports().find(exp => exp.lhs === lhs && (exp.rhs === rhs || exp.rhs.name === rhs))
     }
 
     /**
      * @returns {{ lhs: string, rhs: string | { singular: boolean, name: string }}}
      */
     getExports() {
+        const processObjectLiteral = ({properties}) => ({
+            singular: properties.find(p => p.key.name === 'is_singular' && p.value.value),
+            name: properties.find(p => p.key.name === '__proto__')?.value.property.name
+        })
         return this.exports ??= this.program.body.filter(node => {
             if (node.type !== 'ExpressionStatement') return false
             if (node.expression.left.type !== 'MemberExpression') return false
             const { object, property } = node.expression.left.object
             return object.name === 'module' && property.name === 'exports'
-        }).map(node => (
-            {
+        }).map(node => {
+            return {
                 lhs: node.expression.left.property.name,
-                // CallExpression, where second argument is the original entity name
-                rhs: node.expression.right.arguments[1].value
+                rhs: this.proxyExports
+                    ? node.expression.right.arguments?.[0].elements[1].value
+                    : node.expression.right.property?.name ?? processObjectLiteral(node.expression.right),
+                proxyArgs: node.expression.right.arguments
             }
-        ))
+        })
     }
 }
 
