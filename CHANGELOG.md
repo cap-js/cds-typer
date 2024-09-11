@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.26.0 - TBD
 ### Added
+- Added a static `.keys` property in all entities. That property is dictionary which holds all properties as keys that are marked as `key` in CDS
 - Added a static `.kind` property for entities and types, which contains `'entity'` or `'type'` respectively
 - Apps need to provide `@sap/cds` version `8.2` or higher.
 - Apps need to provide `@cap-js/cds-types` version `0.6.4` or higher.
@@ -43,9 +44,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 
 ## Version 0.22.0 - 2024-06-20
-
-### Added
-- Added a static `.keys` property in all entities. That property is dictionary which holds all properties as keys that are marked as `key` in CDS
 
 ### Fixed
 - Fixed a bug where keys would sometimes inconsistently become nullable
