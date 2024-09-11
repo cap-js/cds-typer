@@ -54,6 +54,14 @@ service S {
          */
         val: E
     );
+
+    action aRfcStyle(
+        INPUT : String(1),
+        @RFCParameterType : 'Table' @Core.OptionalParameter : { $Type: 'Core.OptionalParameterType' }
+            TABLES : many ExternalType2,
+        @RFCParameterType : 'Export' @Core.OptionalParameter : { $Type: 'Core.OptionalParameterType' }
+            EXPORT: String(1)
+    ) returns ExternalType;
 }
 
 action free (param: String) returns { a: Integer; b: String } ;
