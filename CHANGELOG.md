@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.26.0 - TBD
+## Version 0.27.0 - TBD
+
+## Version 0.26.0 - 2024-09-11
 ### Added
 - Added a CLI option `--useEntitiesProxy`. When set to `true`, all entities are wrapped into `Proxy` objects during runtime, allowing top level imports of entity types.
 - Added a static `.kind` property for entities and types, which contains `'entity'` or `'type'` respectively
