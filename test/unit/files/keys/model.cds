@@ -2,6 +2,7 @@ namespace keys_test;
 
 aspect A {
     key a: UUID;
+    b: Integer;
 }
 
 entity E1 {
@@ -14,4 +15,5 @@ entity E2: E1 {
 
 entity C: A, E2 {
     key c: String;
+    d: Integer;
 }
