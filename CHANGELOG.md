@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Action parameters can be optional in the named call style (`service.action({one:1, ...})`).
 - Actions for ABAP RFC modules cannot be called with positional parameters, but only with named ones. They have 'parameter categories' (import/export/changing/tables) that cannot be called in a flat order.
 - Services now have their own export (named like the service itself). The current default export is not usable in some scenarios from CommonJS modules.
-- Operation parameters can have doc comments
+- Enums and operation parameters can have doc comments
 
 ## Version 0.25.0 - 2024-08-13
 ### Added
