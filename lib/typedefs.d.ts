@@ -119,6 +119,7 @@ export module visitor {
     export type CompileParameters = {
         outputDirectory: string,
         logLevel: number,
+        useEntitiesProxy: boolean,
         jsConfigPath?: string,
         inlineDeclarations: 'flat' | 'structured',
         propertiesOptional: boolean,
@@ -133,6 +134,10 @@ export module visitor {
          * `inlineDeclarations = 'flat'` -> @see {@link inline.FlatInlineDeclarationResolver}
          */
         inlineDeclarations: 'flat' | 'structured',
+        /**
+         * `useEntitiesProxy = true` will wrap the `module.exports.<entityName>` in `Proxy` objects
+         */
+        useEntitiesProxy: boolean
     }
 
     export type Inflection = {
@@ -155,4 +160,7 @@ export module visitor {
 
 export module file {
     export type Namespace = Object<string, Buffer>
+    export type FileOptions = {
+        useEntitiesProxy: boolean
+    }
 }
