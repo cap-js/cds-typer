@@ -106,7 +106,8 @@ export module util {
 
     export type CommandLineFlags = {
         desc: string,
-        default?: any
+        default?: any,
+        canonicalName?: string
     }
 
     export type ParsedFlag = {
@@ -155,6 +156,40 @@ export module visitor {
         modifier: '' | '?',
         type: string,
         doc?: string
+    }
+}
+
+export module config {
+    export module cli {
+        export type Parameter = {
+            desc: string,
+            allowed?: string[],
+            allowedHint?: string,
+            type?: 'string' | 'boolean' | 'number',
+            default?: string,
+            defaultHint?: string,
+            postprocess?: (value: string) => any
+        }
+    
+        export type EnrichedParameter = Parameter & {
+            camel: string,
+            snake: string
+        }
+    
+        export type ParameterSchema = {
+            [key: string]: CLIParameter,
+            hasFlag: (flag: string) => boolean
+        }
+    
+        export type EffectiveParameter = {
+            value: any,
+            isDefault: boolean,
+        }
+
+        export type ParseParameters = {
+            positional: string[],
+            named: { [key: string]: EffectiveParameter }
+        }
     }
 }
 
