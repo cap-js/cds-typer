@@ -117,10 +117,6 @@ export module util {
 }
 
 export module visitor {
-    export type CompileParameters = {
-
-    }
-
     export type VisitorOptions = {
         /** `propertiesOptional = true` -> all properties are generated as optional ?:. (standard CAP behaviour, where properties be unavailable) */
         propertiesOptional: boolean,
@@ -185,8 +181,7 @@ export module config {
         export type CLIFlags = 'version' | 'help'
     }
 
-    export type Configuration = { //'logLevel' | 'outputDirectory' | 'useEntitiesProxy' | 'inlineDeclarations' | 'propertiesOptional' | 'IEEE754Compatible'
-    //export type Configuration = {
+    export type Configuration = {
         outputDirectory: string,
         logLevel: number,
         useEntitiesProxy: boolean,
