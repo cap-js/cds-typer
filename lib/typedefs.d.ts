@@ -118,13 +118,7 @@ export module util {
 
 export module visitor {
     export type CompileParameters = {
-        outputDirectory: string,
-        logLevel: number,
-        useEntitiesProxy: boolean,
-        jsConfigPath?: string,
-        inlineDeclarations: 'flat' | 'structured',
-        propertiesOptional: boolean,
-        IEEE754Compatible: boolean,
+
     }
 
     export type VisitorOptions = {
@@ -168,17 +162,14 @@ export module config {
             type?: 'string' | 'boolean' | 'number',
             default?: string,
             defaultHint?: string,
-            postprocess?: (value: string) => any
-        }
-    
-        export type EnrichedParameter = Parameter & {
-            camel: string,
-            snake: string
+            postprocess?: (value: string) => any,
+            camel?: string,
+            snake?: string
         }
     
         export type ParameterSchema = {
-            [key: string]: CLIParameter,
-            hasFlag: (flag: string) => boolean
+            [key: string]: Parameter,
+            //hasFlag: (flag: RuntimeParameters) => boolean
         }
     
         export type EffectiveParameter = {
@@ -188,8 +179,21 @@ export module config {
 
         export type ParseParameters = {
             positional: string[],
-            named: { [key: string]: EffectiveParameter }
+            named: { [key: keyof RuntimeParameters]: EffectiveParameter }
         }
+
+        export type CLIFlags = 'version' | 'help'
+    }
+
+    export type Configuration = { //'logLevel' | 'outputDirectory' | 'useEntitiesProxy' | 'inlineDeclarations' | 'propertiesOptional' | 'IEEE754Compatible'
+    //export type Configuration = {
+        outputDirectory: string,
+        logLevel: number,
+        useEntitiesProxy: boolean,
+        jsConfigPath?: string,
+        inlineDeclarations: 'flat' | 'structured',
+        propertiesOptional: boolean,
+        IEEE754Compatible: boolean
     }
 }
 
