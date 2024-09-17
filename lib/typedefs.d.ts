@@ -103,17 +103,6 @@ export module util {
         '@singular'?: string,
         '@plural'?: string
     }
-
-    export type CommandLineFlags = {
-        desc: string,
-        default?: any,
-        canonicalName?: string
-    }
-
-    export type ParsedFlag = {
-        positional: string[],
-        named: { [key: string]: any }
-    }
 }
 
 export module visitor {
@@ -137,34 +126,28 @@ export module visitor {
 
 export module config {
     export module cli {
-        export type Parameter = {
-            desc: string,
-            allowed?: string[],
-            allowedHint?: string,
-            type?: 'string' | 'boolean' | 'number',
-            default?: string,
-            defaultHint?: string,
-            postprocess?: (value: string) => any,
-            camel?: string,
-            snake?: string
-        }
-    
-        export type ParameterSchema = {
-            [key: string]: Parameter,
-            //hasFlag: (flag: RuntimeParameters) => boolean
-        }
-    
-        export type EffectiveParameter = {
-            value: any,
-            isDefault: boolean,
-        }
-
-        export type ParseParameters = {
-            positional: string[],
-            named: { [key: keyof RuntimeParameters]: EffectiveParameter }
-        }
-
         export type CLIFlags = 'version' | 'help'
+        export type ParameterSchema = {
+            [key: string]: {
+                desc: string,
+                allowed?: string[],
+                allowedHint?: string,
+                type?: 'string' | 'boolean' | 'number',
+                default?: string,
+                defaultHint?: string,
+                postprocess?: (value: string) => any,
+                camel?: string,
+                snake?: string
+            }
+        }
+
+        export type ParsedParameters = {
+            positional: string[],
+            named: { [key: keyof RuntimeParameters]: {
+                value: any,
+                isDefault: boolean,
+            } }
+        }
     }
 
     export type Configuration = {
@@ -191,7 +174,4 @@ export module config {
 
 export module file {
     export type Namespace = Object<string, Buffer>
-    export type FileOptions = {
-        useEntitiesProxy: boolean
-    }
 }
