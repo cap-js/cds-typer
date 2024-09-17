@@ -117,20 +117,6 @@ export module util {
 }
 
 export module visitor {
-    export type VisitorOptions = {
-        /** `propertiesOptional = true` -> all properties are generated as optional ?:. (standard CAP behaviour, where properties be unavailable) */
-        propertiesOptional: boolean,
-        /**
-         * `inlineDeclarations = 'structured'` -> @see {@link inline.StructuredInlineDeclarationResolver}
-         * `inlineDeclarations = 'flat'` -> @see {@link inline.FlatInlineDeclarationResolver}
-         */
-        inlineDeclarations: 'flat' | 'structured',
-        /**
-         * `useEntitiesProxy = true` will wrap the `module.exports.<entityName>` in `Proxy` objects
-         */
-        useEntitiesProxy: boolean
-    }
-
     export type Inflection = {
         typeName?: string,
         singular: string,
@@ -184,10 +170,21 @@ export module config {
     export type Configuration = {
         outputDirectory: string,
         logLevel: number,
+        /**
+         * `useEntitiesProxy = true` will wrap the `module.exports.<entityName>` in `Proxy` objects
+         */
         useEntitiesProxy: boolean,
         jsConfigPath?: string,
+        /**
+         * `inlineDeclarations = 'structured'` -> @see {@link inline.StructuredInlineDeclarationResolver}
+         * `inlineDeclarations = 'flat'` -> @see {@link inline.FlatInlineDeclarationResolver}
+         */
         inlineDeclarations: 'flat' | 'structured',
+        /** `propertiesOptional = true` -> all properties are generated as optional ?:. (standard CAP behaviour, where properties be unavailable) */
         propertiesOptional: boolean,
+        /**
+         * `IEEE754Compatible = true` -> any cds.Decimal will become `number | string`
+         */
         IEEE754Compatible: boolean
     }
 }
