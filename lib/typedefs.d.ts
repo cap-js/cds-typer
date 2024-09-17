@@ -99,7 +99,7 @@ export module resolver {
 
 export module util {
     export type Annotations = {
-        name?: string,
+        name: string,
         '@singular'?: string,
         '@plural'?: string
     }

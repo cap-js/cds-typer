@@ -1,3 +1,4 @@
+const { configuration } = require('../lib/config')
 const fs = require('fs')
 const path = require('path')
 const os = require('os')
@@ -134,10 +135,7 @@ const locations = {
     }
 }
 
-const cds2ts = async (cdsFile, options = {}) => typer.compileFromFile(
-    locations.unit.files(cdsFile),
-    options
-)
+const cds2ts = async cdsFile => typer.compileFromFile(locations.unit.files(cdsFile))
 
 const createProject = projDir => {
     fs.writeFileSync(path.join(projDir, 'package.json'), JSON.stringify({
@@ -165,6 +163,7 @@ const createProject = projDir => {
  * @param {PrepareUnitTestParameters} parameters - additional parameters
  */
 async function prepareUnitTest(model, outputDirectory, parameters = {}) {
+    const configurationBefore = configuration.clone()
     const defaults = {
         typerOptions: {},
         fileSelector: paths => (paths ?? []).find(p => !p.endsWith('_')),
@@ -172,9 +171,8 @@ async function prepareUnitTest(model, outputDirectory, parameters = {}) {
     }
     parameters = { ...defaults, ...parameters }
 
-    const options = {...{ outputDirectory: outputDirectory, inlineDeclarations: 'structured' }, ...parameters.typerOptions}
-    //await unlink(outputDirectory).catch(() => {})
-    const paths = await cds2ts(model, options)
+    configuration.setMany({...{ outputDirectory: outputDirectory, inlineDeclarations: 'structured' }, ...parameters.typerOptions})
+    const paths = await cds2ts(model)
         // eslint-disable-next-line no-console
         .catch(err => console.error(err))
 
@@ -184,6 +182,7 @@ async function prepareUnitTest(model, outputDirectory, parameters = {}) {
         createProject(path.resolve(outputDirectory, '../..'))
         await checkTranspilation(tsFiles)
     }
+    configuration.setFrom(configurationBefore)
     return { astw: new ASTWrapper(path.join(parameters.fileSelector(paths), 'index.ts')), paths }
 
 }
