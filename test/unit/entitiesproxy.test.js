@@ -70,7 +70,7 @@ describe('Compilation/Runtime - with Entities Proxies', () => {
             async () =>
                 ({ paths } = await prepareUnitTest(
                     'entitiesproxy/service.cds',
-                    locations.testOutput('entities_proxy_test/runtime'),
+                    path.join(__dirname, 'files', 'entitiesproxy', '_out'),
                     {
                         typerOptions: { useEntitiesProxy: true },
                     }
