@@ -4,7 +4,6 @@ process.env.cds_typer_IEEE754Compatible = 'true'
 const { describe, beforeAll, test, expect } = require('@jest/globals')
 const cli = require('../../lib/cli')
 const { configuration } = require('../../lib/config')
-const cds = require('@sap/cds')
 
 describe('CLI Options', () => {
     beforeAll(async () => cli.prepareParameters(['"*"', '--outputDirectory', 'y', '--inline_declarations', 'flat']))
