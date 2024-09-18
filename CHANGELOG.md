@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.27.0 - TBD
+### Changed
+- Any configuration variable (via CLI or `cds.env`) can now be passed in snake_case in addition to camelCase
 
 ## Version 0.26.0 - 2024-09-11
 ### Added
