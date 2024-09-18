@@ -6,7 +6,7 @@ import {
     aDocOneLine,
     aManyParamManyReturn,
     aManyParamSingleReturn,
-    aOptionalParam,
+    aMandatoryParam,
     aRfcStyle,
     aSingleParamManyReturn,
     aSingleParamSingleReturn,
@@ -48,7 +48,7 @@ export class S extends cds.ApplicationService { async init(){
   this.on(aManyParamManyReturn,      req => { const {val} = req.data; return val satisfies E[] })
   this.on(aManyParamSingleReturn,    req => { const {val} = req.data; return {e1:val[0].e1} satisfies E })
 
-  this.on(aOptionalParam,  req => {
+  this.on(aMandatoryParam,  req => {
     false satisfies IsKeyOptional<typeof req.data, 'val'>
     false satisfies IsKeyOptional<typeof req.data, 'val2'>
     true satisfies IsKeyOptional<typeof req.data, 'opt'>
