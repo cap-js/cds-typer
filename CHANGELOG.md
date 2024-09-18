@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.27.0 - TBD
+### Fixed
+- `static kind` property received the missing `declare` modifier
 
 ## Version 0.26.0 - 2024-09-11
 ### Added
