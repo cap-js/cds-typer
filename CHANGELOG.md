@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.27.0 - TBD
 ### Changed
+- Any configuration variable (via CLI or `cds.env`) can now be passed in snake_case in addition to camelCase
 - Action parameters are now generated as optional by default, which is how the runtime treats them. Mandatory parameters have to be marked as `not null` in CDS/CDL, or `notNull` in CSN.
 
 ## Version 0.26.0 - 2024-09-11
