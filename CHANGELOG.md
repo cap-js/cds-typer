@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Any configuration variable (via CLI or `cds.env`) can now be passed in snake_case in addition to camelCase
 - Action parameters are now generated as optional by default, which is how the runtime treats them. Mandatory parameters have to be marked as `not null` in CDS/CDL, or `notNull` in CSN.
 
+### Fixed
+- Fix build task for projects with spaces
+
 ## Version 0.26.0 - 2024-09-11
 ### Added
 - Added a CLI option `--useEntitiesProxy`. When set to `true`, all entities are wrapped into `Proxy` objects during runtime, allowing top level imports of entity types.
