@@ -89,7 +89,12 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
 
     async #runCdsTyper () {
         DEBUG?.('running cds-typer')
-        await typer.compileFromFile('*', { outputDirectory: this.#modelDirectoryName })
+        cds.env.typer ??= {}
+        // make sure running typer does change as little state as possible
+        const outputDirectory = cds.env.typer.outputDirectory
+        cds.env.typer.outputDirectory = this.#modelDirectoryName
+        await typer.compileFromFile('*')
+        cds.env.typer.outputDirectory = outputDirectory
     }
 
     async #buildWithConfig () {
