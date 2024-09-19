@@ -69,6 +69,8 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
     get #appFolder () { return cds?.env?.folders?.app ?? 'app' }
 
     get #modelDirectoryName () {
+        const outputDirectory = cds.env.typer?.outputDirectory
+        if (outputDirectory) return outputDirectory
         try {
             // expected format: { '#cds-models/*': [ './@cds-models/*/index.ts' ] }
             //                                       ^^^^^^^^^^^^^^^
