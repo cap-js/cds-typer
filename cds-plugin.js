@@ -36,7 +36,7 @@ const rmDirIfExists = dir => {
  * Remove files with given extensions from a directory recursively.
  * @param {string} dir - The directory to start from.
  * @param {string[]} exts - The extensions to remove.
- * @returns {Promise<void>}
+ * @returns {Promise<unknown>}
  */
 const rmFiles = async (dir, exts) => fs.existsSync(dir)
     ? Promise.all(
@@ -68,10 +68,15 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
 
     get #appFolder () { return cds?.env?.folders?.app ?? 'app' }
 
+    /**
+     * cds.env > tsconfig.compilerOptions.paths > '@cds-models' (default)
+     */
     get #modelDirectoryName () {
+        const outputDirectory = cds.env.typer?.outputDirectory
+        if (outputDirectory) return outputDirectory
         try {
             // expected format: { '#cds-models/*': [ './@cds-models/*/index.ts' ] }
-            //                                       ^^^^^^^^^^^^^^^
+            //                                          ^^^^^^^^^^^
             //                             relevant part - may be changed by user
             const config = JSON.parse(fs.readFileSync ('tsconfig.json', 'utf8'))
             const alias = config.compilerOptions.paths['#cds-models/*'][0]
@@ -89,7 +94,9 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
 
     async #runCdsTyper () {
         DEBUG?.('running cds-typer')
-        await typer.compileFromFile('*', { outputDirectory: this.#modelDirectoryName })
+        cds.env.typer ??= {}
+        cds.env.typer.outputDirectory ??= this.#modelDirectoryName
+        await typer.compileFromFile('*')
     }
 
     async #buildWithConfig () {
