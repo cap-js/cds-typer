@@ -36,7 +36,7 @@ const rmDirIfExists = dir => {
  * Remove files with given extensions from a directory recursively.
  * @param {string} dir - The directory to start from.
  * @param {string[]} exts - The extensions to remove.
- * @returns {Promise<void>}
+ * @returns {Promise<unknown>}
  */
 const rmFiles = async (dir, exts) => fs.existsSync(dir)
     ? Promise.all(
