@@ -68,12 +68,15 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
 
     get #appFolder () { return cds?.env?.folders?.app ?? 'app' }
 
+    /**
+     * cds.env > tsconfig.compilerOptions.paths > '@cds-models' (default)
+     */
     get #modelDirectoryName () {
         const outputDirectory = cds.env.typer?.outputDirectory
         if (outputDirectory) return outputDirectory
         try {
             // expected format: { '#cds-models/*': [ './@cds-models/*/index.ts' ] }
-            //                                       ^^^^^^^^^^^^^^^
+            //                                          ^^^^^^^^^^^
             //                             relevant part - may be changed by user
             const config = JSON.parse(fs.readFileSync ('tsconfig.json', 'utf8'))
             const alias = config.compilerOptions.paths['#cds-models/*'][0]
@@ -92,11 +95,8 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
     async #runCdsTyper () {
         DEBUG?.('running cds-typer')
         cds.env.typer ??= {}
-        // make sure running typer does change as little state as possible
-        const outputDirectory = cds.env.typer.outputDirectory
-        cds.env.typer.outputDirectory = this.#modelDirectoryName
+        cds.env.typer.outputDirectory ??= this.#modelDirectoryName
         await typer.compileFromFile('*')
-        cds.env.typer.outputDirectory = outputDirectory
     }
 
     async #buildWithConfig () {
