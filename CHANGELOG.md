@@ -4,9 +4,18 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.26.0 - TBD
+## Version 0.27.0 - TBD
+### Changed
+- Any configuration variable (via CLI or `cds.env`) can now be passed in snake_case in addition to camelCase
+- Action parameters are now generated as optional by default, which is how the runtime treats them. Mandatory parameters have to be marked as `not null` in CDS/CDL, or `notNull` in CSN.
+
+### Fixed
+- Fix build task for projects with spaces
+
+## Version 0.26.0 - 2024-09-11
 ### Added
 - Added a static `.keys` property in all entities. That property is dictionary which holds all properties as keys that are marked as `key` in CDS
+- Added a CLI option `--useEntitiesProxy`. When set to `true`, all entities are wrapped into `Proxy` objects during runtime, allowing top level imports of entity types.
 - Added a static `.kind` property for entities and types, which contains `'entity'` or `'type'` respectively
 - Apps need to provide `@sap/cds` version `8.2` or higher.
 - Apps need to provide `@cap-js/cds-types` version `0.6.4` or higher.
@@ -15,6 +24,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Actions for ABAP RFC modules cannot be called with positional parameters, but only with named ones. They have 'parameter categories' (import/export/changing/tables) that cannot be called in a flat order.
 - Services now have their own export (named like the service itself). The current default export is not usable in some scenarios from CommonJS modules.
 - Enums and operation parameters can have doc comments
+
 
 ## Version 0.25.0 - 2024-08-13
 ### Added
