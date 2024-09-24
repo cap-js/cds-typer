@@ -532,6 +532,7 @@ const check = {
     isVariableDeclaration: node => checkNodeType(node, 'variableStatement'),
     isCallExpression: (node, expression) => checkNodeType(node, 'callExpression') && (!expression || node.expression === expression),
     isPropertyAccessExpression: (node, expression, name) => checkKeyword(node, 'propertyaccessexpression') && (!expression || node.expression === expression) && (!name || node.name === name),
+    isKeyOf: (n, template)  => check.isTypeReference(n, '___.Key') && template(n.args[0]) // special __.Key<X> type
 }
 
 /**

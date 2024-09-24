@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.26.0 - 2024-09-11
 ### Added
+- Added a static `.keys` property in all entities. That property is dictionary which holds all properties as keys that are marked as `key` in CDS
 - Added a CLI option `--useEntitiesProxy`. When set to `true`, all entities are wrapped into `Proxy` objects during runtime, allowing top level imports of entity types.
 - Added a static `.kind` property for entities and types, which contains `'entity'` or `'type'` respectively
 - Apps need to provide `@sap/cds` version `8.2` or higher.
@@ -53,6 +54,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 
 ## Version 0.22.0 - 2024-06-20
+
 ### Fixed
 - Fixed a bug where keys would sometimes inconsistently become nullable
 
