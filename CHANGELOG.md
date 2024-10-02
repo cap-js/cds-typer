@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 - Fix build task for projects with spaces
+- Fixa bug where cds-typer would produce redundant type declarations when the model contains an associations to another entity's property
 
 ## Version 0.26.0 - 2024-09-11
 ### Added
