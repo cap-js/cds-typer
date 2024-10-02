@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.27.0 - TBD
+## Version 0.28.0 - TBD
+
+## Version 0.27.0 - 2024-10-02
 ### Changed
 - Any configuration variable (via CLI or `cds.env`) can now be passed in snake_case in addition to camelCase
 - Action parameters are now generated as optional by default, which is how the runtime treats them. Mandatory parameters have to be marked as `not null` in CDS/CDL, or `notNull` in CSN.
