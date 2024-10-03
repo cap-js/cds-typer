@@ -60,5 +60,65 @@
       "test/smoke.jest.config.js",
       "test/unit.jest.config.js"
     ]
+  },
+  "cds": {
+    "schema": {
+      "cds": {
+        "typer": {
+          "type": "object",
+          "description": "Configuration for CDS Typer",
+          "properties": {
+            "inlineDeclarations": {
+              "type": "string",
+              "description": "Whether to resolve inline type declarations flat: (x_a, x_b, ...) or structured: (x: {a, b})",
+              "enum": [
+                "flat",
+                "structured"
+              ],
+              "default": "structured"
+            },
+            "IEEE754Compatible": {
+              "type": "boolean",
+              "description": "If set to true, floating point properties are generated as IEEE754 compatible '(number | string)' instead of 'number'",
+              "default": false
+            },
+            "jsConfigPath": {
+              "type": "string",
+              "description": "Path to where the jsconfig.json should be written.\nIf specified, cds-typer will create a jsconfig.json file and set it up to restrict property usage in types entities to existing properties only"
+            },
+            "logLevel": {
+              "type": "string",
+              "description": "Minimum log level that is printed.\nThe default is only used if no explicit value is passed and there is no configuration passed via cds.env either",
+              "enum": [
+                "SILENT",
+                "ERROR",
+                "WARN",
+                "INFO",
+                "DEBUG",
+                "TRACE",
+                "SILLY",
+                "VERBOSE"
+              ],
+              "default": "ERROR"
+            },
+            "outputDirectory": {
+              "type": "string",
+              "description": "Root directory to write the generated files to",
+              "default": "@cds-models"
+            },
+            "propertiesOptional": {
+              "type": "boolean",
+              "description": "If set to true, properties in entities are always generated as optional (a?: T)",
+              "default": true
+            },
+            "useEntitiesProxy": {
+              "type": "boolean",
+              "description": "If set to true the 'cds.entities' exports in the generated 'index.js' files will be wrapped in 'Proxy' objects so static import/require calls can be used everywhere.\n\nWARNING: entity properties can still only be accessed after 'cds.entities' has been loaded",
+              "default": false
+            }
+          }
+        }
+      }
+    }
   }
 }
