@@ -1,7 +1,8 @@
 namespace type_test;
 type IntAlias: Integer;
 type GeoData { latitude: Integer; longitude: Integer }
-type Points: { x: Integer; y: Integer; geoData: GeoData }
+type Info {a: String;}
+type Points: { x: Integer; y: Integer; geoData: GeoData; info: many Info }
 type Lines: Array of Points;
 
 entity Persons {
