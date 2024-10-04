@@ -1,5 +1,7 @@
 'use strict'
 
+const path = require('path')
+const cds = require('@sap/cds')
 const { beforeAll, describe, test, expect } = require('@jest/globals')
 const { locations, prepareUnitTest } = require('../util')
 const { check, checkFunction } = require('../ast')
@@ -53,5 +55,26 @@ describe('type Definitions', () => {
         expect(check.isStaticMember(kind)).toBeTruthy()
         expect(check.isReadonlyMember(kind)).toBeTruthy()
         expect(kind.initializer).toBe('entity')
+    })
+
+    test('check elements of compiled model against generated type properties', async () => {
+        const members = astw.tree.find(def => def.name === '_PersonAspect').body[0].members.map(m => m.name)
+        const model = cds.linked(await cds.load(path.join(__dirname, 'files', 'type', 'model.cds')))
+
+        // check odata model
+        let srvModel = cds.linked(cds.compile(model).for.odata())
+        let personsEntity = srvModel.definitions['type_test.Persons']
+
+        for (const el of [...personsEntity.elements]) {
+            expect(members).toContain(el.name)
+        }
+
+        // check odata model
+        srvModel = cds.linked(cds.compile(model).for.sql())
+        personsEntity = srvModel.definitions['type_test.Persons']
+
+        for (const el of [...personsEntity.elements]) {
+            expect(members).toContain(el.name)
+        }
     })
 })
