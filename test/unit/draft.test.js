@@ -28,7 +28,7 @@ describe('bookshop', () => {
 
     test('Draft-enabled composition produces compiler error', async () => {
         const spyOnConsole = jest.spyOn(console, 'error')
-        await prepareUnitTest('draft/catalog-service-error.cds', locations.testOutput('bookshop_projection'), {typerOptions: {logLevel: 'ERROR'}})
+        await prepareUnitTest('draft/error-catalog-service.cds', locations.testOutput('bookshop_projection'), {typerOptions: {logLevel: 'ERROR'}})
 
         expect(spyOnConsole).toHaveBeenCalledWith(
             '[cds-typer] -',
