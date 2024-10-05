@@ -13,6 +13,9 @@ module.exports = [
                 ...require('globals').node
             }
         },
+        env: {
+            jest: true
+        },
         files: ['**/*.js'],
         plugins: {
             '@stylistic/js': require('@stylistic/eslint-plugin-js')
