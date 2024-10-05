@@ -11,8 +11,13 @@ aspect managed {
 
 entity Books : managed, cuid {
   title      : String;
+  author     : Association to Authors;
   publishers : Composition of many Publishers
-                on publishers.book = $self;
+                 on publishers.book = $self;
+}
+
+entity Authors : managed, cuid {
+  name : String;
 }
 
 entity Publishers : managed, cuid {
