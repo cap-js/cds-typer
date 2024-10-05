@@ -10,11 +10,9 @@ module.exports = [
             ecmaVersion: 'latest',
             sourceType: 'commonjs',
             globals: {
-                ...require('globals').node
+                ...require('globals').node,
+                jest: true
             }
-        },
-        env: {
-            jest: true
         },
         files: ['**/*.js'],
         plugins: {
