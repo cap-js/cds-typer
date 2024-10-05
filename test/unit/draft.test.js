@@ -2,6 +2,7 @@
 
 const path = require('path')
 const { ASTWrapper } = require('../ast')
+const { describe, test, expect } = require('@jest/globals')
 const { locations, prepareUnitTest } = require('../util')
 
 const draftable_ = (entity, ast) => ast.find(n => n.name === entity && n.members.find(({name}) => name === 'drafts'))
@@ -16,7 +17,7 @@ describe('bookshop', () => {
         // root and composition become draft enabled
         expect(draftable('Book', service, () => 'Books')).toBeTruthy()
         expect(draftable('Publisher', service, () => 'Publishers')).toBeTruthy()
-        
+
         // associated entity will not become draft enabled
         expect(draftable('Author', service, () => 'Authors')).toBeFalsy()
 
