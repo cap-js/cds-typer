@@ -25,7 +25,8 @@
     "doc:prepare": "npm run doc:clean && mkdir -p doc/types",
     "doc:typegen": "./node_modules/.bin/tsc ./lib/*.js  --skipLibCheck --declaration --allowJs --emitDeclarationOnly --outDir doc/types && cd doc/types && tsc --init",
     "doc:cli": "npm run cli -- --help > ./doc/cli.txt",
-    "jsdoc:check": "tsc --noEmit --project jsconfig.json"
+    "jsdoc:check": "tsc --noEmit --project jsconfig.json",
+    "write:cds-typer-shema": "node scripts/write-cds-typer-schema.js"
   },
   "files": [
     "lib/",
