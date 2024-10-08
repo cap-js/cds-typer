@@ -68,27 +68,14 @@
           "type": "object",
           "description": "Configuration for CDS Typer",
           "properties": {
-            "inlineDeclarations": {
+            "output_directory": {
               "type": "string",
-              "description": "Whether to resolve inline type declarations flat: (x_a, x_b, ...) or structured: (x: {a, b})",
-              "enum": [
-                "flat",
-                "structured"
-              ],
-              "default": "structured"
+              "description": "Root directory to write the generated files to.",
+              "default": "@cds-models"
             },
-            "IEEE754Compatible": {
-              "type": "boolean",
-              "description": "If set to true, floating point properties are generated as IEEE754 compatible '(number | string)' instead of 'number'",
-              "default": false
-            },
-            "jsConfigPath": {
+            "log_level": {
               "type": "string",
-              "description": "Path to where the jsconfig.json should be written.\nIf specified, cds-typer will create a jsconfig.json file and set it up to restrict property usage in types entities to existing properties only"
-            },
-            "logLevel": {
-              "type": "string",
-              "description": "Minimum log level that is printed.\nThe default is only used if no explicit value is passed and there is no configuration passed via cds.env either",
+              "description": "Minimum log level that is printed.\nThe default is only used if no explicit value is passed\nand there is no configuration passed via cds.env either.",
               "enum": [
                 "SILENT",
                 "ERROR",
@@ -97,23 +84,39 @@
                 "DEBUG",
                 "TRACE",
                 "SILLY",
-                "VERBOSE"
+                "VERBOSE",
+                "WARNING",
+                "CRITICAL",
+                "NONE"
               ],
               "default": "ERROR"
             },
-            "outputDirectory": {
+            "js_config_path": {
               "type": "string",
-              "description": "Root directory to write the generated files to",
-              "default": "@cds-models"
+              "description": "Path to where the jsconfig.json should be written.\nIf specified, cds-typer will create a jsconfig.json file and\nset it up to restrict property usage in types entities to\nexisting properties only."
             },
-            "propertiesOptional": {
+            "use_entities_proxy": {
               "type": "boolean",
-              "description": "If set to true, properties in entities are always generated as optional (a?: T)",
+              "description": "If set to true the 'cds.entities' exports in the generated 'index.js'\nfiles will be wrapped in 'Proxy' objects\nso static import/require calls can be used everywhere.\n\nWARNING: entity properties can still only be accessed after\n'cds.entities' has been loaded",
+              "default": false
+            },
+            "inline_declarations": {
+              "type": "string",
+              "description": "Whether to resolve inline type declarations\nflat: (x_a, x_b, ...)\nor structured: (x: {a, b}).",
+              "enum": [
+                "flat",
+                "structured"
+              ],
+              "default": "structured"
+            },
+            "properties_optional": {
+              "type": "boolean",
+              "description": "If set to true, properties in entities are\nalways generated as optional (a?: T).",
               "default": true
             },
-            "useEntitiesProxy": {
+            "ieee754compatible": {
               "type": "boolean",
-              "description": "If set to true the 'cds.entities' exports in the generated 'index.js' files will be wrapped in 'Proxy' objects so static import/require calls can be used everywhere.\n\nWARNING: entity properties can still only be accessed after 'cds.entities' has been loaded",
+              "description": "If set to true, floating point properties are generated\nas IEEE754 compatible '(number | string)' instead of 'number'.",
               "default": false
             }
           }
