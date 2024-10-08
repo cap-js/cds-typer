@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.28.0 - TBD
+### Added
+- Added a static `elements` property to all entities, which allows access to the `LinkedDefinitions` instance of an entity's elements
 
 ## Version 0.27.0 - 2024-10-02
 ### Changed
