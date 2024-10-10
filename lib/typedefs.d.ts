@@ -67,6 +67,7 @@ export module resolver {
     export type TypeResolveInfo = {
         isBuiltin?: boolean,
         isDeepRequire?: boolean,
+        isInlineEntity?: boolean,
         isNotNull?: boolean,
         isInlineDeclaration?: boolean,
         isForeignKeyReference?: boolean,
