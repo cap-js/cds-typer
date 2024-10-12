@@ -25,7 +25,8 @@
     "doc:prepare": "npm run doc:clean && mkdir -p doc/types",
     "doc:typegen": "./node_modules/.bin/tsc ./lib/*.js  --skipLibCheck --declaration --allowJs --emitDeclarationOnly --outDir doc/types && cd doc/types && tsc --init",
     "doc:cli": "npm run cli -- --help > ./doc/cli.txt",
-    "jsdoc:check": "tsc --noEmit --project jsconfig.json"
+    "jsdoc:check": "tsc --noEmit --project jsconfig.json",
+    "write:cds-typer-shema": "node scripts/write-cds-typer-schema.js"
   },
   "files": [
     "lib/",
@@ -60,5 +61,68 @@
       "test/smoke.jest.config.js",
       "test/unit.jest.config.js"
     ]
+  },
+  "cds": {
+    "schema": {
+      "cds": {
+        "typer": {
+          "type": "object",
+          "description": "Configuration for CDS Typer",
+          "properties": {
+            "output_directory": {
+              "type": "string",
+              "description": "Root directory to write the generated files to.",
+              "default": "@cds-models"
+            },
+            "log_level": {
+              "type": "string",
+              "description": "Minimum log level that is printed.\nThe default is only used if no explicit value is passed\nand there is no configuration passed via cds.env either.",
+              "enum": [
+                "SILENT",
+                "ERROR",
+                "WARN",
+                "INFO",
+                "DEBUG",
+                "TRACE",
+                "SILLY",
+                "VERBOSE",
+                "WARNING",
+                "CRITICAL",
+                "NONE"
+              ],
+              "default": "ERROR"
+            },
+            "js_config_path": {
+              "type": "string",
+              "description": "Path to where the jsconfig.json should be written.\nIf specified, cds-typer will create a jsconfig.json file and\nset it up to restrict property usage in types entities to\nexisting properties only."
+            },
+            "use_entities_proxy": {
+              "type": "boolean",
+              "description": "If set to true the 'cds.entities' exports in the generated 'index.js'\nfiles will be wrapped in 'Proxy' objects\nso static import/require calls can be used everywhere.\n\nWARNING: entity properties can still only be accessed after\n'cds.entities' has been loaded",
+              "default": false
+            },
+            "inline_declarations": {
+              "type": "string",
+              "description": "Whether to resolve inline type declarations\nflat: (x_a, x_b, ...)\nor structured: (x: {a, b}).",
+              "enum": [
+                "flat",
+                "structured"
+              ],
+              "default": "structured"
+            },
+            "properties_optional": {
+              "type": "boolean",
+              "description": "If set to true, properties in entities are\nalways generated as optional (a?: T).",
+              "default": true
+            },
+            "ieee754compatible": {
+              "type": "boolean",
+              "description": "If set to true, floating point properties are generated\nas IEEE754 compatible '(number | string)' instead of 'number'.",
+              "default": false
+            }
+          }
+        }
+      }
+    }
   }
 }
