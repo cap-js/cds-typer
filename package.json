@@ -66,7 +66,7 @@
     "schema": {
       "buildTaskType": {
         "name": "typescript",
-        "description": "A text describing the new build task type."
+        "description": "Typescript build plugin. For use after the nodejs build task."
       },
       "cds": {
         "typer": {
