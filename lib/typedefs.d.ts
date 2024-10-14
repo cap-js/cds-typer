@@ -13,7 +13,7 @@ export module resolver {
         compositions?: { target: string }[]
         doc?: string,
         elements?: { [key: string]: EntityCSN }
-        key?: string // custom!!
+        key?: boolean // custom!!
         keys?: { [key:string]: any }
         kind: string,
         includes?: string[]

@@ -103,10 +103,17 @@ function visitCallExpression(node) {
  * @returns {ModuleDeclaration}
  */
 function visitModuleDeclaration(node) {
+    const nodeNames = [node.name]
+    let body = node.body
+    // consider nested modules
+    while (!body.statements) {
+        nodeNames.push(body.name)
+        body = body.body
+    }
     return {
         nodeType: kinds.ModuleDeclaration,
-        name: visit(node.name),
-        body: node.body.statements.map(visit)
+        name: nodeNames.map(n => visit(n)).join('.'),
+        body: body.statements.map(visit)
     }
 }
 
@@ -326,9 +333,12 @@ class ASTWrapper {
         return this.tree.filter(n => n.nodeType === kinds.ImportDeclaration)
     }
 
-    /** @returns {FunctionDeclaration[]} */
-    getAspectFunctions() {
-        return this.tree.filter(n => n.nodeType === kinds.FunctionDeclaration
+    /**
+     * @param {object[]} [tree] - tree to be used
+     * @returns {FunctionDeclaration[]}
+     */
+    getAspectFunctions(tree) {
+        return (Array.isArray(tree) ? tree : this.tree).filter(n => n.nodeType === kinds.FunctionDeclaration
             && n.body.length === 1
             && n.body[0].nodeType === kinds.ClassExpression)
     }
@@ -371,17 +381,23 @@ class ASTWrapper {
     //         .filter(n => n.heritage?.at(0)?.subtypes?.at(0)?.keyword === keywords.ExpressionWithTypeArguments)
     // }
 
-    /** @returns {ClassDeclaration[]} */
-    getInlineClassDeclarations() {
+    /**
+     * @param {object[]} [tree] - tree to be used
+     * @returns {ClassDeclaration[]}
+     */
+    getInlineClassDeclarations(tree) {
         // this is total bogus, as its the same as getAspects...
-        return this.tree
+        return (Array.isArray(tree) ? tree : this.tree)
             .filter(n => n.nodeType === kinds.FunctionDeclaration)
             .map(fn => ({...fn.body[0], name: fn.name }))
     }
 
-    /** @returns {ClassExpression[]} */
-    getAspects() {
-        return this.getAspectFunctions().map(({name, body}) => ({...body[0], name}))
+    /**
+     * @param {object[]} [tree] - tree to be used
+     * @returns {ClassExpression[]}
+     */
+    getAspects(tree) {
+        return this.getAspectFunctions(tree).map(({name, body}) => ({...body[0], name}))
     }
 
     getAspect(name) {
@@ -398,8 +414,14 @@ class ASTWrapper {
     }
 
     exists(clazz, property, type, typeArg) {
-        const entities = this.getInlineClassDeclarations().concat(this.getAspects())
-        const clz = entities.find(c => c.name === clazz)
+        const getEntities = clazz => {
+            let tree = this.tree
+            const module = clazz.split('.').slice(0, -1).join('.')
+            if (module) tree = this.getModuleDeclaration(module).body
+            return this.getInlineClassDeclarations(tree).concat(this.getAspects(tree))
+        }
+        const entities = getEntities(clazz)
+        const clz = entities.find(c => c.name === clazz.split('.').at(-1))
         if (!clz) throw Error(`no class with name ${clazz}`)
         if (!property) return true
 
