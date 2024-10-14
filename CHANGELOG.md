@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.28.0 - TBD
+### Added
+- Schema definition for `cds.typer` options in `package.json` and `.cdsrc-*.json` files
 
 ## Version 0.27.0 - 2024-10-02
 ### Changed
