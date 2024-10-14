@@ -64,6 +64,10 @@
   },
   "cds": {
     "schema": {
+      "buildTaskType": {
+        "name": "typescript",
+        "description": "A text describing the new build task type."
+      },
       "cds": {
         "typer": {
           "type": "object",
