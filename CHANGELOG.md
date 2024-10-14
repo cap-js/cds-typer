@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Schema definition for `cds.typer` options in `package.json` and `.cdsrc-*.json` files
 
 ### Fixed
-- Entity elements of named structured types are flatted when using the option `--inlineDeclarations flat`
+- Entity elements of named structured types are flattened when using the option `--inlineDeclarations flat`
 
 ## Version 0.27.0 - 2024-10-02
 ### Changed
