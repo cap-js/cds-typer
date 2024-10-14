@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Version 0.28.0 - TBD
 ### Added
 - Schema definition for `cds.typer` options in `package.json` and `.cdsrc-*.json` files
+- Schema definition for `typescript` cds build task.
 
 ## Version 0.27.0 - 2024-10-02
 ### Changed
