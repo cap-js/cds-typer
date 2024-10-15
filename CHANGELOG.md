@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Schema definition for `cds.typer` options in `package.json` and `.cdsrc-*.json` files
 - Schema definition for `typescript` cds build task.
 
+### Fixed
+- Entity elements of named structured types are flattened when using the option `--inlineDeclarations flat`
+
 ## Version 0.27.0 - 2024-10-02
 ### Changed
 - Any configuration variable (via CLI or `cds.env`) can now be passed in snake_case in addition to camelCase
