@@ -64,6 +64,10 @@
   },
   "cds": {
     "schema": {
+      "buildTaskType": {
+        "name": "typescript",
+        "description": "TypeScript build plugin. For use after the nodejs build task."
+      },
       "cds": {
         "typer": {
           "type": "object",
