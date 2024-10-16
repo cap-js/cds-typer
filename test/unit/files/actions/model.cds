@@ -34,9 +34,9 @@ service S {
     action   aManyParamSingleReturn(val: array of E) returns E;
 
     action   aMandatoryParam(
-        val: E not null,
+        val1: E not null,
+        val2: array of E not null,
         opt: E,
-        val2: E not null
     ) returns E;
 
     /** the action */
