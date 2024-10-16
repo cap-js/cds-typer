@@ -49,7 +49,7 @@ export class S extends cds.ApplicationService { async init(){
   this.on(aManyParamSingleReturn,    req => { const {val} = req.data; return {e1:val[0].e1} satisfies E })
 
   this.on(aMandatoryParam,  req => {
-    false satisfies IsKeyOptional<typeof req.data, 'val'>
+    false satisfies IsKeyOptional<typeof req.data, 'val1'>
     false satisfies IsKeyOptional<typeof req.data, 'val2'>
     true satisfies IsKeyOptional<typeof req.data, 'opt'>
   })
