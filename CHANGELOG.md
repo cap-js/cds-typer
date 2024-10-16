@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 - Entity elements of named structured types are flattened when using the option `--inlineDeclarations flat`
+- Static property `.drafts` is only create for entity classes that are actually draft enabled
 
 ## Version 0.27.0 - 2024-10-02
 ### Changed
