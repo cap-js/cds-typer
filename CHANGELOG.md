@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Version 0.28.0 - TBD
 ### Added
 - Schema definition for `cds.typer` options in `package.json` and `.cdsrc-*.json` files
+- Added a static `elements` property to all entities, which allows access to the `LinkedDefinitions` instance of an entity's elements
 - Schema definition for `typescript` cds build task.
 
 ### Fixed
