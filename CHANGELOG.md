@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 - Entity elements of named structured types are flattened when using the option `--inlineDeclarations flat`
+- Properly support mandatory (`not null`) action parameters with `array of` types
 
 ## Version 0.27.0 - 2024-10-02
 ### Changed
