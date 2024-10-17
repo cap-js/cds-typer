@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 - Entity elements of named structured types are flattened when using the option `--inlineDeclarations flat`
+- `override` modifier on `.kind` property is now only generated if the property is actually inherited, satisfying strict `tsconfig.json`s
 - Properly support mandatory (`not null`) action parameters with `array of` types
 - Static property `.drafts` is only create for entity classes that are actually draft enabled
 
