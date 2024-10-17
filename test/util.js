@@ -183,7 +183,8 @@ async function prepareUnitTest(model, outputDirectory, parameters = {}) {
         await checkTranspilation(tsFiles)
     }
     configuration.setFrom(configurationBefore)
-    return { astw: new ASTWrapper(path.join(parameters.fileSelector(paths), 'index.ts')), paths }
+    // return undefined for astw in case type-generation failed
+    return { astw: paths?.length > 0 ? new ASTWrapper(path.join(parameters.fileSelector(paths), 'index.ts')) : undefined, paths }
 
 }
 
