@@ -9,7 +9,7 @@ export class VARCHAR extends String {};
 export class CLOB extends String {};
 export class BINARY extends String {}
 export class ST_POINT {
-    public x: number;
-    public y: number;
+    declare public x: number;
+    declare public y: number;
 }
 export class ST_GEOMETRY { /* FIXME */ }
