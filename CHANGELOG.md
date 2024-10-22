@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Entity elements of named structured types are flattened when using the option `--inlineDeclarations flat`
 - `override` modifier on `.kind` property is now only generated if the property is actually inherited, satisfying strict `tsconfig.json`s
 - Properly support mandatory (`not null`) action parameters with `array of` types
+- Referencing a structured type in an entity will now always flatten and unroll the type, instead of creating a reference
 
 ## Version 0.27.0 - 2024-10-02
 ### Changed
