@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Version 0.28.0 - TBD
 ### Added
 - Schema definition for `cds.typer` options in `package.json` and `.cdsrc-*.json` files
+- Added a static `elements` property to all entities, which allows access to the `LinkedDefinitions` instance of an entity's elements
+- Schema definition for `typescript` cds build task.
+
+### Fixed
+- Entity elements of named structured types are flattened when using the option `--inlineDeclarations flat`
+- `override` modifier on `.kind` property is now only generated if the property is actually inherited, satisfying strict `tsconfig.json`s
+- Properly support mandatory (`not null`) action parameters with `array of` types
+- Static property `.drafts` is only create for entity classes that are actually draft enabled
 
 ## Version 0.27.0 - 2024-10-02
 ### Changed
@@ -15,7 +23,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 - Fix build task for projects with spaces
-- Fixa bug where cds-typer would produce redundant type declarations when the model contains an associations to another entity's property
+- Fix a bug where cds-typer would produce redundant type declarations when the model contains an associations to another entity's property
+- Reintroduce default value `'.'` for `--outputDirectory`
 
 ## Version 0.26.0 - 2024-09-11
 ### Added
