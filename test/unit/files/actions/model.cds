@@ -33,11 +33,10 @@ service S {
     action   aManyParamManyReturn(val: array of E)   returns array of E;
     action   aManyParamSingleReturn(val: array of E) returns E;
 
-    action   aOptionalParam(
-        val: E,
-        @Core.OptionalParameter: {$Type : 'Core.OptionalParameterType'}
+    action   aMandatoryParam(
+        val1: E not null,
+        val2: array of E not null,
         opt: E,
-        val2: E
     ) returns E;
 
     /** the action */
@@ -54,6 +53,14 @@ service S {
          */
         val: E
     );
+
+    action aRfcStyle(
+        INPUT : String(1) not null,
+        @RFCParameterType : 'Table'
+            TABLES : many ExternalType2,
+        @RFCParameterType : 'Export'
+            EXPORT: String(1)
+    ) returns ExternalType;
 }
 
 action free (param: String) returns { a: Integer; b: String } ;
@@ -75,5 +82,5 @@ entity ParameterlessActions {key id: Integer;}
 service S2 {
     entity E {key id: Integer;};
     action a1 (p1: String, p2: many ExternalType2) returns ExternalType;
-    action a2 (p1: String, @Core.OptionalParameter: {$Type : 'Core.OptionalParameterType'} p2: many ExternalType2, p3: Integer) returns ExternalType
+    action a2 (p1: String not null, p2: many ExternalType2, p3: Integer not null) returns ExternalType
 }

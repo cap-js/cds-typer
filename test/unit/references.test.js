@@ -24,9 +24,9 @@ describe('References', () => {
             m.type.name === 'many'
                 && m.type.args[0].name === 'Foo_'
         )).toBeTruthy()
-        expect(astw.exists('_BarAspect', 'assoc_one_first_key', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
-        expect(astw.exists('_BarAspect', 'assoc_one_second_key', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
-        expect(astw.exists('_BarAspect', 'assoc_one_ID', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
+        expect(astw.exists('_BarAspect', 'assoc_one_first_key', m => check.isNullable(m.type, [st => check.isKeyOf(st, check.isString)]))).toBeTruthy()
+        expect(astw.exists('_BarAspect', 'assoc_one_second_key', m => check.isNullable(m.type, [st => check.isKeyOf(st, check.isString)]))).toBeTruthy()
+        expect(astw.exists('_BarAspect', 'assoc_one_ID', m => check.isNullable(m.type, [st => check.isKeyOf(st, check.isString)]))).toBeTruthy()
     })
 
     test('Inline', async () => {

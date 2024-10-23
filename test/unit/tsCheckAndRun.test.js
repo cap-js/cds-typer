@@ -1,3 +1,4 @@
+const { configuration } = require('../../lib/config')
 const { basename, join } = require('path')
 const { describe, test } = require('@jest/globals')
 const cds = require('@sap/cds')
@@ -47,8 +48,8 @@ async function runTyperAndTsCheck(model, testTsFile, outputDirectory, parameters
     }
     parameters = { ...defaults, ...parameters }
 
-    const options = {...{ outputDirectory, inlineDeclarations: 'structured' }, ...parameters.typerOptions}
-    const paths = await typer.compileFromFile(model, options)
+    configuration.setMany({...{ outputDirectory, inlineDeclarations: 'structured' }, ...parameters.typerOptions})
+    const paths = await typer.compileFromFile(model)
     const tsFiles = paths.map(p => join(p, 'index.ts'))
     const emitDir = join(outputDirectory, '__tsc-emit')
     await checkTranspilation([testTsFile, ...tsFiles], {

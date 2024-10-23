@@ -418,11 +418,12 @@ class ASTWrapper {
 }
 
 class JSASTWrapper {
-    static async initialise(file) {
-        return new JSASTWrapper(await fs.readFile(file, 'utf-8'))
+    static async initialise(file, proxyExports = false) {
+        return new JSASTWrapper(await fs.readFile(file, 'utf-8'), proxyExports)
     }
 
-    constructor(code) {
+    constructor(code, proxyExports) {
+        this.proxyExports = proxyExports
         this.program = acorn.parse(code, { ecmaVersion: 'latest'})
     }
 
@@ -431,6 +432,27 @@ class JSASTWrapper {
         for (const [lhs, rhs] of expected) {
             if (!this.hasExport(lhs, rhs)) throw new Error(`missing export module.exports.${lhs} = ${rhs}`)
         }
+    }
+
+    hasCdsEntitiesAccess() {
+        this.program.body.filter(node => {
+            if (node.type !== 'VariableDeclaration') return false
+            if (node.declarations[0].id !== 'csn') return false
+            return node.declarations[0].init?.callee.object.name === 'cds'
+                && node.declarations[0].init?.callee.property.name === 'entities'
+        }).length > 0
+    }
+
+    hasProxyExport(name, customProps) {
+        const proxyExport = this.getExports().find(exp => exp.lhs === name && exp.proxyArgs?.length)
+        if (!proxyExport) throw new Error(`missing module.exports for entities proxy with name ${name}`)
+        if (proxyExport.proxyArgs.length !== 2) throw new Error('proxy function called without additional options')
+
+        const property = proxyExport.proxyArgs[1].properties[1]
+        if (property?.key?.name !== 'customProps') throw new Error('customProps not found in proxy call arguments')
+
+        const propKeys = property.value.elements.map(e => e.value)
+        if (!customProps.every(c => propKeys.includes(c))) throw new Error('not all expected custom props found in argument')
     }
 
     hasExport(lhs, rhs) {
@@ -445,18 +467,20 @@ class JSASTWrapper {
             singular: properties.find(p => p.key.name === 'is_singular' && p.value.value),
             name: properties.find(p => p.key.name === '__proto__')?.value.property.name
         })
-        this.program.body[2].expression.right.properties[1].value.property
         return this.exports ??= this.program.body.filter(node => {
             if (node.type !== 'ExpressionStatement') return false
             if (node.expression.left.type !== 'MemberExpression') return false
             const { object, property } = node.expression.left.object
             return object.name === 'module' && property.name === 'exports'
-        }).map(node => (
-            {
+        }).map(node => {
+            return {
                 lhs: node.expression.left.property.name,
-                rhs: node.expression.right.property?.name ?? processObjectLiteral(node.expression.right)
+                rhs: this.proxyExports
+                    ? node.expression.right.arguments?.[0].elements[1].value
+                    : node.expression.right.property?.name ?? processObjectLiteral(node.expression.right),
+                proxyArgs: node.expression.right.arguments
             }
-        ))
+        })
     }
 }
 
@@ -508,6 +532,7 @@ const check = {
     isVariableDeclaration: node => checkNodeType(node, 'variableStatement'),
     isCallExpression: (node, expression) => checkNodeType(node, 'callExpression') && (!expression || node.expression === expression),
     isPropertyAccessExpression: (node, expression, name) => checkKeyword(node, 'propertyaccessexpression') && (!expression || node.expression === expression) && (!name || node.name === name),
+    isKeyOf: (n, template)  => check.isTypeReference(n, '___.Key') && template(n.args[0]) // special __.Key<X> type
 }
 
 /**

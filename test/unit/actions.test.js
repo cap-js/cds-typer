@@ -177,8 +177,8 @@ describe('Actions', () => {
     })
 
     test ('Optional Action Params', async () => {
-        checkFunction(astwBound.tree.find(fn => fn.name === 'aOptionalParam'), {
-            parameterCheck: ({members: [p1, p2, p3]}) => !check.isOptional(p1) && check.isOptional(p2) && !check.isOptional(p3),
+        checkFunction(astwBound.tree.find(fn => fn.name === 'aMandatoryParam'), {
+            parameterCheck: ({members: [p1, p2, p3]}) => !check.isOptional(p1) && !check.isOptional(p2) && check.isOptional(p3),
         })
     })
 

@@ -82,6 +82,39 @@ export module resolver {
         inflection?: visitor.Inflection
     }
 
+    /**
+     * Custom options to be used during type resolvement
+     */
+    export type TypeResolveOptions = {
+        /**
+         * Entity elements that have a custom type are not available when entity is accessed using CQL.
+         *
+         * They only exist in the original defined form in the CSN and LinkedCSN but not in the compiled
+         * OData or SQL models (i.e. `cds.compile(..).for.odata()`).
+         * 
+         * Therefore they need to be flattened down like inline structs.
+         * 
+         * ```cds
+         * // model.cds
+         * type Adress {
+         *   street: String;
+         *   zipCode: String;
+         * }
+         * entity Persons {
+         *   title: String
+         *   address: Adress
+         * }
+         * ```
+         * 
+         * // service.js
+         * ```js
+         * const {title, address_street, address_zipCode} = await SELECT.from(Persons);
+         * ```
+         * 
+         */
+        forceInlineStructs?: boolean
+    }
+
     export type EntityInfo = Exclude<ReturnType<import('../lib/resolution/entity').EntityRepository['getByFq']>, null>
 
     // TODO: this will be completely replaced by EntityInfo
@@ -99,42 +132,13 @@ export module resolver {
 
 export module util {
     export type Annotations = {
-        name?: string,
+        name: string,
         '@singular'?: string,
         '@plural'?: string
-    }
-
-    export type CommandLineFlags = {
-        desc: string,
-        default?: any
-    }
-
-    export type ParsedFlag = {
-        positional: string[],
-        named: { [key: string]: any }
     }
 }
 
 export module visitor {
-    export type CompileParameters = {
-        outputDirectory: string,
-        logLevel: number,
-        jsConfigPath?: string,
-        inlineDeclarations: 'flat' | 'structured',
-        propertiesOptional: boolean,
-        IEEE754Compatible: boolean,
-    }
-
-    export type VisitorOptions = {
-        /** `propertiesOptional = true` -> all properties are generated as optional ?:. (standard CAP behaviour, where properties be unavailable) */
-        propertiesOptional: boolean,
-        /**
-         * `inlineDeclarations = 'structured'` -> @see {@link inline.StructuredInlineDeclarationResolver}
-         * `inlineDeclarations = 'flat'` -> @see {@link inline.FlatInlineDeclarationResolver}
-         */
-        inlineDeclarations: 'flat' | 'structured',
-    }
-
     export type Inflection = {
         typeName?: string,
         singular: string,
@@ -150,6 +154,54 @@ export module visitor {
         modifier: '' | '?',
         type: string,
         doc?: string
+    }
+}
+
+export module config {
+    export module cli {
+        export type CLIFlags = 'version' | 'help'
+        export type ParameterSchema = {
+            [key: string]: {
+                desc: string,
+                allowed?: string[],
+                allowedHint?: string,
+                type?: 'string' | 'boolean' | 'number',
+                default?: string,
+                defaultHint?: string,
+                postprocess?: (value: string) => any,
+                camel?: string,
+                snake?: string
+            }
+        }
+
+        export type ParsedParameters = {
+            positional: string[],
+            named: { [key: keyof RuntimeParameters]: {
+                value: any,
+                isDefault: boolean,
+            } }
+        }
+    }
+
+    export type Configuration = {
+        outputDirectory: string,
+        logLevel: number,
+        /**
+         * `useEntitiesProxy = true` will wrap the `module.exports.<entityName>` in `Proxy` objects
+         */
+        useEntitiesProxy: boolean,
+        jsConfigPath?: string,
+        /**
+         * `inlineDeclarations = 'structured'` -> @see {@link inline.StructuredInlineDeclarationResolver}
+         * `inlineDeclarations = 'flat'` -> @see {@link inline.FlatInlineDeclarationResolver}
+         */
+        inlineDeclarations: 'flat' | 'structured',
+        /** `propertiesOptional = true` -> all properties are generated as optional ?:. (standard CAP behaviour, where properties be unavailable) */
+        propertiesOptional: boolean,
+        /**
+         * `IEEE754Compatible = true` -> any cds.Decimal will become `number | string`
+         */
+        IEEE754Compatible: boolean
     }
 }
 
