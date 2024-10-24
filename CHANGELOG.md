@@ -4,11 +4,14 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.28.0 - TBD
+## Version 0.29.0 - TBD
+
+## Version 0.28.0 - 24-10-24
 ### Added
 - Schema definition for `cds.typer` options in `package.json` and `.cdsrc-*.json` files
 - Added a static `elements` property to all entities, which allows access to the `LinkedDefinitions` instance of an entity's elements
 - Schema definition for `typescript` cds build task.
+- `.drafts` property of any entity `E` is now of type `DraftOf<E>`, or `DraftsOf<E>` for plurals, respectively. This type exposes dditional properties that are available on drafts during runtime.
 
 ### Fixed
 - Entity elements of named structured types are flattened when using the option `--inlineDeclarations flat`
