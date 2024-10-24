@@ -58,6 +58,15 @@ describe('type Definitions', () => {
             expect(kind.initializer).toBe('entity')
         })
 
+        test('check existence of flattened type elements', () => {
+            const members = astw.tree.find(def => def.name === '_PersonAspect').body[0].members
+
+            expect(members.find(({name, type}) => name === 'pos_x' && type?.subtypes?.[0].keyword === 'number')).toBeTruthy()
+            expect(members.find(({name, type}) => name === 'pos_y' && type?.subtypes?.[0].keyword === 'number')).toBeTruthy()
+            expect(members.find(({name, type}) => name === 'pos_geoData_latitude' && type?.subtypes?.[0].keyword === 'number')).toBeTruthy()
+            expect(members.find(({name, type}) => name === 'pos_geoData_longitude' && type?.subtypes?.[0].keyword === 'number')).toBeTruthy()
+        })
+
     })
 
     describe('flat output', () => {
