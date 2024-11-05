@@ -7,13 +7,19 @@ const { locations, prepareUnitTest } = require('../util')
 
 describe('Actions', () => {
     let paths
+    let sut
     let astwBound
     let astwUnbound
 
     beforeAll(async () => {
-        paths = (await prepareUnitTest('actions/model.cds', locations.testOutput('actions_test'))).paths
+        sut = await prepareUnitTest('actions/model.cds', locations.testOutput('actions_test'))
+        paths = sut.paths
         astwBound = new ASTWrapper(path.join(paths.find(p => p.endsWith('S')), 'index.ts'))
         astwUnbound = new ASTWrapper(path.join(paths.find(p => p.endsWith('actions_test')), 'index.ts'))
+    })
+
+    test('add import statement for builtin types', async () => {
+        expect(sut.astw.getImports()[0].module).toBe('./../_')
     })
 
     test('Bound', async () => {
