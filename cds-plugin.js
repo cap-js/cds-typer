@@ -110,7 +110,7 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
         DEBUG?.('building without config')
         // this will include gen/ that was created by the nodejs task
         // _within_ the project directory. So we need to remove it afterwards.
-        await exec(`npx tsc --outDir "${this.task.dest}"`)
+        await exec(`npx tsc --outDir "${this.task.dest.replace(/\\/g, '/')}"`) // see https://github.com/cap-js/cds-typer/issues/374
         rmDirIfExists(path.join(this.task.dest, cds.env.build.target))
         rmDirIfExists(path.join(this.task.dest, this.#appFolder))
     }
