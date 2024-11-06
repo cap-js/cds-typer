@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 - `cds build` no longer fails on Windows with an `EINVAL` error.
+- `cds build` also supports custom model paths in `tsconfig.json` that do not end with `/index.ts`.  This is the case for projects running with `tsx`.
 
 ## Version 0.28.0 - 24-10-24
 ### Added
