@@ -5,7 +5,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.28.1 - 2024-11-07
-
 ### Fixed
 - `cds build` no longer fails on Windows with an `EINVAL` error.
 - `cds build` also supports custom model paths in `tsconfig.json` that do not end with `/index.ts`.  This is the case for projects running with `tsx`.
