@@ -32,7 +32,7 @@ import { ExternalInRoot } from '#cds-models';
 type IsKeyOptional<T extends Record<string | number | symbol, unknown>, Keys extends keyof T> =
     {[Key in Keys]?: T[Key]} extends Pick<T, Keys> ? true : false;
 
-export class S extends cds.ApplicationService { async init(){
+export class S extends cds.ApplicationService { override async init(){
 
   const s_  = await cds.connect.to(S_)
 

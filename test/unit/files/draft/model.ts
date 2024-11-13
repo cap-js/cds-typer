@@ -3,7 +3,7 @@ import {DraftEntity} from '#cds-models/_'
 import {Books, Publishers} from '#cds-models/bookshop/service/CatalogService'
 
 export class CatalogService extends cds.ApplicationService {
-    async init() {
+    override async init() {
 
         this.after("READ", Publishers.drafts, publishers => {
             if (!publishers?.length) return
