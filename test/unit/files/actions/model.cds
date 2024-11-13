@@ -8,6 +8,7 @@ entity Foo {
 }
 
 service S {
+    action withBuiltInType (timestamp: Timestamp);
     entity E {
         key e1:String
     } actions {

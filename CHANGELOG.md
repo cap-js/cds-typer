@@ -4,17 +4,31 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.28.0 - TBD
+## Version 0.29.0 - tbd
+### Added
+
+### Changed
+
+### Fixed
+- Referencing a structured type in an entity will now always flatten and unroll the type, instead of creating a reference
+
+## Version 0.28.1 - 2024-11-07
+### Fixed
+- `cds build` no longer fails on Windows with an `EINVAL` error.
+- `cds build` also supports custom model paths in `tsconfig.json` that do not end with `/index.ts`.  This is the case for projects running with `tsx`.
+
+## Version 0.28.0 - 24-10-24
 ### Added
 - Schema definition for `cds.typer` options in `package.json` and `.cdsrc-*.json` files
 - Added a static `elements` property to all entities, which allows access to the `LinkedDefinitions` instance of an entity's elements
 - Schema definition for `typescript` cds build task.
+- `.drafts` property of any entity `E` is now of type `DraftOf<E>`, or `DraftsOf<E>` for plurals, respectively. This type exposes dditional properties that are available on drafts during runtime.
 
 ### Fixed
 - Entity elements of named structured types are flattened when using the option `--inlineDeclarations flat`
 - `override` modifier on `.kind` property is now only generated if the property is actually inherited, satisfying strict `tsconfig.json`s
 - Properly support mandatory (`not null`) action parameters with `array of` types
-- Referencing a structured type in an entity will now always flatten and unroll the type, instead of creating a reference
+- Static property `.drafts` is only create for entity classes that are actually draft enabled
 
 ## Version 0.27.0 - 2024-10-02
 ### Changed

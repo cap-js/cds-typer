@@ -75,12 +75,12 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
         const outputDirectory = cds.env.typer?.outputDirectory
         if (outputDirectory) return outputDirectory
         try {
-            // expected format: { '#cds-models/*': [ './@cds-models/*/index.ts' ] }
+            // expected format: { '#cds-models/*': [ './@cds-models/*' ] }
             //                                          ^^^^^^^^^^^
             //                             relevant part - may be changed by user
             const config = JSON.parse(fs.readFileSync ('tsconfig.json', 'utf8'))
             const alias = config.compilerOptions.paths['#cds-models/*'][0]
-            const directory = alias.match(/(?:\.\/)?(.*)\/\*\/index\.ts/)[1]
+            const directory = alias.match(/(?:\.\/)?(.*)\/\*/)[1]
             return normalize(directory)  // could contain forward slashes in tsconfig.json
         } catch {
             DEBUG?.('tsconfig.json not found, not parsable, or inconclusive. Using default model directory name')
@@ -110,7 +110,7 @@ cds.build?.register?.('typescript', class extends cds.build.Plugin {
         DEBUG?.('building without config')
         // this will include gen/ that was created by the nodejs task
         // _within_ the project directory. So we need to remove it afterwards.
-        await exec(`npx tsc --outDir "${this.task.dest}"`)
+        await exec(`npx tsc --outDir "${this.task.dest.replace(/\\/g, '/')}"`) // see https://github.com/cap-js/cds-typer/issues/374
         rmDirIfExists(path.join(this.task.dest, cds.env.build.target))
         rmDirIfExists(path.join(this.task.dest, this.#appFolder))
     }

@@ -173,8 +173,6 @@ async function prepareUnitTest(model, outputDirectory, parameters = {}) {
 
     configuration.setMany({...{ outputDirectory: outputDirectory, inlineDeclarations: 'structured' }, ...parameters.typerOptions})
     const paths = await cds2ts(model)
-        // eslint-disable-next-line no-console
-        .catch(err => console.error(err))
 
     if (parameters.transpilationCheck) {
         const tsFiles = paths.map(p => path.join(p, 'index.ts'))
@@ -184,7 +182,6 @@ async function prepareUnitTest(model, outputDirectory, parameters = {}) {
     }
     configuration.setFrom(configurationBefore)
     return { astw: new ASTWrapper(path.join(parameters.fileSelector(paths), 'index.ts')), paths }
-
 }
 
 module.exports = {
