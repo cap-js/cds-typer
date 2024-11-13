@@ -1,5 +1,12 @@
 const ts = require('typescript')
 
+const defaultTranspilationOptions = {
+    noEmit: true,
+    esModuleInterop: true,
+    strict: true,
+    noImplicitOverride: true
+}
+
 /**
  * Checks a parsed TS program for error diagnostics.
  * @param {any} program - the parsed TS program
@@ -29,7 +36,7 @@ function checkProgram (program) {
  * @param {import('typescript').CompilerOptions} opts - the options to pass to the TS compiler
  */
 async function checkTranspilation (apiFiles, opts = {}) {
-    const options = {...{ noEmit: true, esModuleInterop: true, strict: true }, ...opts}
+    const options = {...defaultTranspilationOptions, ...opts}
     const program = ts.createProgram({ rootNames: apiFiles, options })
     checkProgram(program)
 }
