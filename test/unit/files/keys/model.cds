@@ -21,7 +21,9 @@ entity C: A, E2 {
 // mutual association, while also both extending cuid
 using { cuid } from '@sap/cds/common';
 
-entity Foo: cuid {
+entity SomethingWithoutKey {}
+
+entity Foo: cuid, SomethingWithoutKey {
     bar: Association to Bar
 }
 
