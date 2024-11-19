@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 
 ### Fixed
+- Referencing a structured type in an entity will now always flatten and unroll the type, instead of creating a reference
 
 ## Version 0.28.1 - 2024-11-07
 ### Fixed
