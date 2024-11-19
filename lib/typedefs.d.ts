@@ -202,6 +202,7 @@ export module config {
          * `IEEE754Compatible = true` -> any cds.Decimal will become `number | string`
          */
         IEEE754Compatible: boolean
+        targetModuleType: 'cjs' | 'esm'
     }
 }
 
