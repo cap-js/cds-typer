@@ -61,12 +61,8 @@ function createCdsTyperSchema() {
  * @param {CdsTyperSchema} schema - the json schema for cds.typer
  */
 function writeSchemaToPackageJson(schema) {
-    packageJson.cds = {
-        schema: {
-            cds: {
-                typer: schema,
-            },
-        },
+    packageJson.cds.schema.cds = {
+        typer: schema,
     }
     writeFileSync(join(__dirname, '..', 'package.json'), JSON.stringify(packageJson, undefined, 2) + '\n', {
         encoding: 'utf-8',
