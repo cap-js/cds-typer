@@ -30,4 +30,32 @@ describe('smoke', () => {
             )
         })
     })
+
+    describe('index.js CommonJS', () => {
+        test.each(modelDirs)('$name', async ({ name, rootFile }) => {
+            await prepareUnitTest(
+                rootFile,
+                locations.testOutput(name),
+                {
+                    javascriptCheck: true,
+                    javascriptCheckParameters: { ecmaVersion: 'latest'},
+                    typerOptions: { targetModuleType: 'cjs' }
+                }
+            )
+        })
+    })
+
+    describe('index.js ESM', () => {
+        test.each(modelDirs)('$name', async ({ name, rootFile }) => {
+            await prepareUnitTest(
+                rootFile,
+                locations.testOutput(name),
+                {
+                    javascriptCheck: true,
+                    javascriptCheckParameters: { ecmaVersion: 'latest', sourceType: 'module' },
+                    typerOptions: { targetModuleType: 'esm' },
+                }
+            )
+        })
+    })
 })
