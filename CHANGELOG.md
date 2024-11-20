@@ -6,10 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.29.0 - tbd
 ### Added
+- Passing `--targetModuleType esm` now generates ESM compliant _index.js_ files.
 
 ### Changed
 
 ### Fixed
+- The static `.keys` property now properly reels in key types from inherited classes.
 
 ## Version 0.28.1 - 2024-11-07
 ### Fixed
