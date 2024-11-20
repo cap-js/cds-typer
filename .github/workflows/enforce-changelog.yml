@@ -10,4 +10,4 @@ jobs:
     - uses: dangoslen/changelog-enforcer@v3
       with:
         skipLabels: "skip changelog"
-        missingUpdateErrorMessage: "PR does not update CHANGELOG.md! If this was done on purpose, at the 'skip changelog' label."
+        missingUpdateErrorMessage: "PR does not update CHANGELOG.md! If this was done on purpose, add the 'skip changelog' label."
