@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.29.0 - tbd
 ### Added
-- Passing `--targetModuleType esm` now generates ESM compliant _index.js_ files.
+- cds-typer now tries to automatically detect whether it has to generate ESM or CommonJS in the emitted _index.js_ files. This behaviour can be set via the `--targetModuleType` option.
 
 ### Changed
 
