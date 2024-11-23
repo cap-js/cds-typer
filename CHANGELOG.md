@@ -4,11 +4,26 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.28.0 - TBD
+## Version 0.30.0 - TBD
+
+## Version 0.29.0 - 2024-11-20
+### Added
+- [breaking] cds-typer now tries to automatically detect whether it has to generate ESM or CommonJS in the emitted _index.js_ files. This behaviour can be overridden via the `--targetModuleType` option. _If you rely on these generated index.js files to be CJS despite your project being of ESM type, you need to manually tell cds-typer to generate CJS files!_ 
+
+### Fixed
+- The static `.keys` property now properly reels in key types from inherited classes.
+
+## Version 0.28.1 - 2024-11-07
+### Fixed
+- `cds build` no longer fails on Windows with an `EINVAL` error.
+- `cds build` also supports custom model paths in `tsconfig.json` that do not end with `/index.ts`.  This is the case for projects running with `tsx`.
+
+## Version 0.28.0 - 24-10-24
 ### Added
 - Schema definition for `cds.typer` options in `package.json` and `.cdsrc-*.json` files
 - Added a static `elements` property to all entities, which allows access to the `LinkedDefinitions` instance of an entity's elements
 - Schema definition for `typescript` cds build task.
+- `.drafts` property of any entity `E` is now of type `DraftOf<E>`, or `DraftsOf<E>` for plurals, respectively. This type exposes dditional properties that are available on drafts during runtime.
 
 ### Fixed
 - Entity elements of named structured types are flattened when using the option `--inlineDeclarations flat`

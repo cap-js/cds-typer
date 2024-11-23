@@ -1,6 +1,6 @@
 {
   "name": "@cap-js/cds-typer",
-  "version": "0.27.0",
+  "version": "0.29.0",
   "description": "Generates .ts files for a CDS model to receive code completion in VS Code",
   "main": "index.js",
   "repository": "github:cap-js/cds-typer",
@@ -123,6 +123,16 @@
               "type": "boolean",
               "description": "If set to true, floating point properties are generated\nas IEEE754 compatible '(number | string)' instead of 'number'.",
               "default": false
+            },
+            "target_module_type": {
+              "type": "string",
+              "description": "Output format for generated .js files.\nSetting it to auto tries to derive the module type from\nthe package.json and falls back to CJS.",
+              "enum": [
+                "esm",
+                "cjs",
+                "auto"
+              ],
+              "default": "auto"
             }
           }
         }

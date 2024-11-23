@@ -1,8 +1,9 @@
 const { configuration } = require('../lib/config')
-const fs = require('fs')
-const path = require('path')
-const os = require('os')
+const fs = require('node:fs')
+const path = require('node:path')
+const os = require('node:os')
 const typer = require('../lib/compile')
+const acorn = require('acorn')
 const { ASTWrapper } = require('./ast')
 const { checkTranspilation } = require('./tscheck')
 const { execSync } = require('child_process')
@@ -152,9 +153,11 @@ const createProject = projDir => {
 
 /**
  * @typedef PrepareUnitTestParameters
- * @property {object} typerOptions options to be passed to the typer
- * @property {(paths: string[]) => string} fileSelector a function to select the file to be processed from the generated files
- * @property {boolean} transpilationCheck whether to check the transpilation of the generated files
+ * @property {object} typerOptions - options to be passed to the typer
+ * @property {(paths: string[]) => string} fileSelector - a function to select the file to be processed from the generated files
+ * @property {boolean} transpilationCheck - whether to check the transpilation of the generated files
+ * @property {boolean} javascriptCheck - whether to check the index.js files for consistency (being parsable by acorn)
+ * @property {Parameters<import('acorn').parse>[1]} javascriptCheckParameters - parameters to pass to acorn.parse
  */
 
 /**
@@ -167,7 +170,9 @@ async function prepareUnitTest(model, outputDirectory, parameters = {}) {
     const defaults = {
         typerOptions: {},
         fileSelector: paths => (paths ?? []).find(p => !p.endsWith('_')),
-        transpilationCheck: false
+        transpilationCheck: false,
+        javascriptCheck: false,
+        javascriptCheckParameters: { ecmaVersion: 'latest' }
     }
     parameters = { ...defaults, ...parameters }
 
@@ -179,6 +184,25 @@ async function prepareUnitTest(model, outputDirectory, parameters = {}) {
         // create a package.json w/ common dependencies in a higher dir so that they can be reused by many tests
         createProject(path.resolve(outputDirectory, '../..'))
         await checkTranspilation(tsFiles)
+    }
+
+    if (parameters.javascriptCheck) {
+        const jsErrors = (await Promise.all(paths
+            .map(async p => {
+                const fullPath = path.join(p, 'index.js')
+                const code = await fs.promises.readFile(fullPath, 'utf-8')
+                try {
+                    acorn.parse(code, parameters.javascriptCheckParameters)
+                    return undefined
+                } catch (error) {
+                    return `${fullPath}: ${error.message}`
+                }
+            })))
+            .filter(error => error)
+
+        if (jsErrors.length) {
+            throw new Error(`Several errors found in the generated index.js files:\n${jsErrors.join('\n')}`)
+        }
     }
     configuration.setFrom(configurationBefore)
     return { astw: new ASTWrapper(path.join(parameters.fileSelector(paths), 'index.ts')), paths }

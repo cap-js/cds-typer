@@ -545,11 +545,14 @@ const check = {
     isNull: node => checkKeyword(node, 'literaltype') && checkKeyword(node.literal, 'null'),
     isUnionType: (node, of = []) => checkKeyword(node, 'uniontype')
         && of.reduce((acc, predicate) => acc && node.subtypes.some(st => predicate(st)), true),
+    isIntersectionType: (node, of = []) => checkKeyword(node, 'intersectiontype')
+        && of.reduce((acc, predicate) => acc && node.subtypes.some(st => predicate(st)), true),
     isNullable: (node, of = []) => check.isUnionType(node, of.concat([check.isNull])),
     isOptional: node => node.optional,
     hasDeclareModifier: node => node?.modifiers?.some(mod => checkKeyword(mod, 'declare')),
     isLiteral: (node, literal = undefined) => checkKeyword(node, 'literaltype') && (literal === undefined || node.literal === literal),
     isTypeReference: (node, full = undefined) => checkNodeType(node, 'typeReference') && (!full || node.full === full),
+    isTypeQuery: node => checkKeyword(node, 'typequery'),  // FIXME: should actually check what is being queried
     isTypeAliasDeclaration: node => checkNodeType(node, 'typeAliasDeclaration'),
     isVariableDeclaration: node => checkNodeType(node, 'variableStatement'),
     isCallExpression: (node, expression) => checkNodeType(node, 'callExpression') && (!expression || node.expression === expression),

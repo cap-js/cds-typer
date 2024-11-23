@@ -8,6 +8,7 @@ entity Foo {
 }
 
 service S {
+    action withBuiltInType (timestamp: Timestamp);
     entity E {
         key e1:String
     } actions {
@@ -84,3 +85,13 @@ service S2 {
     action a1 (p1: String, p2: many ExternalType2) returns ExternalType;
     action a2 (p1: String not null, p2: many ExternalType2, p3: Integer not null) returns ExternalType
 }
+
+entity Parent {}
+    actions {
+        action a()
+    }
+
+entity Child: Parent {}
+    actions {
+        action b()
+    }

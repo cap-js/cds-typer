@@ -17,3 +17,16 @@ entity C: A, E2 {
     key c: String;
     d: Integer;
 }
+
+// mutual association, while also both extending cuid
+using { cuid } from '@sap/cds/common';
+
+entity SomethingWithoutKey {}
+
+entity Foo: cuid, SomethingWithoutKey {
+    bar: Association to Bar
+}
+
+entity Bar: cuid {
+    foo: Association to Foo
+}

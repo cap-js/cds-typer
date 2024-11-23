@@ -20,4 +20,15 @@ describe('KeyOf', () => {
         expect(astw.getAspectProperty('_CAspect', 'keys')).toBeTruthy()
         expect(check.isStaticMember(keys)).toBeTruthy()
     })
+
+    test('Key Type Inherited', () => {
+        const keys = astw.getAspectProperty('_FooAspect', 'keys')
+        expect(astw.getAspectProperty('_CAspect', 'keys')).toBeTruthy()
+        expect(check.isStaticMember(keys)).toBeTruthy()
+        expect(keys.type.subtypes.length === 2)  // just Foo and cuid, no type for SomethingWithoutKey -> 2
+        expect(check.isIntersectionType(keys.type, [
+            st => check.isTypeReference(st, '___.KeysOf'),
+            st => check.isTypeQuery(st)
+        ])).toBeTruthy()
+    })
 })
