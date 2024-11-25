@@ -20,7 +20,7 @@
     },
     "include": [
       "./**/*.js"
-    ],
+, "test/integration/output.test.js.skip", "test/integration/compilation.test.js.skip"    ],
     "exclude": [
       "node_modules",
       "./test",
