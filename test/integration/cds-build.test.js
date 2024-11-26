@@ -15,9 +15,9 @@ beforeAll(()=>{
     // which will cause confusion during build-plugin-registration.
     execSync(`npm pack; mv ${path.join(typer, '*cds-typer-*.tgz')} ${path.join(dir, 'typer.tgz')}`, { cwd: typer })
     execSync([
-        'npx cds init',
+        'cds init',
         'npx tsc --init',
-        'npx cds add sample',
+        'cds add sample',
         'npm i @sap/cds-dk typer.tgz',
         'npx cds-typer "*" --outputDirectory @cds-models'
     ].join(';'), { cwd: dir })
