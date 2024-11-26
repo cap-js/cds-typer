@@ -8,8 +8,8 @@ const dir = path.join(__dirname, '_out', 'dummy-project')
 const typer = path.join(__dirname, '..', '..')
 
 beforeAll(()=>{
-    try { fs.unlinkSync(dir) } catch {}  // could be first run and not exist
-    try { fs.mkdirSync(dir, { recursive: true }) } catch {}  // could already exist from former run
+    fs.rmSync(dir, { recursive: true, force: true })
+    fs.mkdirSync(dir, { recursive: true })
     // copy .tar over. This ensures we end up with a cds-typer as if it was downloaded from npmjs,
     // without its node_modules. That is import to avoid having multiple instances of sap/cds(-dk)
     // which will cause confusion during build-plugin-registration.
