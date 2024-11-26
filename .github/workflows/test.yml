@@ -55,6 +55,9 @@ jobs:
       with:
           node-version: ${{ matrix.version }}
 
+    - name: Install @sap/cds globally
+      run: npm install -g @sap/cds
+
     - name: Run Integration Tests
       run: |
         npm ci
