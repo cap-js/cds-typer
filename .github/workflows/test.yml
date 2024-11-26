@@ -40,3 +40,22 @@ jobs:
       run: |
         npm ci
         npm run test:unit
+
+  integration-tests:
+    needs: smoke-tests
+    strategy:
+      matrix:
+        version: [22, 18]
+        platform: [ macos-latest, ubuntu-latest, windows-latest ]
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+          node-version: ${{ matrix.version }}
+
+    - name: Run Integration Tests
+      run: |
+        npm ci
+        npm run test:integration
