@@ -138,13 +138,20 @@ const locations = {
 
 const cds2ts = async cdsFile => typer.compileFromFile(locations.unit.files(cdsFile))
 
-const createProject = projDir => {
-    fs.writeFileSync(path.join(projDir, 'package.json'), JSON.stringify({
-        devDependencies: {
-            '@sap/cds': 'file:' + require('@sap/cds').home,
-            '@cap-js/cds-types': 'file:' + path.resolve(require.resolve('@cap-js/cds-types/package.json'), '..')
-        }
-    }, null, 2))
+const createProject = (projDir, options = {}) => {
+    const devDependencies = {
+        '@sap/cds': 'file:' + require('@sap/cds').home,
+        '@cap-js/cds-types': 'file:' + path.resolve(require.resolve('@cap-js/cds-types/package.json'), '..')
+    }
+
+    if (options?.localCdsTyper) {
+        devDependencies['@capire/cds-typer'] = 'file:' + path.resolve(require.resolve('@cap-js/cds-typer/package.json'), '..')
+    }
+    for (const facet of options?.facets ?? []) {
+        execSync(`cds add ${facet}`, { cwd: projDir })
+    }
+
+    fs.writeFileSync(path.join(projDir, 'package.json'), JSON.stringify({ devDependencies }, null, 2))
     // Avoid installing dependencies if they are already present. Speeds up tests quite a bit.
     if (!fs.existsSync(path.join(projDir, 'node_modules'))) {
         execSync('npm install', { cwd: projDir })
@@ -217,5 +224,6 @@ module.exports = {
     toHavePropertyOfType,
     locations,
     cds2ts,
-    prepareUnitTest
+    prepareUnitTest,
+    createProject
 }
