@@ -25,6 +25,8 @@ export module resolver {
         target?: string,
         type: string | ref,
         name: string,
+        '@singular'?: string,
+        '@plural'?: string,
         '@odata.draft.enabled'?: boolean // custom!
         _unresolved?: boolean
         isRefNotNull?: boolean // custom!
