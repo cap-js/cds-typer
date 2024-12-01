@@ -184,11 +184,15 @@ describe('Compilation', () => {
                 ['A_', 'A'],
                 ['A', 'A'],
                 ['C', 'C'],
+                ['CSub', 'CSub'],
+                ['CSub_', 'CSub'],
                 ['LotsOfCs', 'C'],
                 ['OneSingleD', 'D'],
                 ['D', 'D'],
+                ['DSub', 'DSub'],
+                ['DSub_', 'DSub'],
                 ['Referer', 'Referer'],
-                ['Referer_', 'Referer']
+                ['Referer_', 'Referer'],
             ])
             // ...are currently exceptions where both singular _and_ plural
             // are annotated and the original name is used as an export on top of that.
@@ -207,6 +211,8 @@ describe('Compilation', () => {
                 '_CAspect',
                 '_OneSingleDAspect',
                 '_RefererAspect',
+                '_CSubAspect',
+                '_DSubAspect'
             ]
             expect(aspects.length).toBe(expected.length)
             expect(aspects.map(({name}) => name)).toEqual(expect.arrayContaining(expected))
@@ -230,7 +236,11 @@ describe('Compilation', () => {
                 'D',
                 'D',
                 'Referer',
-                'Referer_'
+                'Referer_',
+                'DSub',
+                'DSub_',
+                'CSub',
+                'CSub_'
             ]
             expect(fns.map(({name}) => name)).toEqual(expect.arrayContaining(expected))
             expect(fns.length).toBe(expected.length)
