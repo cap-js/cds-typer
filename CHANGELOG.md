@@ -5,6 +5,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.30.0 - TBD
+### Added
+- adds classes for inline compositions
+- adds support for `localized` which generates dedicated `text` classes
 
 ## Version 0.29.1 - TBD
 ### Fixed
