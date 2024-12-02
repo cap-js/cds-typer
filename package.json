@@ -63,6 +63,13 @@
     ]
   },
   "cds": {
+    "typer": {
+      "output_directory": "@cds-models",
+      "inline_declarations": "flat",
+      "target_module_type": "auto",
+      "properties_optional": true,
+      "use_entities_proxy": false
+    },
     "schema": {
       "buildTaskType": {
         "name": "typescript",
