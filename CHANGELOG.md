@@ -6,7 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Version 0.30.0 - TBD
 
-## Version 0.29.1 - TBD
+### Changed
+- [breaking] when running cds-typer in a CAP project, the default for the `outputDirectory` option will be `./@cds-models` instead of `./`
+
 ### Fixed
 - cds-typer no longer ignores the selected `outputDirectory`, which would also cause an issue during build
 
