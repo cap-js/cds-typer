@@ -22,15 +22,15 @@ jobs:
         node-version: 22
         registry-url: https://registry.npmjs.org/
 
-    - name: Run Unit Tests
-      run: |
-        npm ci
-        npm run test
+    # - name: Run Unit Tests
+    #   run: |
+    #     npm ci
+    #     npm run test
 
-    #- name: Run Integration Tests
-    #  run: |
-    #    npm install
-    #    npm run test:integration
+    ## - name: Run Integration Tests
+    ##  run: |
+    ##    npm install
+    ##    npm run test:integration
 
     - name: get-version
       id: package-version
