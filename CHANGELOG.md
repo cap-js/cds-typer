@@ -4,12 +4,19 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.30.0 - TBD
+## Version 0.31.0 - TBD
 ### Added
 - adds classes for inline compositions
 - adds support for `localized` which generates dedicated `text` classes
 
-## Version 0.29.1 - TBD
+### Fixed
+- type-referencing a property that is a key no longer breaks the referring property
+
+## Version 0.30.0 - 2024-12-02
+
+### Changed
+- [breaking] when running cds-typer in a CAP project, the default for the `outputDirectory` option will be `./@cds-models` instead of `./`. This default takes the lowest precedence after setting it in the project's `cds.env`, or explicitly as CLI argument.
+
 ### Fixed
 - cds-typer no longer ignores the selected `outputDirectory`, which would also cause an issue during build
 
