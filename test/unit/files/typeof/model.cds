@@ -7,13 +7,15 @@ entity Foo {
     b: Integer;
     c: {
         x: String;
-    }
+    };
+    key k: Integer;
 }
 
 entity Bar {
     ref_a: Foo:a;
     ref_b: Foo:b;
     ref_c: Foo:c.x;
+    ref_k: Foo:k;
 };
 
 entity Baz {

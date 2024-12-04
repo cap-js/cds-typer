@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 - cds aspects now generate a synthetic plural type too, to be used in `composition of many`
 
+### Fixed
+- type-referencing a property that is a key no longer breaks the referring property
+
+
 ## Version 0.30.0 - 2024-12-02
 
 ### Changed
