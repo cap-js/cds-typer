@@ -201,8 +201,7 @@ describe('Actions', () => {
             modifiersCheck: (modifiers = []) => !modifiers.some(check.isStatic),
             callCheck: type => check.isNullable(type, [check.isVoid]),
             returnTypeCheck: type => check.isNullable(type, [check.isVoid]),
-            parameterCheck: ({members: [fst]}) => check.isNullable(fst.type, [
-                st => check.isTypeReference(st, '___.Unkey') && check.isIndexedAccessType(st.args[0])])
+            parameterCheck: ({members: [fst]}) => check.isNullable(fst.type, [check.isIndexedAccessType])
         })
     })
 })

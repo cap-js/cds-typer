@@ -200,9 +200,7 @@ describe('Enums of typeof', () => {
         // so right now the property type reference is incorrectly resolved to n.A
         checkFunction(astw.tree.find(node => node.name === 'EnumInParamAndReturn'), {
             //returnTypeCheck: type =>  check.isNullable(type, [check.isIndexedAccessType]),
-            parameterCheck: ({members: [fst]}) => check.isNullable(fst.type, [
-                st => check.isTypeReference(st, '___.Unkey') &&  check.isIndexedAccessType(st.args[0])
-            ])
+            parameterCheck: ({members: [fst]}) => check.isNullable(fst.type, [check.isIndexedAccessType])
         })
     })
 })
