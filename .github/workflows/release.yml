@@ -51,7 +51,7 @@ jobs:
           try {
             const mdContent = await fsp.readFile(mdFile, 'utf8');
             //  /^(#+.*\d+\.\d+\.\d+.*)tbd(.*)$/im;
-            const regex = new Regexp(`^(#+.*${currentVersion}.*)tbd(.*)$`, 'im');
+            const regex = new RegExp(`^(#+.*${currentVersion}.*)tbd(.*)$`, 'im');
 
             const currentDate = new Date().toISOString().replace(/T.*/i, '');
             const newContent = mdContent.replace(regex, `$1${currentDate}$2`);
