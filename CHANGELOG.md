@@ -4,7 +4,10 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.31.0 - TBD
+
+## Version $REL_VERSION - $REL_DATE
+
+## Version 0.30.1 - 2024-12-22
 ### Fixed
 - type-referencing a property that is a key no longer breaks the referring property
 
