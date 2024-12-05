@@ -25,6 +25,7 @@ permissions:
   contents: write
 
 env:
+  INPUTS_DRY_RUN: ${{ github.event.inputs.dry-run }}
   INPUTS_INCREMENT: ${{ github.event.inputs.increment }}
 
 jobs:
@@ -76,7 +77,9 @@ jobs:
 
             if (mdContent !== newContent) {
               await fsp.writeFile(mdFile, newContent);
-              core.debug(newContent);
+              if (process.env.INPUTS_DRY_RUN === 'true') {
+                core.info(newContent);
+              }
             }
           } catch(err) {
             core.warning('Error during CHANGELOG.md modification: ' + err.message);
@@ -89,6 +92,7 @@ jobs:
         NODE_AUTH_TOKEN: ${{secrets.npm_token}}
 
     - name: Parse changelog
+      if: ${{ github.event.inputs.dry-run == 'false' }}
       id: parse-changelog
       uses: schwma/parse-changelog-action@v1.0.0
       with:
@@ -116,7 +120,9 @@ jobs:
 
             if (mdContent !== newContent) {
               await fsp.writeFile(mdFile, newContent);
-              core.debug(newContent);
+              if (process.env.INPUTS_DRY_RUN === 'true') {
+                core.info(newContent);
+              }
             }
           } catch(err) {
             core.warning('Error during CHANGELOG.md modification: ' + err.message);
