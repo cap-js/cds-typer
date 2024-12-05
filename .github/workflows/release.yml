@@ -72,19 +72,17 @@ jobs:
           const newVersion = process.env.NEW_VERSION;
           const currentDate = new Date().toISOString().replace(/T.*/i, '');
 
-          try {
-            const mdContent = await fsp.readFile(mdFile, 'utf8');
-            const regex = /^(.*)(\$NEXT_VERSION)(.*)(\$NEXT_DATE)(.*)$/im;
-            const newContent = mdContent.replace(regex, `$1${newVersion}$3${currentDate}$5`);
+          const mdContent = await fsp.readFile(mdFile, 'utf8');
+          const regex = /^(.*)(\$NEXT_VERSION)(.*)(\$NEXT_DATE)(.*)$/im;
+          const newContent = mdContent.replace(regex, `$1${newVersion}$3${currentDate}$5`);
 
-            if (mdContent !== newContent) {
-              await fsp.writeFile(mdFile, newContent);
-              if (process.env.INPUTS_DRY_RUN === 'true') {
-                core.info(newContent);
-              }
+          if (mdContent !== newContent) {
+            await fsp.writeFile(mdFile, newContent);
+            if (process.env.INPUTS_DRY_RUN === 'true') {
+              core.info(newContent);
             }
-          } catch(err) {
-            core.warning('Error during CHANGELOG.md modification: ' + err.message);
+          } else {
+            throw 'Pattern not found in CHANGELOG.md. Manually validate changelog.';
           }
 
     - name: Publish to npm
@@ -113,19 +111,27 @@ jobs:
           const fsp = require('node:fs/promises');
           const mdFile = 'CHANGELOG.md';
 
-          try {
-            const mdContent = await fsp.readFile(mdFile, 'utf8');
-            const regex = /^(.*)(\d+\.\d+\.\d+)(.*)(\d{4}-\d{2}-\d{2})(.*)$/im;
-            const newContent = mdContent.replace(regex, `$1$NEXT_VERSION$3$NEXT_DATE$5\n\n$&`);
+          const mdContent = await fsp.readFile(mdFile, 'utf8');
+          const regex = /^##\s+.*$/;
+          const newContent = mdContent.replace(regex, `## [Unreleased]
 
-            if (mdContent !== newContent) {
-              await fsp.writeFile(mdFile, newContent);
-              if (process.env.INPUTS_DRY_RUN === 'true') {
-                core.info(newContent);
-              }
+          ### Added
+          ### Changed
+          ### Deprecated
+          ### Removed
+          ### Fixed
+          ### Security
+
+          $&
+          `);
+
+          if (mdContent !== newContent) {
+            await fsp.writeFile(mdFile, newContent);
+            if (process.env.INPUTS_DRY_RUN === 'true') {
+              core.info(newContent);
             }
-          } catch(err) {
-            core.warning('Error during CHANGELOG.md modification: ' + err.message);
+          } else {
+            throw 'Valid first entry not found in CHANGELOG.md. Manually validate changelog.';
           }
 
     # prepare branch
