@@ -6,8 +6,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 
 ## Version $REL_VERSION - $REL_DATE
-
-## Version 0.30.1 - 2024-12-22
 ### Fixed
 - type-referencing a property that is a key no longer breaks the referring property
 
