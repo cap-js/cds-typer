@@ -122,6 +122,9 @@ jobs:
       env:
         BRANCH: ${{ github.ref || github.head_ref}}
       run: |
+        git config --global user.name "${GITHUB_ACTOR}"
+        git config --global user.email "noreply+ms@github.com"
+
         git add -u .
         git commit -m "chore(version): $INPUTS_INCREMENT version $NEW_VERSION"
         echo "git push origin $BRANCH"
