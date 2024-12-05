@@ -130,3 +130,5 @@ jobs:
         git add -u .
         git commit -m "chore(version): $INPUTS_INCREMENT version $NEW_VERSION"
         echo "git push origin $BRANCH"
+
+        git log -4 --oneline --pretty=format:'%C(yellow)%h%Creset -%C(cyan)%d%Creset %s   %Cgreen%cr  %C(yellow)%an%Creset' --abbrev-commit --date=relative
