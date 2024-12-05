@@ -29,6 +29,7 @@ env:
   INPUTS_INCREMENT: ${{ github.event.inputs.increment }}
   DRY_RUN_OPTION: ${{ github.event.inputs.dry-run == 'true' && '--dry-run' || '' }}
 
+
 jobs:
   publish-npm:
     runs-on: ubuntu-latest
