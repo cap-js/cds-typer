@@ -88,7 +88,7 @@ jobs:
           }
 
     - name: Publish to npm
-      run: echo "npm publish --access public $DRY_RUN_OPTION"
+      run: npm publish --access public $DRY_RUN_OPTION
       env:
         NODE_AUTH_TOKEN: ${{secrets.npm_token}}
 
@@ -139,4 +139,4 @@ jobs:
 
         git add -u .
         git commit -m "chore(version): $INPUTS_INCREMENT version $NEW_VERSION"
-        echo "git push origin $BRANCH $DRY_RUN_OPTION"
+        git push origin $BRANCH $DRY_RUN_OPTION
