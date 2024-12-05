@@ -6,6 +6,11 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
+      dry-run:
+        description: Dry run
+        required: false
+        default: false
+        type: boolean
       increment:
         description: Increment version
         required: true
@@ -34,10 +39,10 @@ jobs:
         node-version: 22
         registry-url: https://registry.npmjs.org/
 
-    # - name: Run Unit Tests
-    #   run: |
-    #     npm ci
-    #     npm run test
+    - name: Run Unit Tests
+      run: |
+        npm ci
+        npm run test
 
     ## - name: Run Integration Tests
     ##  run: |
@@ -77,10 +82,11 @@ jobs:
             core.warning('Error during CHANGELOG.md modification: ' + err.message);
           }
 
-    # - name: Publish to npm
-    #   run: npm publish --access public
-    #   env:
-    #     NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+    - name: Publish to npm
+      if: ${{ github.event.inputs.dry-run == 'false' }}
+      run: npm publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{secrets.npm_token}}
 
     - name: Parse changelog
       id: parse-changelog
@@ -88,11 +94,12 @@ jobs:
       with:
         version: '${{ steps.increment-version.outputs.new-version }}'
 
-    # - name: Create a GitHub release
-    #   uses: ncipollo/release-action@v1
-    #   with:
-    #     tag: 'v${{ steps.increment-version.outputs.new-version }}'
-    #     body: '${{ steps.parse-changelog.outputs.body }}'
+    - name: Create a GitHub release
+      if: ${{ github.event.inputs.dry-run == 'false' }}
+      uses: ncipollo/release-action@v1
+      with:
+        tag: 'v${{ steps.increment-version.outputs.new-version }}'
+        body: '${{ steps.parse-changelog.outputs.body }}'
 
     # add missing template to change log for new development
     - name: Add version template to CHANGELOG.md
@@ -115,10 +122,9 @@ jobs:
             core.warning('Error during CHANGELOG.md modification: ' + err.message);
           }
 
-    # push changes to the repository
-    - name: Commit and push
+    # prepare branch
+    - name: Commit changes
       env:
-        BRANCH: ${{ github.ref || github.head_ref}}
         NEW_VERSION: ${{ steps.increment-version.outputs.new-version }}
       run: |
         git config --global user.name "${GITHUB_ACTOR}"
@@ -126,6 +132,12 @@ jobs:
 
         git add -u .
         git commit -m "chore(version): $INPUTS_INCREMENT version $NEW_VERSION"
-        echo "git push origin $BRANCH"
-
         git log -4 --oneline --pretty=format:'%C(yellow)%h%Creset -%C(cyan)%d%Creset %s   %Cgreen%cr  %C(yellow)%an%Creset' --abbrev-commit --date=relative
+
+    # push changes to the repository
+    - name: Push to repository
+      if: ${{ github.event.inputs.dry-run == 'false' }}
+      env:
+        BRANCH: ${{ github.ref || github.head_ref}}
+      run: |
+        git push origin $BRANCH
