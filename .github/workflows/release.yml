@@ -44,17 +44,16 @@ jobs:
     ##    npm install
     ##    npm run test:integration
 
-    ## requires npm which we get from setup-node
-    # - name: Increment version
-    #   run: |
-    #     npm version $INPUTS_INCREMENT --no-git-tag-version
-    #     echo "NEW_VERSION=$(npm pkg get version | tr -d '"')" >> $GITHUB_ENV
-    #     echo "PR_BRANCH=pr-$NEW_VERSION" >> $GITHUB_ENV
-
-    - name: get-version
-      id: package-version
+    # requires npm which we get from setup-node
+    - name: Increment version
       run: |
+        npm version $INPUTS_INCREMENT --no-git-tag-version
         echo "NEW_VERSION=$(npm pkg get version | tr -d '"')" >> $GITHUB_ENV
+
+    # - name: get-version
+    #   id: package-version
+    #   run: |
+    #     echo "NEW_VERSION=$(npm pkg get version | tr -d '"')" >> $GITHUB_ENV
 
     - name: Replace TBD entry in CHANGELOG.md
       uses: actions/github-script@v7
@@ -74,12 +73,12 @@ jobs:
             if (mdContent !== newContent) {
               await fsp.writeFile(mdFile, newContent);
             }
+
+            console.log(newContent);
+
           } catch(err) {
             core.warning('Error during CHANGELOG.md modification: ' + err.message);
           }
-
-    - run: |
-        cat CHANGELOG.md
 
     # - name: Parse changelog
     #   id: parse-changelog
@@ -97,13 +96,6 @@ jobs:
     #   env:
     #     NODE_AUTH_TOKEN: ${{secrets.npm_token}}
 
-    # - uses: ./.github/actions/create-pr
-    #   with:
-    #     title: Release v${{ steps.package-version.outputs.current-version }}
-    #     increment: patch
-    #     reviewers: |
-    #       -theuser
-
     - name: Add version template to CHANGELOG.md
       uses: actions/github-script@v7
       with:
@@ -119,9 +111,17 @@ jobs:
             if (mdContent !== newContent) {
               await fsp.writeFile(mdFile, newContent);
             }
+
+            console.log(newContent);
+
           } catch(err) {
             core.warning('Error during CHANGELOG.md modification: ' + err.message);
           }
 
-    - run: |
-        cat CHANGELOG.md
+    - name: Commit and push
+      env:
+        BRANCH: ${{ github.ref || github.head_ref}}
+      run: |
+        git add -u .
+        git commit -m "chore(version): $INPUTS_INCREMENT version $NEW_VERSION"
+        echo "git push origin $BRANCH"
