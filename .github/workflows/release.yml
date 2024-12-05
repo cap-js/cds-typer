@@ -51,7 +51,7 @@ jobs:
         npm version $INPUTS_INCREMENT --no-git-tag-version
         echo "new-version=$(npm pkg get version | tr -d '"')" >> $GITHUB_OUTPUT
 
-    # replace placeholders with current vvalues in CHANGELOG.md
+    # replace placeholders with current values in CHANGELOG.md
     - name: Replace TBD entry in CHANGELOG.md
       uses: actions/github-script@v7
       env:
@@ -60,6 +60,7 @@ jobs:
         script: |
           const fsp = require('node:fs/promises');
           const mdFile = 'CHANGELOG.md';
+
           const newVersion = process.env.NEW_VERSION;
           const currentDate = new Date().toISOString().replace(/T.*/i, '');
 
@@ -70,10 +71,8 @@ jobs:
 
             if (mdContent !== newContent) {
               await fsp.writeFile(mdFile, newContent);
+              core.debug(newContent);
             }
-
-            console.log(newContent);
-
           } catch(err) {
             core.warning('Error during CHANGELOG.md modification: ' + err.message);
           }
@@ -83,11 +82,11 @@ jobs:
     #   env:
     #     NODE_AUTH_TOKEN: ${{secrets.npm_token}}
 
-    # - name: Parse changelog
-    #   id: parse-changelog
-    #   uses: schwma/parse-changelog-action@v1.0.0
-    #   with:
-    #     version: '${{ steps.increment-version.outputs.new-version }}'
+    - name: Parse changelog
+      id: parse-changelog
+      uses: schwma/parse-changelog-action@v1.0.0
+      with:
+        version: '${{ steps.increment-version.outputs.new-version }}'
 
     # - name: Create a GitHub release
     #   uses: ncipollo/release-action@v1
@@ -110,10 +109,8 @@ jobs:
 
             if (mdContent !== newContent) {
               await fsp.writeFile(mdFile, newContent);
+              core.debug(newContent);
             }
-
-            console.log(newContent);
-
           } catch(err) {
             core.warning('Error during CHANGELOG.md modification: ' + err.message);
           }
