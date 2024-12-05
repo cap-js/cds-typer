@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 
-## Version $REL_VERSION - $REL_DATE
+## Version $NEXT_VERSION - $NEXT_DATE
 ### Fixed
 - type-referencing a property that is a key no longer breaks the referring property
 

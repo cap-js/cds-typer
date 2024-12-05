@@ -46,28 +46,26 @@ jobs:
 
     # requires npm which we get from setup-node
     - name: Increment version
+      id: increment-version
       run: |
         npm version $INPUTS_INCREMENT --no-git-tag-version
-        echo "NEW_VERSION=$(npm pkg get version | tr -d '"')" >> $GITHUB_ENV
+        echo "new-version=$(npm pkg get version | tr -d '"')" >> $GITHUB_OUTPUT
 
-    # - name: get-version
-    #   id: package-version
-    #   run: |
-    #     echo "NEW_VERSION=$(npm pkg get version | tr -d '"')" >> $GITHUB_ENV
-
+    # replace placeholders with current vvalues in CHANGELOG.md
     - name: Replace TBD entry in CHANGELOG.md
       uses: actions/github-script@v7
+      env:
+        NEW_VERSION: ${{ steps.increment-version.outputs.new-version }}
       with:
         script: |
           const fsp = require('node:fs/promises');
           const mdFile = 'CHANGELOG.md';
           const newVersion = process.env.NEW_VERSION;
+          const currentDate = new Date().toISOString().replace(/T.*/i, '');
 
           try {
             const mdContent = await fsp.readFile(mdFile, 'utf8');
-            const regex = /^(.*)(\$REL_VERSION)(.*)(\$REL_DATE)(.*)$/im;
-
-            const currentDate = new Date().toISOString().replace(/T.*/i, '');
+            const regex = /^(.*)(\$NEXT_VERSION)(.*)(\$NEXT_DATE)(.*)$/im;
             const newContent = mdContent.replace(regex, `$1${newVersion}$3${currentDate}$5`);
 
             if (mdContent !== newContent) {
@@ -80,22 +78,24 @@ jobs:
             core.warning('Error during CHANGELOG.md modification: ' + err.message);
           }
 
+    # - name: Publish to npm
+    #   run: npm publish --access public
+    #   env:
+    #     NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+
     # - name: Parse changelog
     #   id: parse-changelog
     #   uses: schwma/parse-changelog-action@v1.0.0
     #   with:
-    #     version: '${{ steps.package-version.outputs.current-version }}'
+    #     version: '${{ steps.increment-version.outputs.new-version }}'
 
     # - name: Create a GitHub release
     #   uses: ncipollo/release-action@v1
     #   with:
-    #     tag: 'v${{ steps.package-version.outputs.current-version }}'
+    #     tag: 'v${{ steps.increment-version.outputs.new-version }}'
     #     body: '${{ steps.parse-changelog.outputs.body }}'
 
-    # - run: npm publish --access public
-    #   env:
-    #     NODE_AUTH_TOKEN: ${{secrets.npm_token}}
-
+    # add missing template to change log for new development
     - name: Add version template to CHANGELOG.md
       uses: actions/github-script@v7
       with:
@@ -106,7 +106,7 @@ jobs:
           try {
             const mdContent = await fsp.readFile(mdFile, 'utf8');
             const regex = /^(.*)(\d+\.\d+\.\d+)(.*)(\d{4}-\d{2}-\d{2})(.*)$/im;
-            const newContent = mdContent.replace(regex, `$1$REL_VERSION$3$REL_DATE$5\n\n$&`);
+            const newContent = mdContent.replace(regex, `$1$NEXT_VERSION$3$NEXT_DATE$5\n\n$&`);
 
             if (mdContent !== newContent) {
               await fsp.writeFile(mdFile, newContent);
@@ -118,9 +118,11 @@ jobs:
             core.warning('Error during CHANGELOG.md modification: ' + err.message);
           }
 
+    # push changes to the repository
     - name: Commit and push
       env:
         BRANCH: ${{ github.ref || github.head_ref}}
+        NEW_VERSION: ${{ steps.increment-version.outputs.new-version }}
       run: |
         git config --global user.name "${GITHUB_ACTOR}"
         git config --global user.email "noreply+ms@github.com"
