@@ -73,7 +73,7 @@ jobs:
           const currentDate = new Date().toISOString().replace(/T.*/i, '');
 
           const mdContent = await fsp.readFile(mdFile, 'utf8');
-          const regex = /^##\s+[Unreleased]\s*$/i;
+          const regex = /^##\s+\[Unreleased\]\s*$/im;
           const newContent = mdContent.replace(regex, `## [${newVersion}] - ${currentDate}`);
 
           if (mdContent !== newContent) {
@@ -112,7 +112,7 @@ jobs:
           const mdFile = 'CHANGELOG.md';
 
           const mdContent = await fsp.readFile(mdFile, 'utf8');
-          const regex = /^##\s+.*$/;
+          const regex = /^##\s+.*$/m;
           const newContent = mdContent.replace(regex, `## [Unreleased]
 
           ### Added
