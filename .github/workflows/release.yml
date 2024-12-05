@@ -73,8 +73,8 @@ jobs:
           const currentDate = new Date().toISOString().replace(/T.*/i, '');
 
           const mdContent = await fsp.readFile(mdFile, 'utf8');
-          const regex = /^(.*)(\$NEXT_VERSION)(.*)(\$NEXT_DATE)(.*)$/im;
-          const newContent = mdContent.replace(regex, `$1${newVersion}$3${currentDate}$5`);
+          const regex = /^##\s+[Unreleased]\s*$/i;
+          const newContent = mdContent.replace(regex, `## [${newVersion}] - ${currentDate}`);
 
           if (mdContent !== newContent) {
             await fsp.writeFile(mdFile, newContent);
