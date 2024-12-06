@@ -6,31 +6,20 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
+      dry-run:
+        description: Dry run
+        required: false
+        default: false
+        type: boolean
       increment:
-        description: Increment version before release
+        description: Increment version
+        required: true
         default: patch
         type: choice
         options:
           - patch
           - minor
           - major
-          - none
-
-      post-increment:
-        description: Increment version after release
-        default: none
-        type: choice
-        options:
-          - patch
-          - minor
-          - major
-          - none
-
-      dry-run:
-        description: Dry run
-        required: false
-        default: false
-        type: boolean
 
 permissions:
   contents: write
@@ -38,7 +27,6 @@ permissions:
 env:
   INPUTS_DRY_RUN: ${{ github.event.inputs.dry-run }}
   INPUTS_INCREMENT: ${{ github.event.inputs.increment }}
-  INPUTS_POST_INCREMENT: ${{ github.event.inputs.post-increment }}
   DRY_RUN_OPTION: ${{ github.event.inputs.dry-run == 'true' && '--dry-run' || '' }}
 
 
@@ -67,13 +55,9 @@ jobs:
 
     # requires npm which we get from setup-node
     - name: Increment version
-      if: ${{ github.event.inputs.increment != 'none' }}
+      id: increment-version
       run: |
         npm version $INPUTS_INCREMENT --no-git-tag-version
-
-    - name: get version
-      id: get-version
-      run: |
         echo "new-version=$(npm pkg get version | tr -d '"')" >> $GITHUB_OUTPUT
 
     # replace placeholder with current values in CHANGELOG.md
@@ -95,13 +79,13 @@ jobs:
       id: parse-changelog
       uses: schwma/parse-changelog-action@v1.0.0
       with:
-        version: '${{ steps.get-version.outputs.new-version }}'
+        version: '${{ steps.increment-version.outputs.new-version }}'
 
     - name: Create a GitHub release
       if: ${{ github.event.inputs.dry-run == 'false' }}
       uses: ncipollo/release-action@v1
       with:
-        tag: 'v${{ steps.get-version.outputs.new-version }}'
+        tag: 'v${{ steps.increment-version.outputs.new-version }}'
         body: '${{ steps.parse-changelog.outputs.body }}'
 
     # add missing template to change log for new development
@@ -121,16 +105,10 @@ jobs:
         \
         &/' CHANGELOG.md
 
-    # increment version for next development
-    - name: Post increment version
-      if: ${{ github.event.inputs.post-increment != 'none' }}
-      run: |
-        npm version $INPUTS_POST_INCREMENT --no-git-tag-version
-
-    # commit and push branch
+    # prepare branch
     - name: Commit changes
       env:
-        NEW_VERSION: ${{ steps.get-version.outputs.new-version }}
+        NEW_VERSION: ${{ steps.increment-version.outputs.new-version }}
       run: |
         git config --global user.name "${GITHUB_ACTOR}"
         git config --global user.email "noreply+ms@github.com"
