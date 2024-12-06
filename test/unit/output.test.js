@@ -18,6 +18,8 @@ describe('Compilation', () => {
             jsw.exportsAre([
                 ['Book', 'Books'],
                 ['Books', 'Books'],
+                ['Books.text', 'Books.texts'],
+                ['Books.texts', 'Books.texts'],
                 ['Author', 'Authors'],
                 ['Authors', 'Authors'],
                 ['Genre', 'Genres'],
