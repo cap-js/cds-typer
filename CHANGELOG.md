@@ -1,18 +1,21 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file.
-This project adheres to [Semantic Versioning](http://semver.org/).
-The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 0.31.0 - TBD
-### Added
-- adds classes for inline compositions
-- adds support for `localized` which generates dedicated `text` classes
+The format is based on [Keep a Changelog](https://keepachangelog.com/),
+and this project adheres to [Semantic Versioning](https://semver.org/).
 
+
+## [Unreleased]
 ### Fixed
 - type-referencing a property that is a key no longer breaks the referring property
 
-## Version 0.30.0 - 2024-12-02
+### Added
+- new release workflow
+- adds classes for inline compositions
+- adds support for `localized` which generates dedicated `text` classes
+
+## [0.30.0] - 2024-12-02
 
 ### Changed
 - [breaking] when running cds-typer in a CAP project, the default for the `outputDirectory` option will be `./@cds-models` instead of `./`. This default takes the lowest precedence after setting it in the project's `cds.env`, or explicitly as CLI argument.
@@ -20,20 +23,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 - cds-typer no longer ignores the selected `outputDirectory`, which would also cause an issue during build
 
-
-## Version 0.29.0 - 2024-11-20
+## [0.29.0] - 2024-11-20
 ### Added
-- [breaking] cds-typer now tries to automatically detect whether it has to generate ESM or CommonJS in the emitted _index.js_ files. This behaviour can be overridden via the `--targetModuleType` option. _If you rely on these generated index.js files to be CJS despite your project being of ESM type, you need to manually tell cds-typer to generate CJS files!_ 
+- [breaking] cds-typer now tries to automatically detect whether it has to generate ESM or CommonJS in the emitted _index.js_ files. This behaviour can be overridden via the `--targetModuleType` option. _If you rely on these generated index.js files to be CJS despite your project being of ESM type, you need to manually tell cds-typer to generate CJS files!_
 
 ### Fixed
 - The static `.keys` property now properly reels in key types from inherited classes.
 
-## Version 0.28.1 - 2024-11-07
+## [0.28.1] - 2024-11-07
 ### Fixed
 - `cds build` no longer fails on Windows with an `EINVAL` error.
 - `cds build` also supports custom model paths in `tsconfig.json` that do not end with `/index.ts`.  This is the case for projects running with `tsx`.
 
-## Version 0.28.0 - 24-10-24
+## [0.28.0] - 24-10-24
 ### Added
 - Schema definition for `cds.typer` options in `package.json` and `.cdsrc-*.json` files
 - Added a static `elements` property to all entities, which allows access to the `LinkedDefinitions` instance of an entity's elements
@@ -46,7 +48,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Properly support mandatory (`not null`) action parameters with `array of` types
 - Static property `.drafts` is only create for entity classes that are actually draft enabled
 
-## Version 0.27.0 - 2024-10-02
+## [0.27.0] - 2024-10-02
 ### Changed
 - Any configuration variable (via CLI or `cds.env`) can now be passed in snake_case in addition to camelCase
 - Action parameters are now generated as optional by default, which is how the runtime treats them. Mandatory parameters have to be marked as `not null` in CDS/CDL, or `notNull` in CSN.
@@ -56,7 +58,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Fix a bug where cds-typer would produce redundant type declarations when the model contains an associations to another entity's property
 - Reintroduce default value `'.'` for `--outputDirectory`
 
-## Version 0.26.0 - 2024-09-11
+## [0.26.0] - 2024-09-11
 ### Added
 - Added a static `.keys` property in all entities. That property is dictionary which holds all properties as keys that are marked as `key` in CDS
 - Added a CLI option `--useEntitiesProxy`. When set to `true`, all entities are wrapped into `Proxy` objects during runtime, allowing top level imports of entity types.
@@ -69,8 +71,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Services now have their own export (named like the service itself). The current default export is not usable in some scenarios from CommonJS modules.
 - Enums and operation parameters can have doc comments
 
-
-## Version 0.25.0 - 2024-08-13
+## [0.25.0] - 2024-08-13
 ### Added
 - Declaring a type alias on an enum in cds now also exports it on value level in the resulting type
 
@@ -81,7 +82,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - All properties are now preceeded with the `declare` modifier to pass strict tsconfigs using `useDefineForClassFields` or `noImplicitOverride`
 - The static `actions` property of generated classes now includes the types from all inherited classes to also suggest actions defined in a base entity/aspect/type.
 
-## Version 0.24.0 - 2024-07-18
+## [0.24.0] - 2024-07-18
 ### Fixed
 - Suppressed an error that would incorrectly point out naming clashes when an entity was named in singular inflection in the model
 - CDS aspects now also generate a aspect-function in singular inflection, similar to how entities do
@@ -90,14 +91,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Aspects generate named classes again so that tooltips will show more meaningful provenance for properties
 - The TypeScript task for `cds build` no longer looks for tsconfig.json to determine if the project has TS nature and instead checks the dependencies in the project's package.json for an occurrence of `typescript`
 
-## Version 0.23.0 - 2024-07-04
+## [0.23.0] - 2024-07-04
 
 ### Fixed
 - Plurals no longer have `is_singular` attached in the resulting .js files
 - Properties are properly propagated beyond just one level of inheritance
 
-
-## Version 0.22.0 - 2024-06-20
+## [0.22.0] - 2024-06-20
 
 ### Fixed
 - Fixed a bug where keys would sometimes inconsistently become nullable
@@ -105,16 +105,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 - Logging now internally uses `cds.log` and pipes output into the `cds-typer` logger, which can be configured via `cds.env` in addition to explicitly passing a `--logLevel` parameter to CLI. Users now have to use the levels defined in [`cds.log.levels`](https://cap.cloud.sap/docs/node.js/cds-log#log-levels). The formerly valid levels `WARNING`, `CRITICAL`, and `NONE` are now deprecated and automatically mapped to valid levels for now.
 
-## Version 0.21.2 - 2024-06-06
+## [0.21.2] - 2024-06-06
 ### Fixed
 - The typescript build task will no longer attempt to run unless at least cds 8 is installed
 
-## Version 0.21.1 - 2024-06-03
+## [0.21.1] - 2024-06-03
 ### Fixed
 - Added missing _cds-plugin.js_ to exported files to properly enable calling `cds build --for typescript`
 
-
-## Version 0.21.0 - 2024-05-31
+## [0.21.0] - 2024-05-31
 ### Added
 - Added `IEEE754Compatible` flag which, when set to `true`, generates decimal fields as `(number | string)` instead of `number`. This flag will be removed in the long run
 - Added plugin to `cds build` TypeScript projects. Can be explicitly called using `cds build --for typescript`
@@ -128,15 +127,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Entities ending with an "s" are no longer incorrectly truncated within `extends`-clauses
 - Entity names prefixed with their own namespace (e.g. `Name.Name`, `Name.NameAttachments`) are not stripped of their name prefix
 
-## Version 0.20.2 - 2024-04-29
+## [0.20.2] - 2024-04-29
 ### Fixed
 - Referring to a property's type in a function/ action parameter no longer refers to the enclosing entity
 
-## Version 0.20.1 - 2024-04-24
+## [0.20.1] - 2024-04-24
 ### Fixed
 - Void actions no longer crash the type generation process
 
-## Version 0.20.0 - 2024-04-23
+## [0.20.0] - 2024-04-23
 ### Added
 - Types for actions and functions now expose a `.kind` property which holds the string `'function'` or `'action'` respectively
 - Added the `CdsDate`, `CdsDateTime`, `CdsTime`, `CdsTimestamp` types, which are each represented as a `string`.
@@ -152,32 +151,32 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Aspects are now consistently named and called in their singular form
 - Only detect inflection clash if singular and plural share the same namespace. This also no longer reports `sap.common` as erroneous during type creation
 
-## Version 0.19.0 - 2024-03-28
+## [0.19.0] - 2024-03-28
 ### Added
 - Support for `cds.Vector`, which will be represented as `string`
 
-## Version 0.18.2 - 2024-03-21
+## [0.18.2] - 2024-03-21
 ### Fixed
 - Resolving `@sap/cds` will now look in the CWD first to ensure a consistent use the same CDS version across different setups
 - Types of function parameters starting with `cds.` are not automatically considered builtin anymore and receive a more thorough check against an allow-list
 
 
-## Version 0.18.1 - 2024-03-13
+## [0.18.1] - 2024-03-13
 ### Fix
 - Remove faulty plural for CDS `type` definitions from the generated _index.js_ files
 
-## Version 0.18.0 - 2024-03-12
+## [0.18.0] - 2024-03-12
 ### Added
 - Improved support for projections, including projections on inline definitions, and on views, as well as support for explicit exclusion and selection of properties
 
 ### Changed
 - [breaking] CDS `type` definitions will not be inflected. Whatever inflection you define them in will be assumed treated as a singular form and will not receive a plural form anymore
 
-## Version 0.17.0 - 2024-03-05
+## [0.17.0] - 2024-03-05
 ### Fixed
 - Fixed a bug where refering to an externally defined enum via the `typeof` syntax would crash the type generation
 
-## Version 0.16.0 - 2024-02-01
+## [0.16.0] - 2024-02-01
 ### Changed
 - Changed default log level from `NONE` to `ERROR`. See the doc to manually pass in another log level for cds-typer runs
 - Name collisions between automatically generated foreign key fields (`.…_ID`, `.…_code`, etc.) with explicitly named fields will now raise an error
@@ -186,7 +185,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 - Externally defined enums can now be used as parameter types in actions
 
-## Version 0.15.0 - 2023-12-21
+## [0.15.0] - 2023-12-21
 ### Added
 - Support for [scoped entities](https://cap.cloud.sap/docs/cds/cdl#scoped-names)
 - Support for [delimited identifiers](https://cap.cloud.sap/docs/cds/cdl#delimited-identifiers)
@@ -197,18 +196,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Arrays of inline enum values can now be used as action parameters too. But they will only be represented by their enclosing type for now, i.e. `string`, `number`, etc.
 - Foreign keys of projection entities are now propagated as well
 
-## Version 0.14.0 - 2023-12-13
+## [0.14.0] - 2023-12-13
 ### Added
 - Entities that are database views now also receive typings
 
-## Version 0.13.0 - 2023-12-06
+## [0.13.0] - 2023-12-06
 ### Changed
 - Enums are now generated ecplicitly in the respective _index.js_ files and don't have to extract their values from the model at runtime anymore
 
 ### Added
 - The `excluding` clause in projections now actually excludes the specified properties in the generated types
 
-## Version 0.12.0 - 2023-11-23
+## [0.12.0] - 2023-11-23
 
 ### Changed
 - Generate `cds.LargeBinary` as string, buffer, _or readable_ in the case of media content
@@ -219,7 +218,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 - Now using names of enum values in generated _index.js_ files if no explicit value is present
 
-## Version 0.11.1 - 2023-10-12
+## [0.11.1] - 2023-10-12
 
 ### Changed
 
@@ -227,7 +226,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 - Fixed how service names are exported as default export
 
-## Version 0.11.0 - 2023-10-10
+## [0.11.0] - 2023-10-10
 
 ### Changed
 
@@ -243,7 +242,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Removed
 - `compileFromCSN` is no longer part of the package's API
 
-## Version 0.10.0 - 2023-09-21
+## [0.10.0] - 2023-09-21
 
 ### Changed
 - Actions and functions are now attached to a static `.actions` property of each generated class. This reflects the runtime behaviour better than the former way of generating instance methods
@@ -252,7 +251,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-## Version 0.9.0 - 2023-09-08
+## [0.9.0] - 2023-09-08
 
 ### Changed
 
@@ -262,8 +261,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 - Foreign keys are now propagated more than one level (think: `x_ID_ID_ID`)
 
-
-## Version 0.8.0 - 2023-09-05
+## [0.8.0] - 2023-09-05
 
 ### Changed
 
@@ -273,8 +271,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Foreign keys that are inherited via aspects are now also generated in addition to the resolved property (see 0.7.0)
 - Explicitly annotated `@singular` and `@plural` names are now properly used in generated _index.js_ files
 
-
-## Version 0.7.0 - 2023-08-22
+## [0.7.0] - 2023-08-22
 
 ### Changed
 
@@ -283,7 +280,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Foreign keys are now present in the generated types in addition to the resolved property
 
 ### Fixed
-## Version 0.6.1 - 2023-08-10
+## [0.6.1] - 2023-08-10
 
 ### Changed
 
@@ -292,7 +289,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 - Removed a warning about circular imports
 
-## Version 0.6.0 - 2023-08-07
+## [0.6.0] - 2023-08-07
 
 ### Added
 - Support for `event` syntax
@@ -302,7 +299,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Add leading underscore to appease `noUnusedParameters` in strict tsconfigs
 - No longer inflect `type` definitions when they are referenced within entities or other type definitions
 
-## Version 0.5.0 - 2023-07-25
+## [0.5.0] - 2023-07-25
 
 ### Changed
 - Facilitate strict property checks. Note: `checkJs: true` must be present in the project's _jsconfig.json_ or _tsconfig.json_ respectively for this feature to become effective
@@ -314,12 +311,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Generate `string` type for date-related types in CDS definitions
 - Generate `Buffer | string` type for the CDS type `LargeBinary`
 
-
-## Version 0.4.0 - 2023-07-06
+## [0.4.0] - 2023-07-06
 ### Added
 - Support for enums when they are defined separately (not inline in the property type of an entity)
 
-## Version 0.3.0 - 2023-06-26
+## [0.3.0] - 2023-06-26
 ### Added
 - Support `function` definitions (apart from `action`s)
 ### Changed
@@ -328,25 +324,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 - Properly import CDS `type` definitions when they are referenced elsewhere
 
-## Version 0.2.5-beta.1 - 2023-06-13
+## [0.2.5-beta.1] - 2023-06-13
 
 ### Changed
 - Bump version
 
-## Version 0.2.4 - 2023-06-12
+## [0.2.4] - 2023-06-12
 - Enable use of annotated singular/ plural names in associations/ compositions
 - Rename package from `@sap/cds-dts-generator` to `@cap-js/cds-typer`
 
-## Version 0.2.3 - 2023-05-17
+## [0.2.3] - 2023-05-17
 - Add missing library files
 
-## Version 0.2.2 - 2023-05-17
+## [0.2.2] - 2023-05-17
 - Make class hierarchy flatter
 
-## Version 0.2.1 - 2023-05-16
+## [0.2.1] - 2023-05-16
 - Add missing files
 
-## Version 0.2.0 - 2023-05-15
+## [0.2.0] - 2023-05-15
 - use native Typescript AST in unit tests
 - add `propertiesOptional` flag
 - support flat, as well as nested inline declarations
@@ -357,9 +353,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - enable use of additional type libraries (HANA types available as first library)
 - provide proper JSDoc for all modules
 - export entity types for singular variants alongside plural types
-## Version 0.1.1 - 2023-01-26
+
+## [0.1.1] - 2023-01-26
 - add TL;DR section to README
 - allow multiple positional arguments
 
-## Version 0.1.0
+## [0.1.0] - 2023-01-01
 - initial code base
