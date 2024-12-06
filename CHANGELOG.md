@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 - new release workflow
+- adds classes for inline compositions
+- adds support for `localized` which generates dedicated `text` classes
 
 ## [0.30.0] - 2024-12-02
 
