@@ -8,7 +8,6 @@ on:
     inputs:
       increment:
         description: Increment version before release
-        required: true
         default: patch
         type: choice
         options:
@@ -19,7 +18,6 @@ on:
 
       post-increment:
         description: Increment version after release
-        required: true
         default: none
         type: choice
         options:
