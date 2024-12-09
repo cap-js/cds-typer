@@ -68,7 +68,7 @@ jobs:
         NEW_VERSION: ${{ steps.get-version.outputs.new-version }}
       run: |
         CURRENT_DATE=$(date +%Y-%m-%d)
-        sed -i -E "0,/^##\s+\[Unreleased\]\s*$/s//## [${NEW_VERSION}] - ${CURRENT_DATE}/" CHANGELOG.md
+        sed -i -E "0,/^##\s+\[Unreleased\].*$/s//## [${NEW_VERSION}] - ${CURRENT_DATE}/" CHANGELOG.md
 
     - name: Publish to npm
       run: npm publish --access public $DRY_RUN_OPTION
