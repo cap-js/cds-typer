@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 ### Fixed
 - type-referencing a property that is a key no longer breaks the referring property
+- when targeting ESM, all imports within the generated types now add a `/index.js`-suffix to conform to modern module resolution mechanisms
 
 ### Added
 - new release workflow
