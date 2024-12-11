@@ -34,7 +34,7 @@ env:
 jobs:
   publish-npm:
     runs-on: ubuntu-latest
-    # environment: npm
+    environment: npm
     steps:
     - uses: actions/checkout@v4
 
