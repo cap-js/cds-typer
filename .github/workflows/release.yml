@@ -105,7 +105,7 @@ jobs:
         ### Security\
         \
         &/' CHANGELOG.md
-        cat CHANGELOG.md | head -n 20
+        cat CHANGELOG.md | head -n 30
 
     # prepare branch
     - name: Commit changes
