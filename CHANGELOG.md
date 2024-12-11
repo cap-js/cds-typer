@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Fixed
 - type-referencing a property that is a key no longer breaks the referring property
+- when targeting ESM, all imports within the generated types now add a `/index.js`-suffix to conform to modern module resolution mechanisms
 - leaving `target_module_type` at `'auto'` now properly acts on a detected `"type":"module"`
 
 ### Added
