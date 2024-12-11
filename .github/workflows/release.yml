@@ -28,6 +28,7 @@ env:
   INPUTS_DRY_RUN: ${{ github.event.inputs.dry-run }}
   INPUTS_INCREMENT: ${{ github.event.inputs.increment }}
   DRY_RUN_OPTION: ${{ github.event.inputs.dry-run == 'true' && '--dry-run' || '' }}
+  CHANGELOG_FILE: CHANGELOG.md
 
 
 jobs:
@@ -63,20 +64,20 @@ jobs:
     # replace placeholder with current values in CHANGELOG.md
     # -E extended mode for \s support, -i inplace
     # 0,: only operate on the first match.
-    - name: Replace TBD entry in CHANGELOG.md
+    - name: Replace TBD entry in ${{ env.CHANGELOG_FILE }}
       env:
         NEW_VERSION: ${{ steps.increment-version.outputs.new-version }}
       run: |
         CURRENT_DATE=$(date +%Y-%m-%d)
-        sed -i -E "0,/^##\s+\[Unreleased\].*$/s//## [${NEW_VERSION}] - ${CURRENT_DATE}/" CHANGELOG.md
-        cat CHANGELOG.md | head -n 20
+        sed -i -E "0,/^##\s+\[Unreleased\].*$/s//## [${NEW_VERSION}] - ${CURRENT_DATE}/" $CHANGELOG_FILE
+        cat $CHANGELOG_FILE | head -n 20
 
     - name: Publish to npm
       run: npm publish --access public $DRY_RUN_OPTION
       env:
         NODE_AUTH_TOKEN: ${{secrets.npm_token}}
 
-    - name: Parse changelog
+    - name: Parse ${{ env.CHANGELOG_FILE }}
       id: parse-changelog
       uses: schwma/parse-changelog-action@v1.0.0
       with:
@@ -93,7 +94,7 @@ jobs:
     # -E extended mode for \s support, -i inplace
     # 0,: only operate on the first match.
     # & is the matched string
-    - name: Add version template to CHANGELOG.md
+    - name: Add version template to ${{ env.CHANGELOG_FILE }}
       run: |
         sed -i -E '0,/^##\s+.*$/s//## [Unreleased]\
         \
@@ -104,8 +105,8 @@ jobs:
         ### Fixed\
         ### Security\
         \
-        &/' CHANGELOG.md
-        cat CHANGELOG.md | head -n 30
+        &/' $CHANGELOG_FILE
+        cat $CHANGELOG_FILE | head -n 30
 
     # prepare branch
     - name: Commit changes
