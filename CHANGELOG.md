@@ -2,17 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/),
-and this project adheres to [Semantic Versioning](https://semver.org/).
-
-
 ## [Unreleased]
 ### Fixed
 - type-referencing a property that is a key no longer breaks the referring property
 - leaving `target_module_type` at `'auto'` now properly acts on a detected `"type":"module"`
 
 ### Added
-- new release workflow
+- cds aspects now generate a synthetic plural type too, to be used in `composition of many`
 
 ## [0.30.0] - 2024-12-02
 
