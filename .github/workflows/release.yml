@@ -65,7 +65,7 @@ jobs:
     # 0,: only operate on the first match.
     - name: Replace TBD entry in CHANGELOG.md
       env:
-        NEW_VERSION: ${{ steps.get-version.outputs.new-version }}
+        NEW_VERSION: ${{ steps.increment-version.outputs.new-version }}
       run: |
         CURRENT_DATE=$(date +%Y-%m-%d)
         sed -i -E "0,/^##\s+\[Unreleased\].*$/s//## [${NEW_VERSION}] - ${CURRENT_DATE}/" CHANGELOG.md
