@@ -110,12 +110,57 @@ jobs:
 
     # prepare branch
     - name: Commit changes
+      id: commit-changes
       env:
         NEW_VERSION: ${{ steps.increment-version.outputs.new-version }}
+        NEW_BRANCH: chore/release-${{ steps.increment-version.outputs.new-version }}
       run: |
         git config --global user.name "${GITHUB_ACTOR}"
         git config --global user.email "noreply+ms@github.com"
 
+        NEW_BRANCH="chore/release-$NEW_VERSION"
+        NEW_TITLE="chore(version): $INPUTS_INCREMENT version $NEW_VERSION"
+
+        git checkout -B $NEW_BRANCH
         git add -u .
-        git commit -m "chore(version): $INPUTS_INCREMENT version $NEW_VERSION"
-        git push origin $BRANCH $DRY_RUN_OPTION
+        git commit -m $NEW_TITLE
+        git push origin $NEW_BRANCH $DRY_RUN_OPTION
+
+        echo "new-branch=$NEW_BRANCH" >> $GITHUB_OUTPUT
+        echo "new-title=$NEW_TITLE" >> $GITHUB_OUTPUT
+
+    - name: Create PR w/ reviewers
+      uses: actions/github-script@v7
+      # if: ${{ github.event.inputs.dry-run == 'false' }}
+      env:
+        PR_TITLE: ${{ steps.commit-changes.outputs.new-title }}
+        PR_NAME: ${{ steps.commit-changes.outputs.new-branch }}
+        BASE_BRANCH: ${{ github.ref }}
+        NEW_VERSION: ${{ steps.increment-version.outputs.new-version }}
+        REVIEWERS: ${{ github.actor}}
+      with:
+        script: |
+          const [ owner, repo ] = process.env.GITHUB_REPOSITORY.split('/');
+          const { data: pullRequest } = await github.rest.pulls.create({
+            owner,
+            repo,
+            title: process.env.PR_TITLE,
+            head:  process.env.PR_NAME,
+            base:  process.env.BASE_BRANCH,
+            body: `Set version to ${process.env.NEW_VERSION}`,
+          });
+
+          core.info(`PR: ${pullRequest.html_url}`);
+          await core.summary
+            .addLink(pullRequest.html_url, pullRequest.html_url)
+            .write();
+
+          if (process.env.REVIEWERS) {
+            const reviewers = process.env.REVIEWERS.split(/[\n,\s]+/);
+            await github.rest.pulls.requestReviewers({
+              owner,
+              repo,
+              pull_number: pullRequest.number,
+              reviewers
+            });
+          }
