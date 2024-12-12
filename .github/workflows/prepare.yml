@@ -30,9 +30,8 @@ env:
 
 
 jobs:
-  publish-npm:
+  create-pr:
     runs-on: ubuntu-latest
-    environment: npm
     steps:
     - uses: actions/checkout@v4
 
