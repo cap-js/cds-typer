@@ -1,5 +1,5 @@
 
-name: Lint
+name: Prepare
 
 on:
   workflow_dispatch:
@@ -45,7 +45,7 @@ jobs:
         NEW_VERSION: ${{ steps.increment-version.outputs.new-version }}
       run: |
         CURRENT_DATE=$(date +%Y-%m-%d)
-        sed -i -E "0,/^##\s+.*\[Unreleased\].*$/s//## [Unreleased]\
+        sed -i -E '0,/^##\s+.*\[Unreleased\].*$/s//## [Unreleased]\
         \
         ### Added\
         ### Changed\
@@ -54,8 +54,8 @@ jobs:
         ### Fixed\
         ### Security\
         \
-        ## [${NEW_VERSION}] - ${CURRENT_DATE}/" $CHANGELOG_FILE
-        head -n 10 $CHANGELOG_FILE
+        ## [${NEW_VERSION}] - ${CURRENT_DATE}/' $CHANGELOG_FILE
+        head -n 20 $CHANGELOG_FILE
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v7
