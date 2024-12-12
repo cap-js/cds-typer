@@ -14,12 +14,13 @@ describe('Typeof Syntax', () => {
     test('Deep Required', async () => {
         const astw = (await prepareUnitTest('typeof/deep.cds', locations.testOutput('typeof_deep'))).astw
         expect(astw.exists('_UserRoleAspect', 'users',
-            m => check.isTypeReference(m.type) && check.isIndexedAccessType(m.type.args.at(0)) && check.isLiteral(m.type.args.at(0).indexType, 'roles')
+            m => check.isTypeReference(m.type) && check.isTypeReference(m.type.args.at(0), 'Users.roles')
         )).toBeTruthy()
         expect(astw.exists('_UserRoleGroupAspect', 'users',
             m => check.isNullable(m.type, [
-                st => check.isTypeReference(st) && check.isIndexedAccessType(st.args[0]) && check.isLiteral(st.args[0].indexType, 'roleGroups')
-            ]))).toBeTruthy()
+                st => check.isTypeReference(st.args.at(0), 'Users.roleGroup')
+            ])
+        )).toBeTruthy()
     })
 
     test('Structured', async () => {
