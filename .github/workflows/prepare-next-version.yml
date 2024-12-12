@@ -1,5 +1,5 @@
 
-name: Prepare
+name: Prepare Next Version
 
 on:
   workflow_dispatch:
@@ -34,13 +34,15 @@ jobs:
         node-version: 22
         registry-url: https://registry.npmjs.org/
 
-    # requires npm which we get from setup-node
     - name: Increment version
       id: increment-version
       run: |
         npm version $INPUTS_INCREMENT --no-git-tag-version
         echo "new-version=$(npm pkg get version | tr -d '"')" >> $GITHUB_OUTPUT
 
+    # -i for in-place editing, -E for extended regex including \s for whitespace
+    # double quotes needed for sed to work with variable replacement
+    # double backslashes needed for sed to work with double quotes
     - name: Replace Unreleased entry in ${{ env.CHANGELOG_FILE }}
       env:
         NEW_VERSION: ${{ steps.increment-version.outputs.new-version }}
@@ -64,6 +66,5 @@ jobs:
         commit-message: chore/release-${{ steps.increment-version.outputs.new-version }}
         title: "chore(version): ${{ env.INPUTS_INCREMENT}} version ${{ steps.increment-version.outputs.new-version }}"
         body: Set version to ${{ steps.increment-version.outputs.new-version }}
-        # labels: autopep8, automated pr
         branch: chore/release-${{ steps.increment-version.outputs.new-version }}
-        reviewers: ${{ github.actor}}
+        reviewers: ${{ github.actor }}
