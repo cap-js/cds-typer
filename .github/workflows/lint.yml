@@ -1,69 +1,22 @@
-
-name: Lint
+name: Linting
 
 on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
   workflow_dispatch:
-    inputs:
-      increment:
-        description: Increment version
-        required: true
-        default: patch
-        type: choice
-        options:
-          - patch
-          - minor
-          - major
-
-permissions:
-  contents: write
-  pull-requests: write
-
-env:
-  INPUTS_INCREMENT: ${{ github.event.inputs.increment }}
-  CHANGELOG_FILE: CHANGELOG.md
-
 
 jobs:
-  create-pr:
+  lint:
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v4
-
     - uses: actions/setup-node@v4
       with:
-        node-version: 22
-        registry-url: https://registry.npmjs.org/
-
-    # requires npm which we get from setup-node
-    - name: Increment version
-      id: increment-version
+          node-version: 22
+    - name: Run Linter
       run: |
-        npm version $INPUTS_INCREMENT --no-git-tag-version
-        echo "new-version=$(npm pkg get version | tr -d '"')" >> $GITHUB_OUTPUT
-
-    - name: Replace Unreleased entry in ${{ env.CHANGELOG_FILE }}
-      env:
-        NEW_VERSION: ${{ steps.increment-version.outputs.new-version }}
-      run: |
-        CURRENT_DATE=$(date +%Y-%m-%d)
-        sed -i -E "0,/^##\s+.*\[Unreleased\].*$/s//## [Unreleased]\\
-        \\
-        ### Added\\
-        ### Changed\\
-        ### Deprecated\\
-        ### Removed\\
-        ### Fixed\\
-        ### Security\\
-        \\
-        ## [${NEW_VERSION}] - ${CURRENT_DATE}/" $CHANGELOG_FILE
-        head -n 20 $CHANGELOG_FILE
-
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v7
-      with:
-        commit-message: chore/release-${{ steps.increment-version.outputs.new-version }}
-        title: "chore(version): ${{ env.INPUTS_INCREMENT}} version ${{ steps.increment-version.outputs.new-version }}"
-        body: Set version to ${{ steps.increment-version.outputs.new-version }}
-        # labels: autopep8, automated pr
-        branch: chore/release-${{ steps.increment-version.outputs.new-version }}
-        reviewers: ${{ github.actor}}
+        npm ci
+        npm run lint
