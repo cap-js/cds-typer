@@ -4,11 +4,6 @@ name: Prepare
 on:
   workflow_dispatch:
     inputs:
-      dry-run:
-        description: Dry run
-        required: false
-        default: false
-        type: boolean
       increment:
         description: Increment version
         required: true
@@ -23,9 +18,7 @@ permissions:
   contents: write
 
 env:
-  INPUTS_DRY_RUN: ${{ github.event.inputs.dry-run }}
   INPUTS_INCREMENT: ${{ github.event.inputs.increment }}
-  DRY_RUN_OPTION: ${{ github.event.inputs.dry-run == 'true' && '--dry-run' || '' }}
   CHANGELOG_FILE: CHANGELOG.md
 
 
