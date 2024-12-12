@@ -2,18 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/),
-and this project adheres to [Semantic Versioning](https://semver.org/).
-
-
 ## [Unreleased]
 ### Fixed
 - type-referencing a property that is a key no longer breaks the referring property
+- when targeting ESM, all imports within the generated types now add a `/index.js`-suffix to conform to modern module resolution mechanisms
+- leaving `target_module_type` at `'auto'` now properly acts on a detected `"type":"module"`
 
 ### Added
-- new release workflow
-- adds classes for inline compositions
-- adds support for `localized` which generates dedicated `text` classes
+- cds aspects now generate a synthetic plural type too, to be used in `composition of many`
+- dedicated classes for inline compositions
+- support for `localized` which generates dedicated `text` classes
 
 ## [0.30.0] - 2024-12-02
 
