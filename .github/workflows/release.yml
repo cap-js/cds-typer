@@ -40,7 +40,7 @@ jobs:
         id: check-versions
         run: |
           if [ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]; then
-            echo "do-release='true'" >> $GITHUB_OUTPUT
+            echo "do-release=true" >> $GITHUB_OUTPUT
             exit 0
           fi
 
@@ -51,10 +51,10 @@ jobs:
 
           if semver -r ">${npm_version}" "${local_version}"; then
             echo "Local version is greater than npm version: run release"
-            echo "do-release='true'" >> $GITHUB_OUTPUT
+            echo "do-release=true" >> $GITHUB_OUTPUT
           else
             echo "Local version is not greater than npm version: nothing to do."
-            echo "do-release='false'" >> $GITHUB_OUTPUT
+            echo "do-release=false" >> $GITHUB_OUTPUT
           fi
 
   publish-npm:
