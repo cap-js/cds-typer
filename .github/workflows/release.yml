@@ -40,6 +40,7 @@ jobs:
         id: check-versions
         run: |
           if [ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]; then
+            echo "Run as workflow_dispatch: run release"
             echo "do-release=true" >> $GITHUB_OUTPUT
             exit 0
           fi
