@@ -48,6 +48,9 @@ jobs:
           local_version=$(npm pkg get version | tr -d '"')
           npm_version=$(npm show $GITHUB_REPOSITORY version)
 
+          echo "Local version: $local_version"
+          echo "NPM version: $npm_version"
+ 
           npm install -g semver
 
           if semver -r ">${npm_version}" "${local_version}"; then
