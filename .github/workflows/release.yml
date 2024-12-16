@@ -45,7 +45,7 @@ jobs:
             exit 0
           fi
 
-          local_version=$(npm pkg get version | tr -d '"')"
+          local_version=$(npm pkg get version | tr -d '"')
           npm_version=$(npm show $GITHUB_REPOSITORY version)
 
           npm install -g semver
