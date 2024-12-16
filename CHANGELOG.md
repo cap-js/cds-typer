@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+
+### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [0.31.0] - 2024-12-16
 ### Fixed
 - type-referencing a property that is a key no longer breaks the referring property
 - when targeting ESM, all imports within the generated types now add a `/index.js`-suffix to conform to modern module resolution mechanisms
