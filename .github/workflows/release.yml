@@ -45,8 +45,9 @@ jobs:
             exit 0
           fi
 
+          package_name=$(npm pkg get name | tr -d '"')
           local_version=$(npm pkg get version | tr -d '"')
-          npm_version=$(npm show $GITHUB_REPOSITORY version)
+          npm_version=$(npm show $package_name version)
 
           echo "Local version: $local_version"
           echo "NPM version: $npm_version"
