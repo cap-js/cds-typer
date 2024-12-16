@@ -96,7 +96,7 @@ jobs:
         uses: schwma/parse-changelog-action@v1.0.0
         with:
           version: '${{ steps.get-version.outputs.version }}'
-          title-regex: ^##\s+\[\d.*$
+          title-regex: '^##\s+\[\d.*$'
 
       - name: Create a GitHub release
         if: ${{ github.event.inputs.dry-run == 'false' }}
