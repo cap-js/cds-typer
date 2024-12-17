@@ -4,7 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-### Added 
+### Added
+- dedicated classes for inline compositions
+- dedicated text-classes for entities with `localized` elements
+
 ### Changed
 ### Deprecated
 ### Removed
