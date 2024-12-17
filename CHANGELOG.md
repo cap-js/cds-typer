@@ -4,7 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-### Added 
+### Added
+- dedicated classes for inline compositions
+- dedicated text-classes for entities with `localized` elements
+
 ### Changed
 ### Deprecated
 ### Removed
@@ -19,8 +22,6 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - cds aspects now generate a synthetic plural type too, to be used in `composition of many`
-- dedicated classes for inline compositions
-- support for `localized` which generates dedicated `text` classes
 
 ## [0.30.0] - 2024-12-02
 
