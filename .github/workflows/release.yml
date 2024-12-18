@@ -9,6 +9,26 @@ on:
 
   workflow_dispatch:
     inputs:
+      increment:
+        description: Increment version before release
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - none
+
+      post-increment:
+        description: Increment version after release
+        default: none
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - none
+
       dry-run:
         description: Dry run
         required: false
@@ -20,6 +40,8 @@ permissions:
 
 env:
   INPUTS_DRY_RUN: ${{ github.event.inputs.dry-run }}
+  INPUTS_INCREMENT: ${{ github.event.inputs.increment }}
+  INPUTS_POST_INCREMENT: ${{ github.event.inputs.post-increment }}
   DRY_RUN_OPTION: ${{ github.event.inputs.dry-run == 'true' && '--dry-run' || '' }}
 
 
@@ -51,7 +73,7 @@ jobs:
 
           echo "Local version: $local_version"
           echo "NPM version: $npm_version"
- 
+
           npm install -g semver
 
           if semver -r ">${npm_version}" "${local_version}"; then
@@ -81,15 +103,21 @@ jobs:
           npm ci
           npm run test
 
+      # requires npm which we get from setup-node
+      - name: Increment version
+        if: ${{ github.event.inputs.increment != 'none' }}
+        run: |
+          npm version $INPUTS_INCREMENT --no-git-tag-version
+
       - name: Publish to npm
         run: npm publish --access public $DRY_RUN_OPTION
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
 
-      - name: Get Version
+      - name: get version
         id: get-version
         run: |
-          echo "version=$(npm pkg get version | tr -d '"')" >> $GITHUB_OUTPUT
+          echo "new-version=$(npm pkg get version | tr -d '"')" >> $GITHUB_OUTPUT
 
       - name: Parse CHANGELOG.md
         id: parse-changelog
@@ -97,6 +125,48 @@ jobs:
         with:
           version: '${{ steps.get-version.outputs.version }}'
           title-regex: '^##\s+\[\d.*$'
+
+      - name: Create a GitHub release
+        if: ${{ github.event.inputs.dry-run == 'false' }}
+        uses: ncipollo/release-action@v1
+        with:
+          tag: 'v${{ steps.get-version.outputs.new-version }}'
+          body: '${{ steps.parse-changelog.outputs.body }}'
+
+      # add missing template to change log for new development
+      # -E extended mode for \s support, -i inplace
+      # 0,: only operate on the first match.
+      # & is the matched string
+      - name: Add version template to CHANGELOG.md
+        run: |
+          sed -i -E '0,/^##\s+.*$/s//## [Unreleased]\
+          \
+          ### Added\
+          ### Changed\
+          ### Deprecated\
+          ### Removed\
+          ### Fixed\
+          ### Security\
+          \
+          &/' CHANGELOG.md
+
+      # increment version for next development
+      - name: Post increment version
+        if: ${{ github.event.inputs.post-increment != 'none' }}
+        run: |
+          npm version $INPUTS_POST_INCREMENT --no-git-tag-version
+
+      # commit and push branch
+      - name: Commit changes
+        env:
+          NEW_VERSION: ${{ steps.get-version.outputs.new-version }}
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "noreply+ms@github.com"
+
+          git add -u .
+          git commit -m "chore(version): $INPUTS_INCREMENT version $NEW_VERSION"
+          git push origin $BRANCH $DRY_RUN_OPTION
 
       - name: Create a GitHub release
         if: ${{ github.event.inputs.dry-run == 'false' }}
