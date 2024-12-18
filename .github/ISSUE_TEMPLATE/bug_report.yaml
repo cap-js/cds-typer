@@ -38,6 +38,7 @@ body:
     label: Steps To Reproduce
     description: |
       Steps to reproduce the behavior.
+      Make sure to include all entities, `using` statements, etc. to make it a [minimal reproducible example](https://stackoverflow.com/help/minimal-reproducible-example)
       Tip: You can add CDS code in code fences:
       <pre>
       ```cds
@@ -75,7 +76,7 @@ body:
     label: Repository Containing a Minimal Reproducible Example
     placeholder: https://github.com/my/repository
     description: |
-      Do you have a sample repository where we can observe the reported behaviour? Please include the relevant branch.
+      Do you have a sample repository where we can observe the reported behaviour?
   validations:
     required: false
 - type: textarea
