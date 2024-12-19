@@ -65,7 +65,7 @@
   "cds": {
     "typer": {
       "output_directory": "@cds-models",
-      "inline_declarations": "structured",
+      "inline_declarations": "flat",
       "target_module_type": "auto",
       "properties_optional": true,
       "use_entities_proxy": false

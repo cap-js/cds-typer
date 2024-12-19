@@ -6,10 +6,10 @@ All notable changes to this project will be documented in this file.
 
 ### Added 
 ### Changed
-- [breaking] default value for `inline_declarations` is now actually `'structured'`, as is indicated by the help text. If you relied on automatically receiving flat declarations, you can restore the former behaviour by adding `inline_declarations: 'flat'` to your `cds.env`
 ### Deprecated
 ### Removed
 ### Fixed
+- default value for `inline_declarations` in help command
 ### Security
 
 ## [0.31.0] - 2024-12-16
