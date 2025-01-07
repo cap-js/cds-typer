@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Deprecated
 ### Removed
 ### Fixed
+- referencing another entity's property of type `cds.String` in an enum will not properly quote the generated values
 ### Security
 
 ## [0.31.0] - 2024-12-16
