@@ -1,9 +1,34 @@
-name: "Enforce Changelog"
+name: Enforce Changelog
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
 
 jobs:
+  label_dependabot:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Check if PR is by Dependabot
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prAuthor = context.payload.pull_request.user.login;
+            const prNumber = context.payload.pull_request.number;
+            const repoOwner = context.repo.owner;
+            const repoName = context.repo.repo;
+
+            if (prAuthor === 'dependabot[bot]' || prAuthor === 'dependabot') {
+              core.info(`PR #${prNumber} is authored by Dependabot. Adding label...`);
+              await github.rest.issues.addLabels({
+                owner: repoOwner,
+                repo: repoName,
+                issue_number: prNumber,
+                labels: ['skip changelog']
+              });
+            } else {
+              core.info(`PR #${prNumber} is not authored by Dependabot. No action taken.`);
+            }
   changelog:
     runs-on: ubuntu-latest
     steps:
