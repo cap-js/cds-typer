@@ -109,14 +109,14 @@ describe('Actions', () => {
         checkFunction(actions.type.members.find(fn => fn.name === 's1'), {
             callCheck: signature => check.isAny(signature),
             returnTypeCheck: returns => check.isAny(returns),
-            parameterCheck: ({full, args}) => full === 'Record'
+            parameterCheck: ({full, args}) => full === 'globalThis.Record'
                 && checkKeyword(args[0], 'never')
                 && checkKeyword(args[1], 'never')
         })
         checkFunction(actions.type.members.find(fn => fn.name === 'sn'), {
             callCheck: signature => check.isAny(signature),
             returnTypeCheck: returns => check.isAny(returns),
-            parameterCheck: ({full, args}) => full === 'Record'
+            parameterCheck: ({full, args}) => full === 'globalThis.Record'
                 && checkKeyword(args[0], 'never')
                 && checkKeyword(args[1], 'never')
         })
@@ -190,7 +190,7 @@ describe('Actions', () => {
 
     test ('Empty .actions typed as empty Record', async () => {
         const { type } = astwUnbound.getAspectProperty('_NoActionAspect', 'actions')
-        expect(type.full === 'Record'
+        expect(type.full === 'globalThis.Record'
             && checkKeyword(type.args[0], 'never')
             && checkKeyword(type.args[1], 'never')
         ).toBe(true)
