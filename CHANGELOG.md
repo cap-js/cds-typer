@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added 
 ### Changed
-- prefixed builtin types like `Promise` and `Record` with `globalType.`, to allow using names of builtin types for entities without collisions
+- prefixed builtin types like `Promise` and `Record` with `globalThis.`, to allow using names of builtin types for entities without collisions
 ### Deprecated
 ### Removed
 ### Fixed
