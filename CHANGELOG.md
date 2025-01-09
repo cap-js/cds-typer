@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added 
 ### Changed
 - prefixed builtin types like `Promise` and `Record` with `globalThis.`, to allow using names of builtin types for entities without collisions
-- no longer expose a named service that mimics the name of the directory the types are generated into, as this carried the risk for name collisions. The service is instead exposed as unnamed default
+- default export class representing the service itself is now exported without name
 ### Deprecated
 ### Removed
 ### Fixed
