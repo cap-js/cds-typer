@@ -27,6 +27,8 @@ describe('Compilation/Runtime - with Entities Proxies', () => {
             jsw.exportsAre([
                 ['Book', 'Books'],
                 ['Books', 'Books'],
+                ['Books.text', 'Books.texts'],
+                ['Books.texts', 'Books.texts'],
                 ['Author', 'Authors'],
                 ['Authors', 'Authors'],
                 ['Genre', 'Genres'],
