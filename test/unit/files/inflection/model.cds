@@ -32,12 +32,16 @@ entity C {
 
 }
 
+entity CSub : C {}
+
 @UI.HeaderInfo.TypeName: 'OneD'
 @UI.HeaderInfo.TypeNamePlural: 'ManyDs'
 @singular: 'OneSingleD'
 entity D {
 
 }
+
+entity DSub : D {}
 
 entity Referer {
     // annotated
