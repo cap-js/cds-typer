@@ -13,7 +13,7 @@ export module resolver {
         compositions?: { target: string }[]
         doc?: string,
         elements?: { [key: string]: EntityCSN }
-        key?: string // custom!!
+        key?: boolean // custom!!
         keys?: { [key:string]: any }
         kind: string,
         includes?: string[]
@@ -25,6 +25,8 @@ export module resolver {
         target?: string,
         type: string | ref,
         name: string,
+        '@singular'?: string,
+        '@plural'?: string,
         '@odata.draft.enabled'?: boolean // custom!
         _unresolved?: boolean
         isRefNotNull?: boolean // custom!
