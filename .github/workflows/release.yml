@@ -9,9 +9,9 @@ on:
 
   workflow_dispatch:
     inputs:
-      increment:
-        description: Increment version before release
-        default: patch
+      pre-increment:
+        description: Increment version before publishing to NPM
+        default: none
         type: choice
         options:
           - patch
@@ -20,7 +20,7 @@ on:
           - none
 
       post-increment:
-        description: Increment version after release
+        description: Increment version after publishing to NPM
         default: none
         type: choice
         options:
@@ -105,7 +105,7 @@ jobs:
 
       # requires npm which we get from setup-node
       - name: Increment version
-        if: ${{ github.event.inputs.increment != 'none' }}
+        if: ${{ github.event.inputs.pre-increment != 'none' }}
         run: |
           npm version $INPUTS_INCREMENT --no-git-tag-version
 
