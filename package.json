@@ -42,7 +42,7 @@
     "cds-typer": "./lib/cli.js"
   },
   "peerDependencies": {
-    "@cap-js/cds-types": ">=0.6.4",
+    "@cap-js/cds-types": ">=0.9",
     "@sap/cds": ">=8"
   },
   "devDependencies": {
