@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [0.32.0] - 2025-01-14
+
+### Added
 - dedicated classes for inline compositions
 - dedicated text-classes for entities with `localized` elements
 
