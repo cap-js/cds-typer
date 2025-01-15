@@ -4,12 +4,27 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-### Added 
+### Added
 ### Changed
 ### Deprecated
 ### Removed
 ### Fixed
 - default value for `inline_declarations` in help command
+### Security
+
+## [0.32.0] - 2025-01-14
+
+### Added
+- dedicated classes for inline compositions
+- dedicated text-classes for entities with `localized` elements
+
+### Changed
+- prefixed builtin types like `Promise` and `Record` with `globalThis.`, to allow using names of builtin types for entities without collisions
+- bumped peer-dependency to `@cap-js/cds-types` to `>=0.9`
+### Deprecated
+### Removed
+### Fixed
+- referencing another entity's property of type `cds.String` in an enum will now properly quote the generated values
 ### Security
 
 ## [0.31.0] - 2024-12-16

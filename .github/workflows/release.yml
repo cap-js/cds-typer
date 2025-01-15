@@ -76,7 +76,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
 
       - name: Run Unit Tests
-        if: ${{ github.event.inputs.dry-run == 'false' }}
+        if: ${{ github.event.inputs.dry-run != 'true' }}
         run: |
           npm ci
           npm run test
@@ -99,7 +99,7 @@ jobs:
           title-regex: '^##\s+\[\d.*$'
 
       - name: Create a GitHub release
-        if: ${{ github.event.inputs.dry-run == 'false' }}
+        if: ${{ github.event.inputs.dry-run != 'true' }}
         uses: ncipollo/release-action@v1
         with:
           tag: 'v${{ steps.get-version.outputs.version }}'
