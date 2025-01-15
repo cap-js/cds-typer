@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 ### Removed
 ### Fixed
 - default value for `inline_declarations` in help command
+- entity scope and namespace are now added in the correct order to inflected type names
 ### Security
 
 ## [0.32.0] - 2025-01-14
