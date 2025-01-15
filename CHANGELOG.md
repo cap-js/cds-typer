@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Deprecated
 ### Removed
 ### Fixed
+- default value for `inline_declarations` in help command
 ### Security
 
 ## [0.32.0] - 2025-01-14
