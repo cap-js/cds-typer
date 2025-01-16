@@ -49,3 +49,7 @@ entity ExternalEnums {
     gender: Gender;
     yesno: Truthy;
 }
+
+entity ReferingType {
+    gender: type of InlineEnums : gender
+}

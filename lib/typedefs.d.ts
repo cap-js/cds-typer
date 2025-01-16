@@ -48,7 +48,8 @@ export module resolver {
 
 
     export type EnumCSN = EntityCSN & {
-        enum: {[key:name]: string}
+        enum: {[key:name]: string},
+        resolvedType?: string  // custom property! When .type points to a ref, the visitor will resolve the ref into this property
     }
 
     export type CSN = {
