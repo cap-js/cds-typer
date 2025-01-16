@@ -21,7 +21,9 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - prefixed builtin types like `Promise` and `Record` with `globalThis.`, to allow using names of builtin types for entities without collisions
+- default export class representing the service itself is now exported without name
 - bumped peer-dependency to `@cap-js/cds-types` to `>=0.9`
+
 ### Deprecated
 ### Removed
 ### Fixed
