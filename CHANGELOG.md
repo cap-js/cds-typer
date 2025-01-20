@@ -9,6 +9,15 @@ All notable changes to this project will be documented in this file.
 ### Deprecated
 ### Removed
 ### Fixed
+### Security
+
+## [0.32.1] - 2025-01-20
+
+### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
 - default value for `inline_declarations` in help command
 - entity scope and namespace are now added in the correct order to inflected type names
 ### Security
