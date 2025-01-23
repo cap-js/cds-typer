@@ -14,9 +14,9 @@ on:
           - minor
           - major
 
-# permissions:
-#   contents: write
-#   pull-requests: write
+permissions:
+  contents: write
+  pull-requests: write
 
 
 jobs:
