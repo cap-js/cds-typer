@@ -11,6 +11,15 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 ### Security
 
+## [0.33.0] - 2025-01-23
+
+### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
 ## [0.32.1] - 2025-01-20
 
 ### Added
