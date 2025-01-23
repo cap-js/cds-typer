@@ -24,4 +24,4 @@ jobs:
     uses: cap-js/.github/.github/workflows/release.yml@ci/addWorkflows
     secrets: inherit
     with:
-      dry-run: ${{ github.event.inputs.dry-run }}
+      dry-run: ${{ github.event.inputs.dry-run || false }}
