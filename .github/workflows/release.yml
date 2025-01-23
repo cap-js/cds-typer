@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   release:
-    uses: cap-js/.github/.github/workflows/release.yml@ci/addWorkflows
+    uses: cap-js/.github/.github/workflows/release.yml@main
     secrets: inherit
     with:
       dry-run: ${{ github.event.inputs.dry-run || false }}
