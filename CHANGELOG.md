@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 ### Changed
+- `CHANGELOG.md` and `LICENSE` files are no longer part of the npm package.
+
 ### Deprecated
 ### Removed
 ### Fixed
