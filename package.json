@@ -11,7 +11,7 @@
     "CLI"
   ],
   "author": "SAP SE (https://www.sap.com)",
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "Apache-2.0",
   "scripts": {
     "test:unit": "jest --projects test/unit.jest.config.js",
     "test:integration": "jest --projects test/int.jest.config.js",
@@ -31,9 +31,7 @@
   "files": [
     "lib/",
     "library",
-    "CHANGELOG.md",
     "index.js",
-    "LICENSE",
     "README.md",
     "cds-plugin.js"
   ],
