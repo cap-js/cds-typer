@@ -4,8 +4,8 @@ on:
     types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
 
 jobs:
-  enforece-changelog:
-    permissions:
-      pull-requests: write
+  enforce-changelog:
     uses: cap-js/.github/.github/workflows/enforce-changelog.yml@ci/addEnforceChangeLog
     secrets: inherit
+    permissions:
+      pull-requests: write
