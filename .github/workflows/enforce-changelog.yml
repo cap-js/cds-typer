@@ -5,5 +5,7 @@ on:
 
 jobs:
   enforece-changelog:
+    permissions:
+      pull-requests: write
     uses: cap-js/.github/.github/workflows/enforce-changelog.yml@ci/addEnforceChangeLog
     secrets: inherit
