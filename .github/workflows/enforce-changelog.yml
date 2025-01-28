@@ -4,7 +4,7 @@ on:
     types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
 
 jobs:
-  label_dependabot:
+  label-dependabot:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -31,6 +31,7 @@ jobs:
             }
   changelog:
     runs-on: ubuntu-latest
+    needs: label-dependabot
     steps:
     - uses: dangoslen/changelog-enforcer@v3
       with:
