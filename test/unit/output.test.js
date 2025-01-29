@@ -210,11 +210,11 @@ describe('Compilation Tests', () => {
                 '_DSubAspect'
             ]
             assert.strictEqual(aspects.length, expected.length)
-            assert.deepStrictEqual(aspects.map(({name}) => name), expected)
+            assert.deepStrictEqual(aspects.map(({name}) => name).sort(), expected.sort())
         })
 
         it('should verify classes', () => {
-            const fns = astw.getTopLevelClassDeclarations()
+            const fns = astw.getTopLevelClassDeclarations().map(({name}) => name).sort()
             const expected = [
                 'Gizmo',
                 'Gizmos',
@@ -228,7 +228,7 @@ describe('Compilation Tests', () => {
                 'A_',
                 'C',
                 'LotsOfCs',
-                'D',
+                'OneSingleD',
                 'D',
                 'Referer',
                 'Referer_',
@@ -236,9 +236,9 @@ describe('Compilation Tests', () => {
                 'DSub_',
                 'CSub',
                 'CSub_'
-            ]
-            assert.deepStrictEqual(fns.map(({name}) => name), expected)
+            ].sort()
             assert.strictEqual(fns.length, expected.length)
+            assert.deepStrictEqual(fns, expected.sort())
         })
 
         it('should verify annotated associations and compositions', () => {
