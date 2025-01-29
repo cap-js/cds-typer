@@ -215,7 +215,18 @@ async function prepareUnitTest(model, outputDirectory, parameters = {}) {
     return { astw: new ASTWrapper(path.join(parameters.fileSelector(paths), 'index.ts')), paths }
 }
 
+const createSpy = fn => {
+    const spy = (...args) => {
+        spy.calls.push(args)
+        return fn(...args)
+    }
+    spy.calls = []
+    spy.calledWith = (...args) => spy.calls.some(call => call.every((arg, i) => arg === args[i]))
+    return spy
+}
+
 module.exports = {
+    createSpy,
     loadModule,
     toHaveAll,
     toOnlyHave,

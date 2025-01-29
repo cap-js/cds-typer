@@ -4,7 +4,7 @@ const path = require('path')
 const { describe, it } = require('node:test')
 const assert = require('assert')
 const { ASTWrapper } = require('../ast')
-const { locations, prepareUnitTest } = require('../util')
+const { locations, prepareUnitTest, createSpy } = require('../util')
 
 const draftable_ = (entity, ast) => ast.find(n => n.name === entity && n.members.find(({name}) => name === 'drafts'))
 const draftable = (entity, ast, plural = e => `${e}_`) => draftable_(entity, ast) && draftable_(plural(entity), ast)
@@ -29,8 +29,10 @@ describe('Bookshop', () => {
     })
 
     it('should produce compiler error for draft-enabled composition', async () => {
-        const spyOnConsole = console.error
-        console.error = (...args) => spyOnConsole(...args)
+        // eslint-disable-next-line no-console
+        const spyOnConsole = createSpy(console.error)
+        // eslint-disable-next-line no-console
+        console.error = spyOnConsole
 
         await assert.rejects(
             prepareUnitTest('draft/error-catalog-service.cds', locations.testOutput('bookshop_projection'), {
@@ -43,7 +45,5 @@ describe('Bookshop', () => {
             '[cds-typer] -',
             'Composition in draft-enabled entity can\'t lead to another entity with "@odata.draft.enabled" (in entity: "bookshop.service.CatalogService.Books"/element: publishers)!'
         ))
-
-        console.error = spyOnConsole
     })
 })
