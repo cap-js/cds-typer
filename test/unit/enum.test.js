@@ -75,7 +75,7 @@ describe('Enum Types', () => {
 
             it('should validate referring property', async () =>
                 assert.ok(astw.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
-                && members?.find(member => member.name === 'gender' && check.isNullable(member.type, [t => t?.full === 'InlineEnum_gender']))))
+                && members?.find(member => member.name === 'gender' && check.isNullable(member.type, [t => t?.full === 'InlineEnum_gender'])))))
         })
 
         describe('Int Enum', () => {
@@ -88,7 +88,7 @@ describe('Enum Types', () => {
 
             it('should validate referring property', async () =>
                 assert.ok(astw.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
-                && members?.find(member => member.name === 'status' && check.isNullable(member.type, [t => t?.full === 'InlineEnum_status']))))
+                && members?.find(member => member.name === 'status' && check.isNullable(member.type, [t => t?.full === 'InlineEnum_status'])))))
         })
 
         describe('Mixed Enum', () => {
@@ -101,7 +101,7 @@ describe('Enum Types', () => {
 
             it('should validate referring property', async () =>
                 assert.ok(astw.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
-                && members?.find(member => member.name === 'yesno' &&  check.isNullable(member.type, [t => t?.full === 'InlineEnum_yesno']))))
+                && members?.find(member => member.name === 'yesno' &&  check.isNullable(member.type, [t => t?.full === 'InlineEnum_yesno'])))))
         })
     })
 
