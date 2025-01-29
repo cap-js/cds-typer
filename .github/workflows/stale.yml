@@ -9,9 +9,13 @@ on:
   schedule:
   - cron: '36 18 * * *'
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+
 jobs:
   stale:
-
     runs-on: ubuntu-latest
     permissions:
       issues: write

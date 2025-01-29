@@ -3,6 +3,11 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+
 jobs:
   enforce-changelog:
     uses: cap-js/.github/.github/workflows/enforce-changelog.yml@main
