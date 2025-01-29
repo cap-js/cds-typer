@@ -1,22 +1,23 @@
 'use strict'
 
-const { describe, test, expect } = require('@jest/globals')
+const { describe, it } = require('node:test')
+const assert = require('assert')
 const { ASTWrapper } = require('../ast')
 const { locations } = require('../util')
 
 const getWrapped = () => new ASTWrapper(locations.unit.files('typescript/foo.d.ts'))
 
-describe('TS AST Check', () => {
-    test('Parse', () => {
+describe('TypeScript AST Check', () => {
+    it('should parse the TypeScript file', () => {
         const ast = getWrapped()
-        expect(ast.getImports().length).toBe(1)
-        expect(ast.getTopLevelClassDeclarations().length).toBe(2)
+        assert.strictEqual(ast.getImports().length, 1)
+        assert.strictEqual(ast.getTopLevelClassDeclarations().length, 2)
     })
 
-    test('Check TopLevel Class', () => {
+    it('should check top-level class declarations', () => {
         const ast = getWrapped()
         const cls = ast.getTopLevelClassDeclarations().find(c => c.name === 'SomeSingularClass')
-        expect(cls).toBeTruthy()
+        assert.ok(cls)
 
         const props = [
             ['foo', 'Foo'],
@@ -46,15 +47,15 @@ describe('TS AST Check', () => {
             ],
         ]
         for (const [name, type] of props) {
-            expect(ast.exists('FooWithProperties', name, type)).toBeTruthy()
+            assert.ok(ast.exists('FooWithProperties', name, type))
         }
     })
 
-    test('Check FooWithNestedTypes Class', () => {
+    it('should check FooWithNestedTypes class', () => {
         const ast = getWrapped()
         const cls = ast.getAspects().find(c => c.name === 'FooWithNestedTypes')
-        expect(cls).toBeTruthy()
-        expect(ast.exists('FooWithNestedTypes', 'foo',
+        assert.ok(cls)
+        assert.ok(ast.exists('FooWithNestedTypes', 'foo',
             m => m.name === 'foo'
                 && m.type.members.length === 2
                 && m.type.members[0].name === 'bar'
@@ -63,13 +64,13 @@ describe('TS AST Check', () => {
                     && m.type.members[0].type.members[0].type.keyword === 'string'
                 && m.type.members[1].name === 'qux'
                     && m.type.members[1].type.keyword === 'number'
-        )).toBeTruthy()
+        ))
     })
 
-    test('Parse Imports', () => {
+    it('should parse imports', () => {
         const ast = getWrapped()
         const { as, module } = ast.getImports()[0]
-        expect(as).toBe('imp')
-        expect(module).toBe('../../../../a/b/c/')
+        assert.strictEqual(as, 'imp')
+        assert.strictEqual(module, '../../../../a/b/c/')
     })
 })

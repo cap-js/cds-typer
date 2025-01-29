@@ -1,14 +1,15 @@
 'use strict'
 
-const { describe, beforeAll, test, expect } = require('@jest/globals')
+const { describe, before, it } = require('node:test')
+const assert = require('assert')
 const { locations, prepareUnitTest } = require('../util')
 
 describe('Autoexpose', () => {
     let ast
 
-    beforeAll(async () => ast = (await prepareUnitTest('autoexpose/model.cds', locations.testOutput('autoexpose_test'))).astw.tree)
+    before(async () => ast = (await prepareUnitTest('autoexpose/model.cds', locations.testOutput('autoexpose_test'))).astw.tree)
 
-    test('Autoexposed Composition Target Present in Service', async () => {
-        expect(ast.find(n => n.name === 'Books')).toBeTruthy()
+    it('should validate autoexposed composition target present in service', async () => {
+        assert.ok(ast.find(n => n.name === 'Books'))
     })
 })

@@ -1,43 +1,49 @@
 'use strict'
 
 const path = require('path')
+const { describe, it } = require('node:test')
+const assert = require('assert')
 const { ASTWrapper } = require('../ast')
-const { describe, test, expect } = require('@jest/globals')
 const { locations, prepareUnitTest } = require('../util')
 
 const draftable_ = (entity, ast) => ast.find(n => n.name === entity && n.members.find(({name}) => name === 'drafts'))
 const draftable = (entity, ast, plural = e => `${e}_`) => draftable_(entity, ast) && draftable_(plural(entity), ast)
 
-describe('bookshop', () => {
-    test('Draft via root and compositions', async () => {
+describe('Bookshop', () => {
+    it('should validate draft via root and compositions', async () => {
         const paths = (await prepareUnitTest('draft/catalog-service.cds', locations.testOutput('bookshop_projection'))).paths
         const service = new ASTWrapper(path.join(paths[1], 'index.ts')).tree
         const model = new ASTWrapper(path.join(paths[2], 'index.ts')).tree
 
         // root and composition become draft enabled
-        expect(draftable('Book', service, () => 'Books')).toBeTruthy()
-        expect(draftable('Publisher', service, () => 'Publishers')).toBeTruthy()
+        assert.ok(draftable('Book', service, () => 'Books'))
+        assert.ok(draftable('Publisher', service, () => 'Publishers'))
 
         // associated entity will not become draft enabled
-        expect(draftable('Author', service, () => 'Authors')).toBeFalsy()
+        assert.ok(!draftable('Author', service, () => 'Authors'))
 
         // non-service entities will not be draft enabled
-        expect(draftable('Book', model, () => 'Books')).toBeFalsy()
-        expect(draftable('Publisher', model, () => 'Publishers')).toBeFalsy()
-        expect(draftable('Author', model, () => 'Authors')).toBeFalsy()
+        assert.ok(!draftable('Book', model, () => 'Books'))
+        assert.ok(!draftable('Publisher', model, () => 'Publishers'))
+        assert.ok(!draftable('Author', model, () => 'Authors'))
     })
 
-    test('Draft-enabled composition produces compiler error', async () => {
-        const spyOnConsole = jest.spyOn(console, 'error')
-        await expect(
+    it('should produce compiler error for draft-enabled composition', async () => {
+        const spyOnConsole = console.error
+        console.error = (...args) => spyOnConsole(...args)
+
+        await assert.rejects(
             prepareUnitTest('draft/error-catalog-service.cds', locations.testOutput('bookshop_projection'), {
                 typerOptions: { logLevel: 'ERROR' },
-            })
-        ).rejects.toThrow('Compilation of model failed')
+            }),
+            new Error('Compilation of model failed')
+        )
 
-        expect(spyOnConsole).toHaveBeenCalledWith(
+        assert.ok(spyOnConsole.calledWith(
             '[cds-typer] -',
             'Composition in draft-enabled entity can\'t lead to another entity with "@odata.draft.enabled" (in entity: "bookshop.service.CatalogService.Books"/element: publishers)!'
-        )
+        ))
+
+        console.error = spyOnConsole
     })
 })

@@ -1,7 +1,8 @@
 'use strict'
 
 const path = require('path')
-const { describe, beforeAll, test, expect } = require('@jest/globals')
+const { describe, before, it } = require('node:test')
+const assert = require('assert')
 const { checkFunction, check, ASTWrapper, checkKeyword } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 
@@ -11,20 +12,20 @@ describe('Actions', () => {
     let astwBound
     let astwUnbound
 
-    beforeAll(async () => {
+    before(async () => {
         sut = await prepareUnitTest('actions/model.cds', locations.testOutput('actions_test'))
         paths = sut.paths
         astwBound = new ASTWrapper(path.join(paths.find(p => p.endsWith('S')), 'index.ts'))
         astwUnbound = new ASTWrapper(path.join(paths.find(p => p.endsWith('actions_test')), 'index.ts'))
     })
 
-    test('add import statement for builtin types', async () => {
-        expect(sut.astw.getImports()[0].module).toBe('./../_')
+    it('should add import statement for builtin types', async () => {
+        assert.strictEqual(sut.astw.getImports()[0].module, './../_')
     })
 
-    test('Bound', async () => {
+    it('should validate bound actions', async () => {
         const actions = astwBound.getAspectProperty('_EAspect', 'actions')
-        expect(actions.modifiers.some(check.isStatic)).toBeTruthy()
+        assert.ok(actions.modifiers.some(check.isStatic))
         checkFunction(actions.type.members.find(fn => fn.name === 'f'), {
             parameterCheck: ({members: [fst]}) => fst.name === 'x' && check.isNullable(fst.type, [check.isString])
         })
@@ -40,7 +41,7 @@ describe('Actions', () => {
         })
     })
 
-    test('Unbound', async () => {
+    it('should validate unbound actions', async () => {
         const ast = astwUnbound.tree
         checkFunction(ast.find(node => node.name === 'free'), {
             modifiersCheck: (modifiers = []) => !modifiers.some(check.isStatic),
@@ -58,9 +59,9 @@ describe('Actions', () => {
         })
     })
 
-    test('Bound Returning External Type', async () => {
+    it('should validate bound actions returning external type', async () => {
         const actions = astwBound.getAspectProperty('_EAspect', 'actions')
-        expect(actions.modifiers.some(check.isStatic)).toBeTruthy()
+        assert.ok(actions.modifiers.some(check.isStatic))
         checkFunction(actions.type.members.find(fn => fn.name === 'f'), {
             callCheck: signature => check.isAny(signature),
             parameterCheck: ({members: [fst]}) => fst.name === 'x' && check.isNullable(fst.type, [check.isString]),
@@ -78,7 +79,7 @@ describe('Actions', () => {
         })
     })
 
-    test('Unbound Returning External Type', async () => {
+    it('should validate unbound actions returning external type', async () => {
         const ast = astwUnbound.tree
 
         checkFunction(ast.find(node => node.name === 'free2'), {
@@ -94,7 +95,7 @@ describe('Actions', () => {
         })
     })
 
-    test('Void action returning void', async () => {
+    it('should validate void action returning void', async () => {
         checkFunction(astwUnbound.tree.find(node => node.name === 'freevoid'), {
             modifiersCheck: (modifiers = []) => !modifiers.some(check.isStatic),
             callCheck: type => check.isNullable(type, [check.isVoid]),
@@ -102,9 +103,9 @@ describe('Actions', () => {
         })
     })
 
-    test('Bound Expecting $self Arguments', async () => {
+    it('should validate bound actions expecting $self arguments', async () => {
         const actions = astwBound.getAspectProperty('_EAspect', 'actions')
-        expect(actions.modifiers.some(check.isStatic)).toBeTruthy()
+        assert.ok(actions.modifiers.some(check.isStatic))
         // mainly make sure $self parameter is not present at all
         checkFunction(actions.type.members.find(fn => fn.name === 's1'), {
             callCheck: signature => check.isAny(signature),
@@ -127,7 +128,7 @@ describe('Actions', () => {
         })
     })
 
-    test ('Inflection on External Type in Function Type', async () => {
+    it('should validate inflection on external type in function type', async () => {
         checkFunction(astwBound.tree.find(fn => fn.name === 'getOneExternalType'), {
             returnTypeCheck: returns => check.isNullable(returns.subtypes[0].args[0], [st => check.isTypeReference(st, '_elsewhere.ExternalType')])
         })
@@ -136,7 +137,7 @@ describe('Actions', () => {
         })
     })
 
-    test ('Inflection in Parameters/ Return Type of Functions', async () => {
+    it('should validate inflection in parameters/return type of functions', async () => {
         checkFunction(astwBound.tree.find(fn => fn.name === 'fSingleParamSingleReturn'), {
             parameterCheck: ({members: [fst]}) => check.isNullable(fst.type, [arg => check.isTypeReference(arg, 'E')]),
             returnTypeCheck: returns => check.isNullable(returns.subtypes[0].args[0], [st => check.isTypeReference(st, 'E')])
@@ -159,7 +160,7 @@ describe('Actions', () => {
         })
     })
 
-    test ('Inflection in Parameters/ Return Type of Actions', async () => {
+    it('should validate inflection in parameters/return type of actions', async () => {
         checkFunction(astwBound.tree.find(fn => fn.name === 'aSingleParamSingleReturn'), {
             parameterCheck: ({members: [fst]}) => check.isNullable(fst.type, [arg => check.isTypeReference(arg, 'E')]),
             returnTypeCheck: returns => check.isNullable(returns.subtypes[0].args[0], [st => check.isTypeReference(st, 'E')])
@@ -182,21 +183,20 @@ describe('Actions', () => {
         })
     })
 
-    test ('Optional Action Params', async () => {
+    it('should validate optional action params', async () => {
         checkFunction(astwBound.tree.find(fn => fn.name === 'aMandatoryParam'), {
             parameterCheck: ({members: [p1, p2, p3]}) => !check.isOptional(p1) && !check.isOptional(p2) && check.isOptional(p3),
         })
     })
 
-    test ('Empty .actions typed as empty Record', async () => {
+    it('should validate empty .actions typed as empty Record', async () => {
         const { type } = astwUnbound.getAspectProperty('_NoActionAspect', 'actions')
-        expect(type.full === 'globalThis.Record'
-            && checkKeyword(type.args[0], 'never')
-            && checkKeyword(type.args[1], 'never')
-        ).toBe(true)
+        assert.strictEqual(type.full, 'globalThis.Record')
+        assert.ok(checkKeyword(type.args[0], 'never'))
+        assert.ok(checkKeyword(type.args[1], 'never'))
     })
 
-    test ('typeof Parameter Referring to Correct Type', async () => {
+    it('should validate typeof parameter referring to correct type', async () => {
         checkFunction(astwUnbound.tree.find(node => node.name === 'freetypeof'), {
             modifiersCheck: (modifiers = []) => !modifiers.some(check.isStatic),
             callCheck: type => check.isNullable(type, [check.isVoid]),

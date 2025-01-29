@@ -1,20 +1,22 @@
 'use strict'
 
-const { beforeAll, describe, test, expect } = require('@jest/globals')
+const { before, describe, it } = require('node:test')
+const assert = require('assert')
 const { locations, prepareUnitTest } = require('../util')
 
-describe('Scoped Entities', () => {
+describe('Scoped Entities Tests', () => {
     let astw
 
-    beforeAll(async () => astw = (await prepareUnitTest('scoped/model.cds', locations.testOutput('scoped_test'))).astw)
+    before(async () => astw = (await prepareUnitTest('scoped/model.cds', locations.testOutput('scoped_test'))).astw)
 
-    test('Namespace Exists', () => expect(astw.getModuleDeclaration('Name')).toBeTruthy())
-    test('Namespace Entity Exists', () => expect(astw.getAspect('_NameAspect')).toBeTruthy())
+    it('should verify namespace existence', () => assert.ok(astw.getModuleDeclaration('Name')))
+    
+    it('should verify namespace entity existence', () => assert.ok(astw.getAspect('_NameAspect')))
 
-    test('Entities Present Within Namespace', () => {
+    it('should verify entities within namespace', () => {
         const namespace = astw.getModuleDeclaration('Name')
-        expect(namespace).toBeTruthy()
-        expect(namespace.body.find(e => e.name === 'Something')).toBeTruthy()
-        expect(namespace.body.find(e => e.name === 'Something_')).toBeTruthy()
+        assert.ok(namespace)
+        assert.ok(namespace.body.find(e => e.name === 'Something'))
+        assert.ok(namespace.body.find(e => e.name === 'Something_'))
     })
 })
