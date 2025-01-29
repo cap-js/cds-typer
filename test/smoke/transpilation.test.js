@@ -2,7 +2,7 @@
 
 const fs = require('fs')
 const path = require('path')
-const { describe, test } = require('@jest/globals')
+const { describe, it } = require('node:test')
 const { locations, prepareUnitTest } = require('../util')
 
 const modelDirs = fs.readdirSync(locations.smoke.files(''))
@@ -20,9 +20,9 @@ const modelDirs = fs.readdirSync(locations.smoke.files(''))
     })
     .filter(Boolean)
 
-describe('smoke', () => {
-    describe('transpilation', () => {
-        test.each(modelDirs)('$name', async ({ name, rootFile }) => {
+describe('transpilation', () => {
+    modelDirs.forEach(({ name, rootFile }) => {
+        it(name, async () => {
             await prepareUnitTest(
                 rootFile,
                 locations.testOutput(name),
@@ -30,9 +30,11 @@ describe('smoke', () => {
             )
         })
     })
+})
 
-    describe('index.js CommonJS', () => {
-        test.each(modelDirs)('$name', async ({ name, rootFile }) => {
+describe('index.js CommonJS', () => {
+    modelDirs.forEach(({ name, rootFile }) => {
+        it(name, async () => {
             await prepareUnitTest(
                 rootFile,
                 locations.testOutput(name),
@@ -44,9 +46,11 @@ describe('smoke', () => {
             )
         })
     })
+})
 
-    describe('index.js ESM', () => {
-        test.each(modelDirs)('$name', async ({ name, rootFile }) => {
+describe('index.js ESM', () => {
+    modelDirs.forEach(({ name, rootFile }) => {
+        it(name, async () => {
             await prepareUnitTest(
                 rootFile,
                 locations.testOutput(name),

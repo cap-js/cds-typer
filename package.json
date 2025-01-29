@@ -14,9 +14,9 @@
   "license": "Apache-2.0",
   "scripts": {
     "test:unit": "node --import ./test/setup.units.mjs --test ./test/unit/*.test.js",
-    "test:integration": "jest --projects test/int.jest.config.js",
-    "test:smoke": "jest --projects test/smoke.jest.config.js",
-    "test:all": "jest",
+    "test:integration": "node --import ./test/setup.int.mjs --test ./test/unit/*.test.js",
+    "test:smoke": "node --import ./test/setup.smoke.mjs  --test ./test/smoke/*.test.js",
+    "test:all": "npm run test:smoke && npm run test:unit",
     "test": "npm run test:smoke && npm run test:unit",
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix",
