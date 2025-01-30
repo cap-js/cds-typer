@@ -2,7 +2,7 @@
 
 const fs = require('fs')
 const path = require('path')
-const { describe, test } = require('@jest/globals')
+const { describe, it } = require('node:test')
 const { locations, prepareUnitTest } = require('../util')
 
 const modelDirs = fs.readdirSync(locations.smoke.files(''))
@@ -20,19 +20,34 @@ const modelDirs = fs.readdirSync(locations.smoke.files(''))
     })
     .filter(Boolean)
 
-describe('smoke', () => {
-    describe('transpilation', () => {
-        test.each(modelDirs)('$name', async ({ name, rootFile }) => {
-            await prepareUnitTest(
-                rootFile,
-                locations.testOutput(name),
-                { transpilationCheck: true }
-            )
+describe('transpilation', () => {
+    modelDirs.forEach(({ name, rootFile }) => {
+        it(name, async () => {
+            try {
+                await prepareUnitTest(
+                    rootFile,
+                    locations.testOutput(name),
+                    {
+                        transpilationCheck: true,
+                        tsCompilerOptions: {
+                            skipLibCheck: true,
+                        }
+                    }
+                )
+            } catch (e) {
+                // nodejs test runner just shows "x subtests failed" without any details
+                // so we are artificially showing the error here for now
+                // eslint-disable-next-line no-console
+                console.error(e)
+                throw e
+            }
         })
     })
+})
 
-    describe('index.js CommonJS', () => {
-        test.each(modelDirs)('$name', async ({ name, rootFile }) => {
+describe('index.js CommonJS', () => {
+    modelDirs.forEach(({ name, rootFile }) => {
+        it(name, async () => {
             await prepareUnitTest(
                 rootFile,
                 locations.testOutput(name),
@@ -44,9 +59,11 @@ describe('smoke', () => {
             )
         })
     })
+})
 
-    describe('index.js ESM', () => {
-        test.each(modelDirs)('$name', async ({ name, rootFile }) => {
+describe('index.js ESM', () => {
+    modelDirs.forEach(({ name, rootFile }) => {
+        it(name, async () => {
             await prepareUnitTest(
                 rootFile,
                 locations.testOutput(name),

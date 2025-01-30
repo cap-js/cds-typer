@@ -1,19 +1,20 @@
 'use strict'
 
-const { describe, beforeAll, test, expect } = require('@jest/globals')
+const { describe, before, it } = require('node:test')
+const assert = require('assert')
 const { locations, prepareUnitTest } = require('../util')
 
 describe('Delimited Identifiers', () => {
     let astw
 
-    beforeAll(async () => astw = (await prepareUnitTest('delimident/model.cds', locations.testOutput('delimident_test'))).astw)
+    before(async () => astw = (await prepareUnitTest('delimident/model.cds', locations.testOutput('delimident_test'))).astw)
 
-    test('Properties in Aspect Present', () => {
-        expect(astw.getAspectProperty('_FooAspect', 'sap-icon://a')).toBeTruthy()
+    it('should validate properties in aspect are present', () => {
+        assert.ok(astw.getAspectProperty('_FooAspect', 'sap-icon://a'))
         const nested = astw.getAspectProperty('_FooAspect', 'sap-icon://b')
-        expect(nested).toBeTruthy()
-        expect(nested.type.subtypes[0].members[0].name).toBe('sap-icon://c')
+        assert.ok(nested)
+        assert.strictEqual(nested.type.subtypes[0].members[0].name, 'sap-icon://c')
         const actions = astw.getAspectProperty('_FooAspect', 'actions')
-        expect(actions.type.members.find(fn => fn.name === 'sap-icon://f')).toBeTruthy()
+        assert.ok(actions.type.members.find(fn => fn.name === 'sap-icon://f'))
     })
 })

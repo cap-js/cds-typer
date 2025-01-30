@@ -1,34 +1,36 @@
 'use strict'
 
+const { describe, it, before } = require('node:test')
+const assert = require('assert')
 const { check } = require('../ast')
-const { beforeAll, describe, test } = require('@jest/globals')
 const { locations, prepareUnitTest } = require('../util')
-const { expect } = require('@jest/globals')
 
 describe('KeyOf', () => {
     let astw
 
-    beforeAll(async () => astw = (await prepareUnitTest('keys/model.cds', locations.testOutput('keys_test'))).astw)
+    before(async () => {
+        astw = (await prepareUnitTest('keys/model.cds', locations.testOutput('keys_test'))).astw
+    })
 
-    test('Type Correctly Wrapped For Key Property', () => {
+    it('should correctly wrap type for key property', () => {
         const c_ID = astw.getAspectProperty('_CAspect', 'c')
-        expect(check.isKeyOf(c_ID.type, check.isString)).toBe(true)
+        assert.ok(check.isKeyOf(c_ID.type, check.isString))
     })
 
-    test('Static Key Property Present', () => {
+    it('should have static key property present', () => {
         const keys = astw.getAspectProperty('_CAspect', 'keys')
-        expect(astw.getAspectProperty('_CAspect', 'keys')).toBeTruthy()
-        expect(check.isStaticMember(keys)).toBeTruthy()
+        assert.ok(keys)
+        assert.ok(check.isStaticMember(keys))
     })
 
-    test('Key Type Inherited', () => {
+    it('should inherit key type', () => {
         const keys = astw.getAspectProperty('_FooAspect', 'keys')
-        expect(astw.getAspectProperty('_CAspect', 'keys')).toBeTruthy()
-        expect(check.isStaticMember(keys)).toBeTruthy()
-        expect(keys.type.subtypes.length === 2)  // just Foo and cuid, no type for SomethingWithoutKey -> 2
-        expect(check.isIntersectionType(keys.type, [
+        assert.ok(astw.getAspectProperty('_CAspect', 'keys'))
+        assert.ok(check.isStaticMember(keys))
+        assert.strictEqual(keys.type.subtypes.length, 2)  // just Foo and cuid, no type for SomethingWithoutKey -> 2
+        assert.ok(check.isIntersectionType(keys.type, [
             st => check.isTypeReference(st, '___.KeysOf'),
             st => check.isTypeQuery(st)
-        ])).toBeTruthy()
+        ]))
     })
 })

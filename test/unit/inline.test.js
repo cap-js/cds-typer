@@ -1,13 +1,14 @@
 'use strict'
 
-const { describe, test, expect } = require('@jest/globals')
+const { describe, it } = require('node:test')
+const assert = require('assert')
 const { check } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 
 describe('Inline Type Declarations', () => {
-    test('Structured', async () => {
+    it('should verify structured inline type declarations', async () => {
         const astw = (await prepareUnitTest('inline/model.cds', locations.testOutput('inline_test_structured'))).astw
-        expect(astw.exists('_BarAspect', 'x', node => {
+        assert.ok(astw.exists('_BarAspect', 'x', node => {
             const { name, type } = node
             const [nonNullType] = type.subtypes
             const [a, y] = nonNullType.members
@@ -24,17 +25,17 @@ describe('Inline Type Declarations', () => {
                         && check.isNullable(c.type, [t => t.nodeType === 'typeReference' && t.args[0].full === 'Foo'])
                     && y.name === 'y'
                     && check.isNullable(y.type, [check.isString])
-        })).toBeTruthy()
+        }))
     })
 
-    test('Flat', async () => {
+    it('should verify flat inline type declarations', async () => {
         const astw = (await prepareUnitTest(
             'inline/model.cds',
             locations.testOutput('inline_test_flat'),
             { typerOptions: { inlineDeclarations: 'flat' } }
         )).astw
-        expect(astw.exists('_BarAspect', 'x_a_b', node => check.hasDeclareModifier(node) && check.isNullable(node.type, [check.isNumber]))).toBeTruthy()
-        expect(astw.exists('_BarAspect', 'x_y', node => check.hasDeclareModifier(node) && check.isNullable(node.type, [check.isString]))).toBeTruthy()
-        expect(astw.exists('_BarAspect', 'x_a_c', node => check.hasDeclareModifier(node) && check.isNullable(node.type, [m => m.name === 'to' && m.args[0].full === 'Foo' ]))).toBeTruthy()
+        assert.ok(astw.exists('_BarAspect', 'x_a_b', node => check.hasDeclareModifier(node) && check.isNullable(node.type, [check.isNumber])))
+        assert.ok(astw.exists('_BarAspect', 'x_y', node => check.hasDeclareModifier(node) && check.isNullable(node.type, [check.isString])))
+        assert.ok(astw.exists('_BarAspect', 'x_a_c', node => check.hasDeclareModifier(node) && check.isNullable(node.type, [m => m.name === 'to' && m.args[0].full === 'Foo' ])))
     })
 })

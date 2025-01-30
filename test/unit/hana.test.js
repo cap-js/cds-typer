@@ -1,6 +1,7 @@
 'use strict'
 
-const { beforeAll, describe, test, expect } = require('@jest/globals')
+const { before, describe, it } = require('node:test')
+const assert = require('assert')
 const { locations, prepareUnitTest } = require('../util')
 const { check } = require('../ast')
 
@@ -8,17 +9,21 @@ describe('Builtin HANA Datatypes', () => {
     let paths
     let astw
 
-    beforeAll(async () => ({astw, paths} = await prepareUnitTest('hana/model.cds', locations.testOutput('hana_files'))))
-
-    // the one module [1] + baseDefinitions [0] + hana definitions [2]
-    test('Output Files Created', () => expect(paths).toHaveLength(3))
-
-    test('Import of HANA Types Present', () => {
-        const imp = astw.getImports()
-        expect(imp.map(i=>i.as)).toContain('_cds_hana')
+    before(async () => {
+        ({astw, paths} = await prepareUnitTest('hana/model.cds', locations.testOutput('hana_files')))
     })
 
-    test('Types Correct', () => {
+    // the one module [1] + baseDefinitions [0] + hana definitions [2]
+    it('should create output files', () => {
+        assert.strictEqual(paths.length, 3)
+    })
+
+    it('should contain import of HANA types', () => {
+        const imp = astw.getImports()
+        assert.ok(imp.map(i => i.as).includes('_cds_hana'))
+    })
+
+    it('should have correct types', () => {
         astw.exists('_EverythingAspect', 'bar', ({type}) => check.isNullable(type, [check.isString]))
         astw.exists('_EverythingAspect', 'smallint', ({type}) => check.isNullable(type, [t => t.name === 'SMALLINT']))
         astw.exists('_EverythingAspect', 'tinyint', ({type}) => check.isNullable(type, [t => t.name === 'TINYINT']))

@@ -1,11 +1,11 @@
 const { configuration } = require('../../lib/config')
 const { basename, join } = require('path')
-const { describe, test } = require('@jest/globals')
+const { describe, it } = require('node:test')
 const cds = require('@sap/cds')
 const { fs } = cds.utils
 const { locations } = require('../util')
 
-describe('Generate, TS Check, Run ', () => {
+describe('Generate, TS Check, and Run Tests', () => {
 
     const tsDirs = fs.readdirSync(locations.unit.files(''))
         .map(dir => {
@@ -15,19 +15,22 @@ describe('Generate, TS Check, Run ', () => {
         })
         .filter(Boolean)
 
-    test.each(tsDirs)('%s', async (dir, modelFile='model.cds', testFile='model.ts') => {
-        const base = join(__dirname, 'files', dir, modelFile, '..')
-        const modelPath = join(base, modelFile)
-        const tsFile = join(base, testFile)
-        const out = join(base, '_out')
-        await runTyperAndTsCheck(modelPath, tsFile, out)
+    tsDirs.forEach(dir => {
+        it(`should process and run TypeScript files in ${dir}`, async () => {
+            const modelFile = 'model.cds'
+            const testFile = 'model.ts'
+            const base = join(__dirname, 'files', dir, modelFile, '..')
+            const modelPath = join(base, modelFile)
+            const tsFile = join(base, testFile)
+            const out = join(base, '_out')
+            await runTyperAndTsCheck(modelPath, tsFile, out)
 
-        // serve the services in a minimal way (no db, no express)
-        cds.root = base
-        cds.model = cds.linked(await cds.load(join(base, modelFile)))
-        await cds.serve('all').with(join(out, 'model.js')) // as service impl. the tsc-emitted js file is used
+            // serve the services in a minimal way (no db, no express)
+            cds.root = base
+            cds.model = cds.linked(await cds.load(join(base, modelFile)))
+            await cds.serve('all').with(join(out, 'model.js')) // as service impl. the tsc-emitted js file is used
+        })
     })
-
 })
 
 const typer = require('../../lib/compile')
@@ -55,6 +58,7 @@ async function runTyperAndTsCheck(model, testTsFile, outputDirectory, parameters
     await checkTranspilation([testTsFile, ...tsFiles], {
         noEmit: false, // need to have the model.js file so that we can run it later
         outDir: emitDir,
+        skipLibCheck: true,
         paths: {
             '#cds-models/*': [ join(outputDirectory, '/*/index.ts') ],
             '#cds-models': [ join(outputDirectory, '/index.ts') ]
@@ -72,6 +76,5 @@ async function runTyperAndTsCheck(model, testTsFile, outputDirectory, parameters
             '#cds-models/*': './*/index.js'
         }
     }, null, 2))
-
 }
 

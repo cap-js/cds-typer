@@ -1,19 +1,20 @@
 'use strict'
 
 const path = require('path')
-const { beforeAll, describe, test, expect } = require('@jest/globals')
+const { before, describe, it } = require('node:test')
+const assert = require('assert')
 const { JSASTWrapper, check } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 
-describe('Compilation', () => {
+describe('Compilation Tests', () => {
     let paths
     let astw
 
-    describe('Bookshoplet', () => {
+    describe('Bookshoplet Tests', () => {
 
-        beforeAll(async () => ({paths, astw} = await prepareUnitTest('bookshoplet/model.cds', locations.testOutput('output_test/bookshoplet'))))
+        before(async () => ({paths, astw} = await prepareUnitTest('bookshoplet/model.cds', locations.testOutput('output_test/bookshoplet'))))
 
-        test('index.js', async () => {
+        it('should verify exports in index.js', async () => {
             const jsw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'))
             jsw.exportsAre([
                 ['Book', 'Books'],
@@ -39,9 +40,9 @@ describe('Compilation', () => {
             ])
         })
 
-        test('Generated Paths', () => expect(paths).toHaveLength(2)) // the one module [1] + baseDefinitions [0]
+        it('should verify generated paths', () => assert.strictEqual(paths.length, 2))
 
-        test('Aspects', () => {
+        it('should verify aspects', () => {
             const aspects = astw.getAspects()
             const expected = [
                 '_BookAspect',
@@ -54,11 +55,11 @@ describe('Compilation', () => {
                 '_EAspect',
                 '_QueryEntityAspect',
             ]
-            expect(aspects.length).toBe(expected.length)
-            expect(aspects.map(({name}) => name)).toEqual(expect.arrayContaining(expected))
+            assert.strictEqual(aspects.length, expected.length)
+            assert.deepStrictEqual(aspects.map(({name}) => name), expected)
         })
 
-        test('Aspect Functions', () => {
+        it('should verify aspect functions', () => {
             const fns = astw.getAspectFunctions()
             const expected = [
                 '_BookAspect',
@@ -71,11 +72,11 @@ describe('Compilation', () => {
                 '_EAspect',
                 '_QueryEntityAspect',
             ]
-            expect(fns.length).toBe(expected.length)
-            expect(fns.map(({name}) => name)).toEqual(expect.arrayContaining(expected))
+            assert.strictEqual(fns.length, expected.length)
+            assert.deepStrictEqual(fns.map(({name}) => name), expected)
         })
 
-        test('Classes', () => {
+        it('should verify classes', () => {
             const fns = astw.getTopLevelClassDeclarations()
             const expected = [
                 'Book',
@@ -97,92 +98,88 @@ describe('Compilation', () => {
                 'QueryEntity',
                 'QueryEntity_',
             ]
-            expect(fns.length).toBe(expected.length)
-            expect(fns.map(({name}) => name)).toEqual(expect.arrayContaining(expected))
+            assert.strictEqual(fns.length, expected.length)
+            assert.deepStrictEqual(fns.map(({name}) => name), expected)
         })
     })
 
-    describe('Builtin Types', () => {
-        test('Primitives', async () => {
+    describe('Builtin Types Tests', () => {
+        it('should verify primitive types', async () => {
             const astw = (await prepareUnitTest('builtins/model.cds', locations.testOutput('output_test/builtin'))).astw
-            expect(astw.exists('_EAspect', 'uuid', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'str', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'bin', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
-            // expect(astw.exists('_EAspect', 'vec', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'lstr', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'lbin', m => check.isUnionType(m.type, [
+            assert.ok(astw.exists('_EAspect', 'uuid', m => check.isNullable(m.type, [check.isString])))
+            assert.ok(astw.exists('_EAspect', 'str', m => check.isNullable(m.type, [check.isString])))
+            assert.ok(astw.exists('_EAspect', 'bin', m => check.isNullable(m.type, [check.isString])))
+            // assert.ok(astw.exists('_EAspect', 'vec', m => check.isNullable(m.type, [check.isString])))
+            assert.ok(astw.exists('_EAspect', 'lstr', m => check.isNullable(m.type, [check.isString])))
+            assert.ok(astw.exists('_EAspect', 'lbin', m => check.isUnionType(m.type, [
                 st => st.full === 'Buffer',
                 check.isString
-            ]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'integ', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'uint8', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'int16', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'int32', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'int64', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'integer64', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'dec', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'doub', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'd', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsDate')]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 't', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTime')]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'dt', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsDateTime')]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'ts', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTimestamp')]))).toBeTruthy()
+            ])))
+            assert.ok(astw.exists('_EAspect', 'integ', m => check.isNullable(m.type, [check.isNumber])))
+            assert.ok(astw.exists('_EAspect', 'uint8', m => check.isNullable(m.type, [check.isNumber])))
+            assert.ok(astw.exists('_EAspect', 'int16', m => check.isNullable(m.type, [check.isNumber])))
+            assert.ok(astw.exists('_EAspect', 'int32', m => check.isNullable(m.type, [check.isNumber])))
+            assert.ok(astw.exists('_EAspect', 'int64', m => check.isNullable(m.type, [check.isNumber])))
+            assert.ok(astw.exists('_EAspect', 'integer64', m => check.isNullable(m.type, [check.isNumber])))
+            assert.ok(astw.exists('_EAspect', 'dec', m => check.isNullable(m.type, [check.isNumber])))
+            assert.ok(astw.exists('_EAspect', 'doub', m => check.isNullable(m.type, [check.isNumber])))
+            assert.ok(astw.exists('_EAspect', 'd', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsDate')])))
+            assert.ok(astw.exists('_EAspect', 't', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTime')])))
+            assert.ok(astw.exists('_EAspect', 'dt', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsDateTime')])))
+            assert.ok(astw.exists('_EAspect', 'ts', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTimestamp')])))
         })
 
-        test('IEEE754', async () => {
-            // nothing should change compared to the previous test, except for the type of 'dec' and 'doub'
-
-            // (number | string)
+        it('should verify IEEE754 types', async () => {
             const ieee754 = m => check.isParenthesizedType(m, st => check.isUnionType(st, [check.isNumber, check.isString]))
 
             const astw = (await prepareUnitTest('builtins/model.cds', locations.testOutput('output_test/builtin'), {
                 typerOptions: { IEEE754Compatible: true }
             })).astw
-            expect(astw.exists('_EAspect', 'uuid', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'str', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'bin', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
-            // expect(astw.exists('_EAspect', 'vec', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'lstr', m => check.isNullable(m.type, [check.isString]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'lbin', m => check.isUnionType(m.type, [
+            assert.ok(astw.exists('_EAspect', 'uuid', m => check.isNullable(m.type, [check.isString])))
+            assert.ok(astw.exists('_EAspect', 'str', m => check.isNullable(m.type, [check.isString])))
+            assert.ok(astw.exists('_EAspect', 'bin', m => check.isNullable(m.type, [check.isString])))
+            // assert.ok(astw.exists('_EAspect', 'vec', m => check.isNullable(m.type, [check.isString])))
+            assert.ok(astw.exists('_EAspect', 'lstr', m => check.isNullable(m.type, [check.isString])))
+            assert.ok(astw.exists('_EAspect', 'lbin', m => check.isUnionType(m.type, [
                 st => st.full === 'Buffer',
                 check.isString
-            ]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'integ', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'uint8', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'int16', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'int32', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'int64', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'integer64', m => check.isNullable(m.type, [check.isNumber]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'dec', m => check.isNullable(m.type, [ieee754]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'doub', m => check.isNullable(m.type, [ieee754]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'd', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsDate')]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 't', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTime')]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'dt', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsDateTime')]))).toBeTruthy()
-            expect(astw.exists('_EAspect', 'ts', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTimestamp')]))).toBeTruthy()
+            ])))
+            assert.ok(astw.exists('_EAspect', 'integ', m => check.isNullable(m.type, [check.isNumber])))
+            assert.ok(astw.exists('_EAspect', 'uint8', m => check.isNullable(m.type, [check.isNumber])))
+            assert.ok(astw.exists('_EAspect', 'int16', m => check.isNullable(m.type, [check.isNumber])))
+            assert.ok(astw.exists('_EAspect', 'int32', m => check.isNullable(m.type, [check.isNumber])))
+            assert.ok(astw.exists('_EAspect', 'int64', m => check.isNullable(m.type, [check.isNumber])))
+            assert.ok(astw.exists('_EAspect', 'integer64', m => check.isNullable(m.type, [check.isNumber])))
+            assert.ok(astw.exists('_EAspect', 'dec', m => check.isNullable(m.type, [ieee754])))
+            assert.ok(astw.exists('_EAspect', 'doub', m => check.isNullable(m.type, [ieee754])))
+            assert.ok(astw.exists('_EAspect', 'd', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsDate')])))
+            assert.ok(astw.exists('_EAspect', 't', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTime')])))
+            assert.ok(astw.exists('_EAspect', 'dt', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsDateTime')])))
+            assert.ok(astw.exists('_EAspect', 'ts', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTimestamp')])))
         })
     })
 
-    describe('Inflection', () => {
+    describe('Inflection Tests', () => {
         let paths
         let astw
 
-        beforeAll(async () => ({paths, astw} = await prepareUnitTest('inflection/model.cds', locations.testOutput('output_test/inflection'))))
+        before(async () => ({paths, astw} = await prepareUnitTest('inflection/model.cds', locations.testOutput('output_test/inflection'))))
 
+        it('should verify generated paths', () => assert.strictEqual(paths.length, 2))
 
-        test('Generated Paths', () => expect(paths).toHaveLength(2)) // the one module [1] + baseDefinitions [0]
-
-        test('index.js', async () => {
+        it('should verify exports in index.js', async () => {
             const jsw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'))
             jsw.exportsAre([
                 ['Gizmo', 'Gizmos'],
                 ['Gizmos', 'Gizmos'],
                 ['FooSingular', 'Foos'],
                 ['Foos', 'Foos'],
-                ['Bar', 'Bars'],  // this one...
+                ['Bar', 'Bars'],
                 ['BarPlural', 'Bars'],
                 ['Bars', 'Bars'],
                 ['BazSingular', 'Bazes'],
                 ['BazPlural', 'Bazes'],
-                ['Bazes', 'Bazes'],  // ...and this one...
+                ['Bazes', 'Bazes'],
                 ['A_', 'A'],
                 ['A', 'A'],
                 ['C', 'C'],
@@ -196,13 +193,9 @@ describe('Compilation', () => {
                 ['Referer', 'Referer'],
                 ['Referer_', 'Referer'],
             ])
-            // ...are currently exceptions where both singular _and_ plural
-            // are annotated and the original name is used as an export on top of that.
-            // So _three_ exports per entity. If we ever choose to remove this third one,
-            // then this test has to reflect that.
         })
 
-        test('Aspects', () => {
+        it('should verify aspects', () => {
             const aspects = astw.getAspects()
             const expected = [
                 '_GizmoAspect',
@@ -216,12 +209,12 @@ describe('Compilation', () => {
                 '_CSubAspect',
                 '_DSubAspect'
             ]
-            expect(aspects.length).toBe(expected.length)
-            expect(aspects.map(({name}) => name)).toEqual(expect.arrayContaining(expected))
+            assert.strictEqual(aspects.length, expected.length)
+            assert.deepStrictEqual(aspects.map(({name}) => name).sort(), expected.sort())
         })
 
-        test('Classes', () => {
-            const fns = astw.getTopLevelClassDeclarations()
+        it('should verify classes', () => {
+            const fns = astw.getTopLevelClassDeclarations().map(({name}) => name).sort()
             const expected = [
                 'Gizmo',
                 'Gizmos',
@@ -235,7 +228,7 @@ describe('Compilation', () => {
                 'A_',
                 'C',
                 'LotsOfCs',
-                'D',
+                'OneSingleD',
                 'D',
                 'Referer',
                 'Referer_',
@@ -243,43 +236,43 @@ describe('Compilation', () => {
                 'DSub_',
                 'CSub',
                 'CSub_'
-            ]
-            expect(fns.map(({name}) => name)).toEqual(expect.arrayContaining(expected))
-            expect(fns.length).toBe(expected.length)
+            ].sort()
+            assert.strictEqual(fns.length, expected.length)
+            assert.deepStrictEqual(fns, expected.sort())
         })
 
-        test('Annotated Assoc/ Comp', () => {
-            expect(astw.exists('_RefererAspect', 'a', m => check.isNullable(m.type, [
+        it('should verify annotated associations and compositions', () => {
+            assert.ok(astw.exists('_RefererAspect', 'a', m => check.isNullable(m.type, [
                 ({name, args}) => name === 'to' && args[0].name === 'BazSingular'
-            ]))).toBeTruthy()
-            expect(astw.exists('_RefererAspect', 'b', m =>
+            ])))
+            assert.ok(astw.exists('_RefererAspect', 'b', m =>
                 m.type.name === 'many'
                     && m.type.args[0].name === 'BazPlural'
-            )).toBeTruthy()
-            expect(astw.exists('_RefererAspect', 'c', m => check.isNullable(m.type, [
+            ))
+            assert.ok(astw.exists('_RefererAspect', 'c', m => check.isNullable(m.type, [
                 ({name, args}) => name === 'of' && args[0].name === 'BazSingular'
-            ]))).toBeTruthy()
-            expect(astw.exists('_RefererAspect', 'd', m =>
+            ])))
+            assert.ok(astw.exists('_RefererAspect', 'd', m =>
                 m.type.name === 'many'
                     && m.type.args[0].name === 'BazPlural'
-            )).toBeTruthy()
+            ))
         })
 
-        test('Inferred Assoc/ Comp', () => {
-            expect(astw.exists('_RefererAspect', 'e', m => check.isNullable(m.type, [
+        it('should verify inferred associations and compositions', () => {
+            assert.ok(astw.exists('_RefererAspect', 'e', m => check.isNullable(m.type, [
                 ({name, args}) => name === 'to' && args[0].name === 'Gizmo'
-            ]))).toBeTruthy()
-            expect(astw.exists('_RefererAspect', 'f', m =>
+            ])))
+            assert.ok(astw.exists('_RefererAspect', 'f', m =>
                 m.type.name === 'many'
                     && m.type.args[0].name === 'Gizmos'
-            )).toBeTruthy()
-            expect(astw.exists('_RefererAspect', 'g', m => check.isNullable(m.type, [
+            ))
+            assert.ok(astw.exists('_RefererAspect', 'g', m => check.isNullable(m.type, [
                 ({name, args}) => name === 'of' && args[0].name === 'Gizmo'
-            ]))).toBeTruthy()
-            expect(astw.exists('_RefererAspect', 'h', m =>
+            ])))
+            assert.ok(astw.exists('_RefererAspect', 'h', m =>
                 m.type.name === 'many'
                     && m.type.args[0].name === 'Gizmos'
-            )).toBeTruthy()
+            ))
         })
     })
 })

@@ -1,57 +1,57 @@
 'use strict'
 
-const { describe, beforeAll, test, expect } = require('@jest/globals')
+const { describe, before, it } = require('node:test')
+const assert = require('assert')
 const { checkFunction, check } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 
-describe('array of', () => {
+describe('Array Of', () => {
     let astw
 
-    beforeAll(async () => astw = (await prepareUnitTest('arrayof/model.cds', locations.testOutput('arrayof_test'))).astw)
+    before(async () => astw = (await prepareUnitTest('arrayof/model.cds', locations.testOutput('arrayof_test'))).astw)
 
     describe('Entity Properties', () => {
         let aspect
-        beforeAll(async () => aspect = astw.tree.find(n => n.name === '_EAspect').body[0])
+        before(async () => aspect = astw.tree.find(n => n.name === '_EAspect').body[0])
 
-        test('array of String', async () => {
-            expect(aspect.members.find(m => m.name === 'stringz'
+        it('should validate array of String', async () => {
+            assert.ok(aspect.members.find(m => m.name === 'stringz'
                 && m.type.full === 'Array'
-                && check.isString(m.type.args[0]))).toBeTruthy()
+                && check.isString(m.type.args[0])))
         })
 
-        test('many Integer', async () => {
-            expect(aspect.members.find(m => m.name === 'numberz'
+        it('should validate many Integer', async () => {
+            assert.ok(aspect.members.find(m => m.name === 'numberz'
                 && m.type.full === 'Array'
-                && check.isNumber(m.type.args[0]))).toBeTruthy()
+                && check.isNumber(m.type.args[0])))
         })
 
-        test('array of locally defined type', async () => {
-            expect(aspect.members.find(m => m.name === 'tz'
+        it('should validate array of locally defined type', async () => {
+            assert.ok(aspect.members.find(m => m.name === 'tz'
                 && m.type.full === 'Array'
-                && m.type.args[0].full === 'T')).toBeTruthy()
+                && m.type.args[0].full === 'T'))
         })
 
-        test('array of externally defined type', async () => {
-            expect(aspect.members.find(m => m.name === 'extz'
+        it('should validate array of externally defined type', async () => {
+            assert.ok(aspect.members.find(m => m.name === 'extz'
                 && m.type.full === 'Array'
-                && m.type.args[0].full === '_elsewhere.ExternalType')).toBeTruthy()
+                && m.type.args[0].full === '_elsewhere.ExternalType'))
         })
 
-        test('array of inline type type', async () => {
-            expect(aspect.members.find(m => m.name === 'inlinez'
+        it('should validate array of inline type', async () => {
+            assert.ok(aspect.members.find(m => m.name === 'inlinez'
                 && m.type.full === 'Array'
                 && m.type.args[0].keyword === 'typeliteral'
-                && m.type.args[0].members.length === 2)).toBeTruthy()
+                && m.type.args[0].members.length === 2))
         })
     })
 
     describe('Function', () => {
         let func
-        beforeAll(async () => func = astw.tree.find(n => n.name === 'fn'))
+        before(async () => func = astw.tree.find(n => n.name === 'fn'))
 
-        test('Returning array of String', async () => {
-            //expect(func.type.type.full === 'Array' && func.type.type.args[0].keyword === 'string').toBeTruthy()
-            expect(checkFunction(func, {
+        it('should validate function returning array of String', async () => {
+            assert.ok(checkFunction(func, {
                 callCheck: signature => check.isString(signature.subtypes[0].args[0].args[0]),
                 parameterCheck: params => params.members?.[0]?.name === 'xs',
                 returnTypeCheck: returns => check.isString(returns.subtypes[0].args[0].args[0])
@@ -60,8 +60,8 @@ describe('array of', () => {
 
         /*
         // should re-enable these at some point. Needs to do proper function parsing in AST.
-        test('Taking array of Number as Parameter', async () => {
-            expect(func.type.type.full === 'Array' && func.type.type.args[0].keyword === 'string').toBeTruthy()
+        it('should validate function taking array of Number as parameter', async () => {
+            assert.ok(func.type.type.full === 'Array' && func.type.type.args[0].keyword === 'string')
         })
         */
     })

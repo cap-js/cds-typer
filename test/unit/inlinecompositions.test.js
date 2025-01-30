@@ -1,7 +1,8 @@
 'use strict'
 
 const path = require('path')
-const { describe, test, expect } = require('@jest/globals')
+const { describe, it } = require('node:test')
+const assert = require('assert')
 const { JSASTWrapper } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 
@@ -11,18 +12,15 @@ const { locations, prepareUnitTest } = require('../util')
 
 describe('Inline compositions', () => {
 
-    test.each([
-        ['with entities proxy', { useEntitiesProxy: true }],
-        ['with direct csn export', {}],
-    ])('Test exports > %s', async (_, typerOptions) => {
+    it('should test exports with entities proxy', async () => {
         const paths = (
             await prepareUnitTest('inlinecompositions/model.cds', locations.testOutput('inlinecompositions_test'), {
-                typerOptions,
+                typerOptions: { useEntitiesProxy: true },
             })
         ).paths
         const jsw = await JSASTWrapper.initialise(
             path.join(paths[1], 'index.js'),
-            typerOptions?.useEntitiesProxy ?? false
+            true
         )
         jsw.exportsAre([
             ['Genre', 'Genres'],
@@ -43,34 +41,68 @@ describe('Inline compositions', () => {
             ['Books.publishers.office', 'Books.publishers.offices'],
             ['Books.publishers.offices', 'Books.publishers.offices'],
         ])
-        expect(jsw.getExport('Genre.code').rhs).toEqual({ Fiction: 'Fiction' })
-        expect(jsw.getExport('Genres.text.code')?.rhs).toEqual({ Fiction: 'Fiction' })
-        expect(jsw.getExport('Books.publisher.type')?.rhs).toEqual({ self: 'self', independent: 'independent' })
-        expect(jsw.getExport('Books.publishers.office.size')?.rhs).toEqual({
+        assert.deepStrictEqual(jsw.getExport('Genre.code').rhs, { Fiction: 'Fiction' })
+        assert.deepStrictEqual(jsw.getExport('Genres.text.code')?.rhs, { Fiction: 'Fiction' })
+        assert.deepStrictEqual(jsw.getExport('Books.publisher.type')?.rhs, { self: 'self', independent: 'independent' })
+        assert.deepStrictEqual(jsw.getExport('Books.publishers.office.size')?.rhs, {
             small: 'small',
             medium: 'medium',
             large: 'large',
         })
 
-        if (typerOptions?.useEntitiesProxy) {
-            jsw.hasProxyExport('Genres.text', ['code'])
-            jsw.hasProxyExport('Books.publisher', ['type'])
-            jsw.hasProxyExport('Books.publishers.office', ['size'])
-        }
+        jsw.hasProxyExport('Genres.text', ['code'])
+        jsw.hasProxyExport('Books.publisher', ['type'])
+        jsw.hasProxyExport('Books.publishers.office', ['size'])
     })
 
-    test.each([
-        ['with entities proxy', { useEntitiesProxy: true }],
-        ['with direct csn export', {}],
-    ])('Test service exports > %s', async (_, typerOptions) => {
+    it('should test exports with direct csn export', async () => {
         const paths = (
             await prepareUnitTest('inlinecompositions/model.cds', locations.testOutput('inlinecompositions_test'), {
-                typerOptions,
+                typerOptions: {},
+            })
+        ).paths
+        const jsw = await JSASTWrapper.initialise(
+            path.join(paths[1], 'index.js'),
+            false
+        )
+        jsw.exportsAre([
+            ['Genre', 'Genres'],
+            ['Genres', 'Genres'],
+            ['Bestseller', 'Books'],
+            ['Bestsellers', 'Books'],
+            ['Books', 'Books'],
+            ['Genres.text', 'Genres.texts'],
+            ['Genres.texts', 'Genres.texts'],
+            ['Books.publisher', 'Books.publishers'],
+            ['Books.publishers', 'Books.publishers'],
+            ['Books.publishers.PEditor', 'Books.publishers.intEditors'],
+            ['Books.publishers.PEditors', 'Books.publishers.intEditors'],
+            ['Books.publishers.intEditors', 'Books.publishers.intEditors'],
+            ['Books.publishers.EEditor', 'Books.publishers.extEditors'],
+            ['Books.publishers.EEditors', 'Books.publishers.extEditors'],
+            ['Books.publishers.extEditors', 'Books.publishers.extEditors'],
+            ['Books.publishers.office', 'Books.publishers.offices'],
+            ['Books.publishers.offices', 'Books.publishers.offices'],
+        ])
+        assert.deepStrictEqual(jsw.getExport('Genre.code').rhs, { Fiction: 'Fiction' })
+        assert.deepStrictEqual(jsw.getExport('Genres.text.code')?.rhs, { Fiction: 'Fiction' })
+        assert.deepStrictEqual(jsw.getExport('Books.publisher.type')?.rhs, { self: 'self', independent: 'independent' })
+        assert.deepStrictEqual(jsw.getExport('Books.publishers.office.size')?.rhs, {
+            small: 'small',
+            medium: 'medium',
+            large: 'large',
+        })
+    })
+
+    it('should test service exports with entities proxy', async () => {
+        const paths = (
+            await prepareUnitTest('inlinecompositions/model.cds', locations.testOutput('inlinecompositions_test'), {
+                typerOptions: { useEntitiesProxy: true },
             })
         ).paths
         const jsw = await JSASTWrapper.initialise(
             path.join(paths[2], 'index.js'),
-            typerOptions?.useEntitiesProxy ?? false
+            true
         )
         jsw.exportsAre([
             ['Genre', 'Genres'],
@@ -91,19 +123,56 @@ describe('Inline compositions', () => {
             ['Books.publishers.office', 'Books.publishers.offices'],
             ['Books.publishers.offices', 'Books.publishers.offices'],
         ])
-        expect(jsw.getExport('Genre.code').rhs).toEqual({ Fiction: 'Fiction' })
-        expect(jsw.getExport('Genres.text.code')?.rhs).toEqual({ Fiction: 'Fiction' })
-        expect(jsw.getExport('Books.publisher.type')?.rhs).toEqual({ self: 'self', independent: 'independent' })
-        expect(jsw.getExport('Books.publishers.office.size')?.rhs).toEqual({
+        assert.deepStrictEqual(jsw.getExport('Genre.code').rhs, { Fiction: 'Fiction' })
+        assert.deepStrictEqual(jsw.getExport('Genres.text.code')?.rhs, { Fiction: 'Fiction' })
+        assert.deepStrictEqual(jsw.getExport('Books.publisher.type')?.rhs, { self: 'self', independent: 'independent' })
+        assert.deepStrictEqual(jsw.getExport('Books.publishers.office.size')?.rhs, {
             small: 'small',
             medium: 'medium',
             large: 'large',
         })
 
-        if (typerOptions?.useEntitiesProxy) {
-            jsw.hasProxyExport('Genres.text', ['code'])
-            jsw.hasProxyExport('Books.publisher', ['type'])
-            jsw.hasProxyExport('Books.publishers.office', ['size'])
-        }
+        jsw.hasProxyExport('Genres.text', ['code'])
+        jsw.hasProxyExport('Books.publisher', ['type'])
+        jsw.hasProxyExport('Books.publishers.office', ['size'])
+    })
+
+    it('should test service exports with direct csn export', async () => {
+        const paths = (
+            await prepareUnitTest('inlinecompositions/model.cds', locations.testOutput('inlinecompositions_test'), {
+                typerOptions: {},
+            })
+        ).paths
+        const jsw = await JSASTWrapper.initialise(
+            path.join(paths[2], 'index.js'),
+            false
+        )
+        jsw.exportsAre([
+            ['Genre', 'Genres'],
+            ['Genres', 'Genres'],
+            ['Book', 'Books'],
+            ['Books', 'Books'],
+            ['Books', 'Books'],
+            ['Genres.text', 'Genres.texts'],
+            ['Genres.texts', 'Genres.texts'],
+            ['Books.publisher', 'Books.publishers'],
+            ['Books.publishers', 'Books.publishers'],
+            ['Books.publishers.PEditor', 'Books.publishers.intEditors'],
+            ['Books.publishers.PEditors', 'Books.publishers.intEditors'],
+            ['Books.publishers.intEditors', 'Books.publishers.intEditors'],
+            ['Books.publishers.EEditor', 'Books.publishers.extEditors'],
+            ['Books.publishers.EEditors', 'Books.publishers.extEditors'],
+            ['Books.publishers.extEditors', 'Books.publishers.extEditors'],
+            ['Books.publishers.office', 'Books.publishers.offices'],
+            ['Books.publishers.offices', 'Books.publishers.offices'],
+        ])
+        assert.deepStrictEqual(jsw.getExport('Genre.code').rhs, { Fiction: 'Fiction' })
+        assert.deepStrictEqual(jsw.getExport('Genres.text.code')?.rhs, { Fiction: 'Fiction' })
+        assert.deepStrictEqual(jsw.getExport('Books.publisher.type')?.rhs, { self: 'self', independent: 'independent' })
+        assert.deepStrictEqual(jsw.getExport('Books.publishers.office.size')?.rhs, {
+            small: 'small',
+            medium: 'medium',
+            large: 'large',
+        })
     })
 })
