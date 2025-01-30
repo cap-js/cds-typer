@@ -8,7 +8,7 @@
 // "test:smoke": "node --import ./test/smoke/setup.mjs --test './test/smoke/*.test.js'",
 //
 // again.
-const { execSync, execFileSync } = require('child_process')
+const { execFileSync } = require('child_process')
 const path = require('path')
 const fs = require('fs')
 
