@@ -30,6 +30,7 @@ jobs:
   unit-tests:
     needs: smoke-tests # to avoid writing over each others output
     strategy:
+      fail-fast: false
       matrix:
         version: [22, 18]
         platform: [ macos-latest, ubuntu-latest, windows-latest ]
@@ -49,6 +50,7 @@ jobs:
   integration-tests:
     needs: smoke-tests
     strategy:
+      fail-fast: false
       matrix:
         version: [22, 18]
         platform: [ macos-latest, ubuntu-latest, windows-latest ]
