@@ -2,6 +2,7 @@
 
 const fs = require('fs')
 const path = require('path')
+const assert = require('assert')
 const { describe, it } = require('node:test')
 const { locations, prepareUnitTest } = require('../util')
 
@@ -23,11 +24,24 @@ const modelDirs = fs.readdirSync(locations.smoke.files(''))
 describe('transpilation', () => {
     modelDirs.forEach(({ name, rootFile }) => {
         it(name, async () => {
-            await prepareUnitTest(
-                rootFile,
-                locations.testOutput(name),
-                { transpilationCheck: true }
-            )
+            try {
+                await prepareUnitTest(
+                    rootFile,
+                    locations.testOutput(name),
+                    {
+                        transpilationCheck: true,
+                        tsCompilerOptions: {
+                            skipLibCheck: true,
+                        }
+                    }
+                )
+            } catch (e) {
+                // nodejs test runner just shows "x subtests failed" without any details
+                // so we are artificially showing the error here for now
+                // eslint-disable-next-line no-console
+                console.error(e)
+                throw e
+            }
         })
     })
 })

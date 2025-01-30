@@ -165,6 +165,7 @@ const createProject = (projDir, options = {}) => {
  * @property {boolean} transpilationCheck - whether to check the transpilation of the generated files
  * @property {boolean} javascriptCheck - whether to check the index.js files for consistency (being parsable by acorn)
  * @property {Parameters<import('acorn').parse>[1]} javascriptCheckParameters - parameters to pass to acorn.parse
+ * @property {import('typescript').CompilerOptions} tsCompilerOptions - options to be passed to the TypeScript compiler
  */
 
 /**
@@ -179,7 +180,8 @@ async function prepareUnitTest(model, outputDirectory, parameters = {}) {
         fileSelector: paths => (paths ?? []).find(p => !p.endsWith('_')),
         transpilationCheck: false,
         javascriptCheck: false,
-        javascriptCheckParameters: { ecmaVersion: 'latest' }
+        javascriptCheckParameters: { ecmaVersion: 'latest' },
+        tsCompilerOptions: {}
     }
     parameters = { ...defaults, ...parameters }
 
@@ -190,7 +192,7 @@ async function prepareUnitTest(model, outputDirectory, parameters = {}) {
         const tsFiles = paths.map(p => path.join(p, 'index.ts'))
         // create a package.json w/ common dependencies in a higher dir so that they can be reused by many tests
         createProject(path.resolve(outputDirectory, '../..'))
-        await checkTranspilation(tsFiles)
+        await checkTranspilation(tsFiles, parameters.tsCompilerOptions)
     }
 
     if (parameters.javascriptCheck) {
