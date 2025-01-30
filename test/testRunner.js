@@ -8,7 +8,7 @@
 // "test:smoke": "node --import ./test/smoke/setup.mjs --test './test/smoke/*.test.js'",
 //
 // again.
-const { execSync } = require('child_process')
+const { execSync, execFileSync } = require('child_process')
 const path = require('path')
 const fs = require('fs')
 
@@ -25,5 +25,4 @@ if (testFiles.length === 0) {
     process.exit(1)
 }
 
-const command = `node --import ${setupFile} --test ${testFiles.join(' ')}`
-execSync(command, { stdio: 'inherit' })
+execFileSync('node', ['--import', setupFile, '--test', testFiles.join(' ')], { stdio: 'inherit' })
