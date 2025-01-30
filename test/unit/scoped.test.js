@@ -10,7 +10,7 @@ describe('Scoped Entities Tests', () => {
     before(async () => astw = (await prepareUnitTest('scoped/model.cds', locations.testOutput('scoped_test'))).astw)
 
     it('should verify namespace existence', () => assert.ok(astw.getModuleDeclaration('Name')))
-    
+
     it('should verify namespace entity existence', () => assert.ok(astw.getAspect('_NameAspect')))
 
     it('should verify entities within namespace', () => {

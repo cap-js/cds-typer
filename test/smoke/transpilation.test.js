@@ -2,7 +2,6 @@
 
 const fs = require('fs')
 const path = require('path')
-const assert = require('assert')
 const { describe, it } = require('node:test')
 const { locations, prepareUnitTest } = require('../util')
 
