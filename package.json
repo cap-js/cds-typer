@@ -13,9 +13,9 @@
   "author": "SAP SE (https://www.sap.com)",
   "license": "Apache-2.0",
   "scripts": {
-    "test:unit": "node --import ./test/unit/setup.mjs --test ./test/unit/*.test.js",
-    "test:integration": "node --import ./test/integration/setup.mjs --test ./test/unit/*.test.js",
-    "test:smoke": "node --import ./test/smoke/setup.mjs  --test ./test/smoke/*.test.js",
+    "test:unit": "node --import ./test/unit/setup.mjs --test './test/unit/*.test.js'",
+    "test:integration": "node --import ./test/integration/setup.mjs --test './test/unit/*.test.js'",
+    "test:smoke": "node --import ./test/smoke/setup.mjs --test './test/smoke/*.test.js'",
     "test:all": "npm run test:smoke && npm run test:unit",
     "test": "npm run test:smoke && npm run test:unit",
     "lint": "npx eslint .",
