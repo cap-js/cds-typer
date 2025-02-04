@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Support new `cds.Map` type, which is emitted as `: object`
 ### Changed
 - `CHANGELOG.md` and `LICENSE` files are no longer part of the npm package.
 
