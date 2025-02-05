@@ -1,111 +1,112 @@
 'use strict'
 
 const path = require('path')
-const { describe, test, expect } = require('@jest/globals')
+const { describe, it } = require('node:test')
+const assert = require('assert')
 const { Buffer, Path, SourceFile } = require('../../lib/file')
 
-describe('Buffer', () => {
+describe('Buffer Tests', () => {
     const buffer = new Buffer(' ')
-    test('No Indent', () => expect(buffer.currentIndent).toBe(''))
-    test('One Indent', () => {
+    it('should have no indent initially', () => assert.strictEqual(buffer.currentIndent, ''))
+    it('should have one indent after indenting once', () => {
         buffer.indent()
-        expect(buffer.currentIndent).toBe(' ')
+        assert.strictEqual(buffer.currentIndent, ' ')
     })
-    test('Two Indent', () => {
+    it('should have two indents after indenting twice', () => {
         buffer.indent()
-        expect(buffer.currentIndent).toBe('  ')
+        assert.strictEqual(buffer.currentIndent, '  ')
     })
-    test('One Outdent', () => {
+    it('should have one indent after outdenting once', () => {
         buffer.outdent()
-        expect(buffer.currentIndent).toBe(' ')
+        assert.strictEqual(buffer.currentIndent, ' ')
     })
-    test('Two Outdent', () => {
+    it('should have no indent after outdenting twice', () => {
         buffer.outdent()
-        expect(buffer.currentIndent).toBe('')
+        assert.strictEqual(buffer.currentIndent, '')
     })
-    test('Three Outdent', () => {
-        expect(buffer.outdent).toThrow()
-        expect(buffer.currentIndent).toBe('')
+    it('should throw an error when outdenting below zero', () => {
+        assert.throws(() => buffer.outdent())
+        assert.strictEqual(buffer.currentIndent, '')
     })
 
-    test('Add A', () => {
+    it('should add part A to the buffer', () => {
         buffer.add('A')
-        expect(buffer.parts.length).toBe(1)
+        assert.strictEqual(buffer.parts.length, 1)
     })
-    test('Add B', () => {
+    it('should add part B to the buffer and join correctly', () => {
         buffer.add('B')
-        expect(buffer.join('-')).toBe('A-B')
+        assert.strictEqual(buffer.join('-'), 'A-B')
     })
-    test('Clear', () => {
+    it('should clear the buffer', () => {
         buffer.clear()
-        expect(buffer.parts.length).toBe(0)
-        expect(buffer.join()).toBe('')
+        assert.strictEqual(buffer.parts.length, 0)
+        assert.strictEqual(buffer.join(), '')
     })
 })
 
-describe('Path', () => {
-    test('asNamespace', () => {
+describe('Path Tests', () => {
+    it('should convert path to namespace', () => {
         let p = new Path(['a', 'b', 'c'])
-        expect(p.asNamespace()).toBe('a.b.c')
+        assert.strictEqual(p.asNamespace(), 'a.b.c')
     })
 
-    test('asIdentifier', () => {
+    it('should convert path to identifier', () => {
         let p = new Path(['a', 'b', 'c'])
-        expect(p.asIdentifier()).toBe('_a_b_c')
+        assert.strictEqual(p.asIdentifier(), '_a_b_c')
         p = new Path([])
-        expect(p.asIdentifier()).toBe('_')
+        assert.strictEqual(p.asIdentifier(), '_')
     })
 
-    test('asDirectory', () => {
+    it('should convert path to directory', () => {
         let p = new Path(['a', 'b', 'c'])
-        expect(p.asDirectory()).toBe('./a/b/c')
-        expect(p.asDirectory({relative: 'a/b'})).toBe('./c')
-        expect(p.asDirectory({relative: 'a/b/c/d/e'})).toBe('./../..')
-        expect(p.asDirectory({relative: 'a/b/x/y'})).toBe('./../../c')
-        expect(p.asDirectory({local: false})).toBe('a/b/c')
-        expect(p.asDirectory({posix: false, local: false})).toBe(path.join('a','b','c'))
-        expect(p.asDirectory({posix: false})).toBe('.' + path.sep + path.join('a','b','c'))
+        assert.strictEqual(p.asDirectory(), './a/b/c')
+        assert.strictEqual(p.asDirectory({relative: 'a/b'}), './c')
+        assert.strictEqual(p.asDirectory({relative: 'a/b/c/d/e'}), './../..')
+        assert.strictEqual(p.asDirectory({relative: 'a/b/x/y'}), './../../c')
+        assert.strictEqual(p.asDirectory({local: false}), 'a/b/c')
+        assert.strictEqual(p.asDirectory({posix: false, local: false}), path.join('a','b','c'))
+        assert.strictEqual(p.asDirectory({posix: false}), '.' + path.sep + path.join('a','b','c'))
         p = new Path([])
-        expect(p.asDirectory({local: false})).toBe('.')
+        assert.strictEqual(p.asDirectory({local: false}), '.')
     })
 
-    test('isCwd', () => {
+    it('should check if path is current working directory', () => {
         let p = new Path(['a', 'b', 'c'])
-        expect(p.isCwd()).toBe(false)
-        expect(p.isCwd(p.asDirectory())).toBe(true)
-        expect(p.isCwd('./a/b/c')).toBe(true)
-        expect(p.isCwd('./x/y/z')).toBe(false)
+        assert.strictEqual(p.isCwd(), false)
+        assert.strictEqual(p.isCwd(p.asDirectory()), true)
+        assert.strictEqual(p.isCwd('./a/b/c'), true)
+        assert.strictEqual(p.isCwd('./x/y/z'), false)
         p = new Path([])
-        expect(p.isCwd()).toBe(true)
-        expect(p.isCwd(p.asDirectory())).toBe(true)
-        expect(p.isCwd('./a/b/c')).toBe(false)
+        assert.strictEqual(p.isCwd(), true)
+        assert.strictEqual(p.isCwd(p.asDirectory()), true)
+        assert.strictEqual(p.isCwd('./a/b/c'), false)
     })
 
-    test('parent', () => {
+    it('should get parent path', () => {
         let p = new Path(['a', 'b', 'c'])
-        expect(p.asNamespace()).toBe('a.b.c')
+        assert.strictEqual(p.asNamespace(), 'a.b.c')
         p = p.getParent()
-        expect(p.asNamespace()).toBe('a.b')
+        assert.strictEqual(p.asNamespace(), 'a.b')
         p = p.getParent()
-        expect(p.asNamespace()).toBe('a')
+        assert.strictEqual(p.asNamespace(), 'a')
         p = p.getParent()
-        expect(p.asNamespace()).toBe('')
+        assert.strictEqual(p.asNamespace(), '')
         p = p.getParent()
-        expect(p.asNamespace()).toBe('')
+        assert.strictEqual(p.asNamespace(), '')
     })
 })
 
-describe('SourceFile', () => {
-    test('addImport', () => {
+describe('SourceFile Tests', () => {
+    it('should add imports correctly', () => {
         const sf = new SourceFile('.')
         const impNo = sf.getImports().parts.length
         sf.addImport(new Path(['a', 'b']))
-        expect(sf.getImports().parts.length).toBe(impNo+1)
+        assert.strictEqual(sf.getImports().parts.length, impNo + 1)
         sf.addImport(new Path(['a', 'b']))
-        expect(sf.getImports().parts.length).toBe(impNo+1)
+        assert.strictEqual(sf.getImports().parts.length, impNo + 1)
         sf.addImport(new Path(['a', 'b', 'c']))
-        expect(sf.getImports().parts.length).toBe(impNo+2)
+        assert.strictEqual(sf.getImports().parts.length, impNo + 2)
         sf.addImport(new Path([]))
-        expect(sf.getImports().parts.length).toBe(impNo+2)
+        assert.strictEqual(sf.getImports().parts.length, impNo + 2)
     })
 })

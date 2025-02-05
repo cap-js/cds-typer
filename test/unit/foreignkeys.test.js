@@ -1,26 +1,29 @@
 'use strict'
 
-const { beforeAll, describe, test, expect } = require('@jest/globals')
+const { before, describe, it } = require('node:test')
+const assert = require('assert')
 const { locations, prepareUnitTest } = require('../util')
 const { check } = require('../ast')
 
 describe('Foreign Keys', () => {
     let astw
-    beforeAll(async () => astw = (await prepareUnitTest('foreignkeys/model.cds', locations.testOutput('foreign_keys'))).astw)
-
-    test('One Level Deep', async () => {
-        expect(astw.exists('_BAspect', 'c_ID', ({type}) => check.isKeyOf(type, check.isString))).toBeTruthy()
-        expect(astw.exists('_BAspect', 'd_ID', ({type}) => check.isKeyOf(type, check.isString))).toBeTruthy()
-        expect(astw.exists('_CAspect', 'e_ID', ({type}) => check.isKeyOf(type, check.isString))).toBeTruthy()
+    before(async () => {
+        astw = (await prepareUnitTest('foreignkeys/model.cds', locations.testOutput('foreign_keys'))).astw
     })
 
-    test('Two Levels Deep', async () => {
-        expect(astw.exists('_AAspect', 'b_c_ID', ({type}) => check.isKeyOf(type, check.isString))).toBeTruthy()
-        expect(astw.exists('_AAspect', 'b_d_ID', ({type}) => check.isKeyOf(type, check.isString))).toBeTruthy()
-        expect(astw.exists('_BAspect', 'c_e_ID', ({type}) => check.isKeyOf(type, check.isString))).toBeTruthy()
+    it('should verify keys one level deep', async () => {
+        assert.ok(astw.exists('_BAspect', 'c_ID', ({type}) => check.isKeyOf(type, check.isString)))
+        assert.ok(astw.exists('_BAspect', 'd_ID', ({type}) => check.isKeyOf(type, check.isString)))
+        assert.ok(astw.exists('_CAspect', 'e_ID', ({type}) => check.isKeyOf(type, check.isString)))
     })
 
-    test('Three Levels Deep', async () => {
-        expect(astw.exists('_AAspect', 'b_c_e_ID', ({type}) => check.isKeyOf(type, check.isString))).toBeTruthy()
+    it('should verify keys two levels deep', async () => {
+        assert.ok(astw.exists('_AAspect', 'b_c_ID', ({type}) => check.isKeyOf(type, check.isString)))
+        assert.ok(astw.exists('_AAspect', 'b_d_ID', ({type}) => check.isKeyOf(type, check.isString)))
+        assert.ok(astw.exists('_BAspect', 'c_e_ID', ({type}) => check.isKeyOf(type, check.isString)))
+    })
+
+    it('should verify keys three levels deep', async () => {
+        assert.ok(astw.exists('_AAspect', 'b_c_e_ID', ({type}) => check.isKeyOf(type, check.isString)))
     })
 })
