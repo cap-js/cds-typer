@@ -19,4 +19,5 @@ entity E {
     t: Time;
     dt: DateTime;
     ts: Timestamp;
+    map: Map;
 }
