@@ -110,7 +110,7 @@
                 "flat",
                 "structured"
               ],
-              "default": "structured"
+              "default": "flat"
             },
             "properties_optional": {
               "type": "boolean",
@@ -131,6 +131,11 @@
                 "auto"
               ],
               "default": "auto"
+            },
+            "skip_build_task": {
+              "type": "boolean",
+              "description": "If set to true, the typescript build task will not be registered/ executed.",
+              "default": false
             }
           }
         }
