@@ -2,7 +2,8 @@
 
 const path = require('path')
 const cds = require('@sap/cds')
-const { beforeAll, afterEach, describe, test, expect } = require('@jest/globals')
+const { describe, before, afterEach, it } = require('node:test')
+const assert = require('assert')
 const { JSASTWrapper } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 
@@ -10,19 +11,18 @@ describe('Compilation/Runtime - with Entities Proxies', () => {
     let paths
 
     describe('Compile Bookshoplet', () => {
-        beforeAll(
-            async () =>
-                ({ paths } = await prepareUnitTest(
-                    'bookshoplet/model.cds',
-                    locations.testOutput('entities_proxy_test/bookshoplet'),
-                    { typerOptions: { useEntitiesProxy: true } }
-                ))
-        )
+        before(async () => {
+            ({ paths } = await prepareUnitTest(
+                'bookshoplet/model.cds',
+                locations.testOutput('entities_proxy_test/bookshoplet'),
+                { typerOptions: { useEntitiesProxy: true } }
+            ))
+        })
 
-        test('index.js', async () => {
+        it('should validate index.js', async () => {
             const jsw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'), true)
             // cds.entities must not be used directly
-            expect(jsw.hasCdsEntitiesAccess()).toBeFalsy()
+            assert.ok(!jsw.hasCdsEntitiesAccess())
             // check if exports are used in proxy function call
             jsw.exportsAre([
                 ['Book', 'Books'],
@@ -49,17 +49,16 @@ describe('Compilation/Runtime - with Entities Proxies', () => {
         })
     })
 
-    describe('Inline Enum compilation', () => {
-        beforeAll(
-            async () =>
-                ({ paths } = await prepareUnitTest(
-                    'enums/model.cds',
-                    locations.testOutput('entities_proxy_test/enums'),
-                    { typerOptions: { useEntitiesProxy: true } }
-                ))
-        )
+    describe('Inline Enum Compilation', () => {
+        before(async () => {
+            ({ paths } = await prepareUnitTest(
+                'enums/model.cds',
+                locations.testOutput('entities_proxy_test/enums'),
+                { typerOptions: { useEntitiesProxy: true } }
+            ))
+        })
 
-        test('Inline enum names passed to proxy function call', async () => {
+        it('should validate inline enum names passed to proxy function call', async () => {
             const jsw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'), true)
 
             jsw.hasProxyExport('InlineEnum', ['gender', 'status', 'yesno'])
@@ -68,62 +67,63 @@ describe('Compilation/Runtime - with Entities Proxies', () => {
     })
 
     describe('Runtime Checks for Entity Proxies', () => {
-        beforeAll(
-            async () =>
-                ({ paths } = await prepareUnitTest(
-                    'entitiesproxy/service.cds',
-                    path.join(__dirname, 'files', 'entitiesproxy', '_out'),
-                    {
-                        typerOptions: { useEntitiesProxy: true },
-                    }
-                ))
-        )
+        before(async () => {
+            ({ paths } = await prepareUnitTest(
+                'entitiesproxy/service.cds',
+                path.join(__dirname, 'files', 'entitiesproxy', '_out'),
+                {
+                    typerOptions: { useEntitiesProxy: true },
+                }
+            ))
+        })
+
         afterEach(() => {
             // tear down loaded cds model
             cds.model = undefined
         })
 
-        test('Invalid \'elements\' access via proxy before cds is loaded', async () => {
+        it('should throw error for invalid "elements" access via proxy before cds is loaded', async () => {
             const { Books } = require(paths[1])
 
-            expect(() => Books.elements).toThrow(
+            assert.throws(
+                () => Books.elements,
                 new Error(
                     'Property elements does not exist on entity \'bookshop.CatalogService.Books\' or cds.entities is not yet defined. Ensure the CDS runtime is fully booted before accessing properties.'
                 )
             )
         })
 
-        test('Inline enum access via proxy export without cds runtime', () => {
+        it('should validate inline enum access via proxy export without cds runtime', () => {
             const { Book } = require(paths[1])
 
-            expect(Book.genre).toStrictEqual({ Fantasy: 'Fantasy', SciFi: 'Science-Fiction' })
+            assert.deepStrictEqual(Book.genre, { Fantasy: 'Fantasy', SciFi: 'Science-Fiction' })
         })
 
-        test('Use entity proxy as stand-in for definition from cds.entities', async () => {
+        it('should use entity proxy as stand-in for definition from cds.entities', async () => {
             const { Books, Book } = require(paths[1])
             const base = path.join(__dirname, 'files', 'entitiesproxy')
             cds.root = base
             cds.model = cds.linked(await cds.load(path.join(base, 'service.cds')))
             await cds.serve('all')
 
-            expect(Books.name).toBe('bookshop.CatalogService.Books')
-            expect(Book.name).toBe('bookshop.CatalogService.Books')
+            assert.strictEqual(Books.name, 'bookshop.CatalogService.Books')
+            assert.strictEqual(Book.name, 'bookshop.CatalogService.Books')
 
-            expect(Book.elements).toBe(cds.entities('bookshop.CatalogService').Books.elements)
+            assert.strictEqual(Book.elements, cds.entities('bookshop.CatalogService').Books.elements)
 
             // test service registration with proxy
             const catService = cds.services['bookshop.CatalogService']
             catService.prepend(srv => {
-                expect(srv.after('READ', Books, () => {})).toBe(srv)
+                assert.strictEqual(srv.after('READ', Books, () => {}), srv)
             })
         })
 
-        test('Use entity proxy for entity without namespace', async () => {
+        it('should use entity proxy for entity without namespace', async () => {
             const { Publishers, Publisher } = require(paths[2])
 
             // access name property before cds runtime is loaded
-            expect(Publisher.name).toBe('Publishers')
-            expect(Publishers.name).toBe('Publishers')
+            assert.strictEqual(Publisher.name, 'Publishers')
+            assert.strictEqual(Publishers.name, 'Publishers')
 
             const base = path.join(__dirname, 'files', 'entitiesproxy')
             cds.root = base
@@ -131,8 +131,8 @@ describe('Compilation/Runtime - with Entities Proxies', () => {
             await cds.serve('all')
 
             // access name after cds runtime is loaded
-            expect(Publisher.name).toBe('Publishers')
-            expect(Publishers.name).toBe('Publishers')
+            assert.strictEqual(Publisher.name, 'Publishers')
+            assert.strictEqual(Publishers.name, 'Publishers')
         })
     })
 })

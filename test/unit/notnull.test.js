@@ -1,6 +1,7 @@
 'use strict'
 
-const { beforeAll, describe, test, expect } = require('@jest/globals')
+const { describe, it, before } = require('node:test')
+const assert = require('assert')
 const { check, checkFunction } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 
@@ -9,52 +10,53 @@ const dir = locations.testOutput('not_null_test')
 describe('Not Null', () => {
     let astw
 
-    beforeAll(async () => astw = (await prepareUnitTest('notnull/model.cds', dir)).astw)
+    before(async () => {
+        astw = (await prepareUnitTest('notnull/model.cds', dir)).astw
+    })
 
     describe('Properties', () => {
-        test('Primitive', async () =>
-            expect(astw.getAspects().find(({name, members}) => name === '_EAspect'
+        it('should verify primitive property is not null', async () => {
+            assert.ok(astw.getAspects().find(({name, members}) => name === '_EAspect'
             && members?.find(member => member.name === 'x' && !check.isNullable(member.type) && check.isNumber(member.type))))
-                .toBeTruthy())
+        })
 
-        test('Association to One', async () =>
-            expect(astw.getAspects().find(({name, members}) => name === '_EAspect'
+        it('should verify association to one is not null', async () => {
+            assert.ok(astw.getAspects().find(({name, members}) => name === '_EAspect'
             && members?.find(member => member.name === 'foo_assoc' && !check.isNullable(member.type))))
-                .toBeTruthy())
+        })
 
-        test('Association to Many', async () =>
-            expect(astw.getAspects().find(({name, members}) => name === '_EAspect'
+        it('should verify association to many is not null', async () => {
+            assert.ok(astw.getAspects().find(({name, members}) => name === '_EAspect'
             && members?.find(member => member.name === 'foos_assoc' && !check.isNullable(member.type))))
-                .toBeTruthy())
+        })
 
-        test('Composition of One', async () =>
-            expect(astw.getAspects().find(({name, members}) => name === '_EAspect'
+        it('should verify composition of one is not null', async () => {
+            assert.ok(astw.getAspects().find(({name, members}) => name === '_EAspect'
             && members?.find(member => member.name === 'foo_comp' && !check.isNullable(member.type))))
-                .toBeTruthy())
+        })
 
-        test('Composition of Many', async () =>
-            expect(astw.getAspects().find(({name, members}) => name === '_EAspect'
+        it('should verify composition of many is not null', async () => {
+            assert.ok(astw.getAspects().find(({name, members}) => name === '_EAspect'
             && members?.find(member => member.name === 'foos_comp' && !check.isNullable(member.type))))
-                .toBeTruthy())
+        })
 
-        test('Inline', async () =>
-            expect(astw.getAspects().find(({name, members}) => name === '_EAspect'
+        it('should verify inline property is not null', async () => {
+            assert.ok(astw.getAspects().find(({name, members}) => name === '_EAspect'
             && members?.find(member => member.name === 'inline'
                 && !check.isNullable(member.type)
                 && !check.isNullable(member.type.members[0]))))
-                .toBeTruthy())
+        })
     })
 
-
     describe('Actions', () => {
-        test('Bound', async () => {
+        it('should verify bound action is not null', async () => {
             const actions = astw.getAspectProperty('_EAspect', 'actions')
             checkFunction(actions.type.members.find(fn => fn.name === 'f'), {
                 parameterCheck: ({members: [fst]}) => fst.name === 'x' && !check.isNullable(fst.type)
             })
         })
 
-        test('Unbound', async () => {
+        it('should verify unbound action is not null', async () => {
             checkFunction(astw.tree.find(node => node.name === 'free'), {
                 callCheck: type => !check.isNullable(type),
                 parameterCheck: ({members: [fst]}) => fst.name === 'param' && !check.isNullable(fst.type),
@@ -64,7 +66,7 @@ describe('Not Null', () => {
     })
 
     describe('cuid', () => {
-        test('Not Null', async () => {
+        it('should verify cuid is not null', async () => {
             // This checks the absence of a very specific bug (#219):
             // Having an association to an entity that extended cuid caused
             // the key to be nullable. It was not when it was not associated from anywhere.
@@ -92,10 +94,8 @@ describe('Not Null', () => {
             const cuidA = astwA.getAspectProperty('_cuidAspect', 'ID')
             const cuidB = astwB.getAspectProperty('_cuidAspect', 'ID')
 
-            expect(check.isNullable(cuidA.type)).toBe(check.isNullable(cuidB.type))
-            expect(check.isString(cuidA.type)).toBe(check.isString(cuidB.type))
+            assert.strictEqual(check.isNullable(cuidA.type), check.isNullable(cuidB.type))
+            assert.strictEqual(check.isString(cuidA.type), check.isString(cuidB.type))
         })
     })
-
-
 })
