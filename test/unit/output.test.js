@@ -127,6 +127,7 @@ describe('Compilation Tests', () => {
             assert.ok(astw.exists('_EAspect', 't', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTime')])))
             assert.ok(astw.exists('_EAspect', 'dt', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsDateTime')])))
             assert.ok(astw.exists('_EAspect', 'ts', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTimestamp')])))
+            assert.ok(astw.exists('_EAspect', 'map', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsMap')])))
         })
 
         it('should verify IEEE754 types', async () => {
@@ -156,6 +157,7 @@ describe('Compilation Tests', () => {
             assert.ok(astw.exists('_EAspect', 't', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTime')])))
             assert.ok(astw.exists('_EAspect', 'dt', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsDateTime')])))
             assert.ok(astw.exists('_EAspect', 'ts', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTimestamp')])))
+            assert.ok(astw.exists('_EAspect', 'map', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsMap')])))
         })
     })
 
