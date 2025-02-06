@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Support new `cds.Map` type, which is emitted as `{[key:string]: unknown}`. The most appropriate type would in fact be `{[key:string]: any}`, which would also allow any and all keys. But would also cause issues with strict project configurations. Therefore, to effectively use `cds.Map`, users will have to cast the `unknown`s to the effective type they expect.
 ### Changed
+- [breaking] The types `cds.Binary` and `cds.LargeBinary` are now generated as `Buffer` and `Readable` respectively to reflect the behaviour of the new database packages `@cap-js/hana` and `@cap-js/sqlite`. You can switch back to the old behaviour by adding `legacy_binary_types: true` to your project configuration.
 - `CHANGELOG.md` and `LICENSE` files are no longer part of the npm package.
 
 ### Deprecated
