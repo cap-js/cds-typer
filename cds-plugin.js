@@ -4,10 +4,10 @@ const cds = require('@sap/cds')
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 const typer = require('./lib/compile')
-
 const { fs, path } = cds.utils
 const DEBUG = cds.debug('cli|build')
 const BUILD_CONFIG = 'tsconfig.cdsbuild.json'
+const { configuration } = require('./lib/config')
 
 /**
  * Check if the project is a TypeScript project by looking for a dependency on TypeScript.
@@ -60,7 +60,9 @@ const rmFiles = async (dir, exts) => fs.existsSync(dir)
         return
     }
 
-    if (cds.env.typer?.skipBuildTask) {
+    // by checking configuration instead of cds.env, we make sure the user can set
+    // this configuration in both camelCase and snake_case.
+    if (configuration.buildTask === false) {  // unset is considered true
         DEBUG?.('skipping typescript build task registration based on configuration option')
         return
     }
