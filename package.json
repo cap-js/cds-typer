@@ -59,7 +59,8 @@
       "inline_declarations": "flat",
       "target_module_type": "auto",
       "properties_optional": true,
-      "use_entities_proxy": false
+      "use_entities_proxy": false,
+      "build_task": true
     },
     "schema": {
       "buildTaskType": {
@@ -110,7 +111,7 @@
                 "flat",
                 "structured"
               ],
-              "default": "structured"
+              "default": "flat"
             },
             "properties_optional": {
               "type": "boolean",
@@ -131,6 +132,11 @@
                 "auto"
               ],
               "default": "auto"
+            },
+            "build_task": {
+              "type": "boolean",
+              "description": "If set to true, the typescript build task will not be registered/ executed.\nThis value must be set in your project configuration.\nPassing it as parameter to the cds-typer CLI has no effect.",
+              "default": true
             }
           }
         }
