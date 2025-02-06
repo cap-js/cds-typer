@@ -31,7 +31,5 @@ jobs:
           git add .
           if ! git diff --cached --exit-code; then
             echo "Schema in package.json not consistent with CLI parameters. Run "npm run write:cds-typer-shema" and commit the resulting changes."
-            echo "Diff:"
-            git diff --cached
             exit 1
           fi
