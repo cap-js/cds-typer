@@ -123,6 +123,11 @@
               "description": "If set to true, floating point properties are generated\nas IEEE754 compatible '(number | string)' instead of 'number'.",
               "default": false
             },
+            "legacy_binary_types": {
+              "type": "boolean",
+              "description": "If set to true, Binary and LargeBinary are generated\nas strings.",
+              "default": false
+            },
             "target_module_type": {
               "type": "string",
               "description": "Output format for generated .js files.\nSetting it to auto tries to derive the module type from\nthe package.json and falls back to CJS.",

@@ -206,6 +206,10 @@ export module config {
          */
         IEEE754Compatible: boolean
         targetModuleType: 'cjs' | 'esm' | 'auto'
+        /**
+         * `legacyBinaryTypes = true` -> Binary and LargeBinary are generated as `string` and a union type respectively
+         */
+        legacyBinaryTypes: boolean
     }
 }
 
