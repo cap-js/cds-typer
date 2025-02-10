@@ -7,9 +7,6 @@ on:
   push:
     branches: main
 
-  pull_request:
-    branches: main
-
   workflow_dispatch:
     inputs:
       dry-run:
@@ -31,4 +28,4 @@ jobs:
     uses: cap-js/.github/.github/workflows/release.yml@fix/release
     secrets: inherit
     with:
-      dry-run: ${{ fromJson(github.event.inputs.adry-run) || 'false' }}
+      dry-run: ${{ fromJson(github.event.inputs.dry-run) || 'false' }}
