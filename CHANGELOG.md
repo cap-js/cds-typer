@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 ### Security
 
-## [0.33.0] - 2025-02-07
+## [0.33.0] - 2025-02-10
 
 ### Added
 - Support new `cds.Map` type, which is emitted as `{[key:string]: unknown}`. The most appropriate type would in fact be `{[key:string]: any}`, which would also allow any and all keys. But would also cause issues with strict project configurations. Therefore, to effectively use `cds.Map`, users will have to cast the `unknown`s to the effective type they expect.
