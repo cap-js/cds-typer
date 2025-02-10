@@ -28,4 +28,4 @@ jobs:
     uses: cap-js/.github/.github/workflows/release.yml@main
     secrets: inherit
     with:
-      dry-run: ${{ toJSON(github.event.inputs.dry-run || false) }}  # value needs to be string
+      dry-run: format('{0}', github.event.inputs.dry-run || false) }}  # value needs to be single-quoted string
