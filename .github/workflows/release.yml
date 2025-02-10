@@ -25,7 +25,7 @@ concurrency:
 
 jobs:
   release:
-    uses: cap-js/.github/.github/workflows/release.yml@fix/release
+    uses: cap-js/.github/.github/workflows/release.yml@main
     secrets: inherit
     with:
-      dry-run: ${{ fromJson(github.event.inputs.dry-run) || 'false' }}
+      dry-run: ${{ fromJSON(github.event.inputs.dry-run || 'false') }}  # value needs to be single-quoted string
