@@ -16,7 +16,8 @@
       "target": "ESNext",
       "module": "ESNext",
       "moduleResolution": "node",
-      "outDir": "dist"
+      "outDir": "dist",
+      "noEmit": true
     },
     "include": [
       "./**/*.js"
@@ -24,7 +25,10 @@
     "exclude": [
       "node_modules",
       "./test",
-      "./dist"
+      "./dist",
+      "./coverage",
+      "./@cds-models",
+      "./cds-plugin.js"  // types for cds-dk.build not available as of today
     ],
     "verbose": true
   }
