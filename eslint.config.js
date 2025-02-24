@@ -14,8 +14,7 @@ module.exports = (async () => [
             ecmaVersion: 'latest',
             sourceType: 'commonjs',
             globals: {
-                ...(await import('@sap/cds/eslint.config.mjs')).defaults.languageOptions.globals,
-                jest: true
+                ...(await import('@sap/cds/eslint.config.mjs')).defaults.languageOptions.globals
             }
         },
         files: ['**/*.js'],
