@@ -32,12 +32,30 @@ describe('Enum Action Parameters', () => {
     })
 })
 
-describe('Nested Enums', () => {
+describe('Nested Enums CJS', () => {
     let astw
 
     before(async () => {
         const paths = (await prepareUnitTest('enums/nested.cds', locations.testOutput('enums_test'))).paths
         astw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'))
+    })
+
+    it('should validate coalescing assignment present', () => {
+        const stmts = astw.program.body
+        const enm = stmts.find(n => n.type === 'ExpressionStatement' && n.expression.type === 'AssignmentExpression' && n.expression.operator === '??=')
+        assert.ok(enm)
+        const { left } = enm.expression
+        // not checking the entire object chain here...
+        assert.strictEqual(left.property.name, 'someEnumProperty')
+    })
+})
+
+describe('Nested Enums ESM', () => {
+    let astw
+
+    before(async () => {
+        const paths = (await prepareUnitTest('enums/nested.cds', locations.testOutput('enums_test'), { typerOptions: { targetModuleType: 'esm' } })).paths
+        astw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'), undefined, { sourceType: 'module' })
     })
 
     it('should validate coalescing assignment present', () => {
