@@ -55,7 +55,7 @@ describe('Nested Enums ESM', () => {
 
     before(async () => {
         const paths = (await prepareUnitTest('enums/nested.cds', locations.testOutput('enums_test'), { typerOptions: { targetModuleType: 'esm' } })).paths
-        astw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'), undefined, { sourceType: 'module' })
+        astw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'), false, { sourceType: 'module' })
     })
 
     it('should validate coalescing assignment present', () => {
