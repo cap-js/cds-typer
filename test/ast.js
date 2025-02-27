@@ -440,13 +440,13 @@ class ASTWrapper {
 }
 
 class JSASTWrapper {
-    static async initialise(file, proxyExports = false) {
-        return new JSASTWrapper(await fs.readFile(file, 'utf-8'), proxyExports)
+    static async initialise(file, proxyExports = false, acornOptions = {}) {
+        return new JSASTWrapper(await fs.readFile(file, 'utf-8'), proxyExports, acornOptions)
     }
 
-    constructor(code, proxyExports) {
+    constructor(code, proxyExports, acornOptions = {}) {
         this.proxyExports = proxyExports
-        this.program = acorn.parse(code, { ecmaVersion: 'latest'})
+        this.program = acorn.parse(code, {...{ ecmaVersion: 'latest'}, ...acornOptions})
     }
 
     /**
