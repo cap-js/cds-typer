@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Deprecated
 ### Removed
 ### Fixed
+- Enums will now be exported in ESM style in ESM projects
 ### Security
 
 ## [0.33.0] - 2025-02-10
