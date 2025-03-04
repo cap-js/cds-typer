@@ -52,6 +52,14 @@ const rmFiles = async (dir, exts) => fs.existsSync(dir)
     )
     : undefined
 
+cds.on('before-watch', async () => {
+    try {
+        await typer.compileFromFile('*')
+    } catch {
+        // silently ignore if no (valid) model exists at initial startup
+    }
+})
+
 // IIFE to be able to return early
 ;(() => {
     // FIXME: remove once cds7 has been phased out
