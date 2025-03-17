@@ -58,7 +58,7 @@
       "inline_declarations": "flat",
       "target_module_type": "auto",
       "properties_optional": true,
-      "use_entities_proxy": false,
+      "use_entities_proxy": true,
       "build_task": true
     },
     "schema": {
