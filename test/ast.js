@@ -440,7 +440,7 @@ class ASTWrapper {
 }
 
 class JSASTWrapper {
-    static async initialise(file, proxyExports = false, acornOptions = {}) {
+    static async initialise(file, proxyExports, acornOptions = {}) {
         return new JSASTWrapper(await fs.readFile(file, 'utf-8'), proxyExports, acornOptions)
     }
 
@@ -462,7 +462,7 @@ class JSASTWrapper {
     }
 
     hasCdsEntitiesAccess() {
-        this.program.body.filter(node => {
+        return this.program.body.filter(node => {
             if (node.type !== 'VariableDeclaration') return false
             if (node.declarations[0].id !== 'csn') return false
             return node.declarations[0].init?.callee.object.name === 'cds'
@@ -501,7 +501,19 @@ class JSASTWrapper {
      * @returns {{ lhs: string, rhs: string | { singular: boolean, name: string } | Record<string,any>, type: 'entity' | 'enum', proxyArgs?: any[]}[]}
      */
     getExports() {
-        const processRhsObjLiteral = ({ properties }) => {
+        const processRhsCallExpression = ({ type, callee, arguments: [fqParts, opts] }) => {
+            if (type !== 'CallExpression') return
+            if (callee.name !== 'createEntityProxy') return
+            return {
+                // find is_singular in the options argument of createEntityProxy
+                singular: Boolean(opts.properties.find(({key}) => key.name === 'target')
+                    ?.value.properties.find(({key}) => key.name === 'is_singular')
+                    ?.value.value),
+                name: fqParts.elements[1].value,
+            }
+        }
+        const processRhsObjLiteral = ({ type, properties }) => {
+            if (type !== 'ObjectExpression') return
             const proto = properties.find(p => p.key.name === '__proto__')
             return {
                 singular: !!properties.find(p => p.key.name === 'is_singular' && p.value.value),
@@ -548,7 +560,8 @@ class JSASTWrapper {
                         ? right.arguments?.[0].elements[1].value // proxy function arg -> 'A.sub'
                         : right.property?.name ?? // csn.A
                             right.property?.value ?? // csn['A.sub']
-                            processRhsObjLiteral(right), // {__proto__: csn.A} | {__proto__: csn['A.sub']}
+                            processRhsObjLiteral(right) ?? // {__proto__: csn.A} | {__proto__: csn['A.sub']}
+                            processRhsCallExpression(right), // createEntityProxy(['namespace', 'A'], { target: { is_singular: true }})
                     proxyArgs: right.arguments,
                 }
             }
