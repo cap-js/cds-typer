@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Introduced `cache` option to cache CDS model between runs. If set to `blake2s256`, typer will only regenerate the files if the model has changed between runs.
 ### Changed
 - [breaking] The config `use_entities_proxy` (allowing for static imports) is now set to `true` as default. You can set it to `false` to revert to the old behaviour.
 ### Deprecated
