@@ -58,7 +58,7 @@
       "inline_declarations": "flat",
       "target_module_type": "auto",
       "properties_optional": true,
-      "use_entities_proxy": false,
+      "use_entities_proxy": true,
       "build_task": true
     },
     "schema": {
@@ -101,7 +101,7 @@
             "use_entities_proxy": {
               "type": "boolean",
               "description": "If set to true the 'cds.entities' exports in the generated 'index.js'\nfiles will be wrapped in 'Proxy' objects\nso static import/require calls can be used everywhere.\n\nWARNING: entity properties can still only be accessed after\n'cds.entities' has been loaded",
-              "default": false
+              "default": true
             },
             "inline_declarations": {
               "type": "string",

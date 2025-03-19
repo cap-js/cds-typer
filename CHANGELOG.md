@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 ### Changed
+- [breaking] The config `use_entities_proxy` (allowing for static imports) is now set to `true` as default. You can set it to `false` to revert to the old behaviour.
 ### Deprecated
 ### Removed
 ### Fixed
