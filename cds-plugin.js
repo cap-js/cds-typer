@@ -159,10 +159,10 @@ const rmFiles = async (dir, exts) => fs.existsSync(dir)
 if (cds.watched) {
     if (fs.existsSync(cds.env.typer.output_directory)) return
     try {
-        DEBUG?.('>> running cds-typer before cds watch')
+        DEBUG?.('>> start cds-typer before cds watch')
         module.exports = typer.compileFromFile('*')
-            .then(() => DEBUG?.('<< running cds-typer before cds watch')
-        )
+            .then(() => DEBUG?.('<< end cds-typer before cds watch'))
+            .catch(e => DEBUG?.(e))
     } catch (error) {
         // silently ignore if no (valid) model exists at initial startup
         DEBUG?.(error)
