@@ -55,16 +55,6 @@ const rmFiles = async (dir, exts) => fs.existsSync(dir)
     )
     : undefined
 
-cds.on('watch', async () => {
-    if (fs.existsSync(cds.env.typer.output_directory ?? DEFAULT_MODEL_DIRECTORY_NAME)) return
-    try {
-        DEBUG?.('running cds-typer before cds watch')
-        await typer.compileFromFile('*')
-    } catch  {
-        // silently ignore if no (valid) model exists at initial startup
-    }
-})
-
 // IIFE to be able to return early
 ;(() => {
     // FIXME: remove once cds7 has been phased out
@@ -79,6 +69,17 @@ cds.on('watch', async () => {
         DEBUG?.('skipping typescript build task registration based on configuration option')
         return
     }
+
+    cds.on('watch', async () => {
+        if (fs.existsSync(cds.env.typer.output_directory ?? DEFAULT_MODEL_DIRECTORY_NAME)) return
+        try {
+            DEBUG?.('running cds-typer before cds watch')
+            await typer.compileFromFile('*')
+        } catch (error) {
+            // silently ignore if no (valid) model exists at initial startup
+            DEBUG?.(error)
+        }
+    })
 
     // requires @sap/cds-dk version >= 7.5.0
     cds.build?.register?.('typescript', class extends cds.build.Plugin {
