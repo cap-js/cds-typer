@@ -71,7 +71,7 @@ const rmFiles = async (dir, exts) => fs.existsSync(dir)
     }
 
     cds.on('watch', async () => {
-        if (fs.existsSync(cds.env.typer.output_directory ?? DEFAULT_MODEL_DIRECTORY_NAME)) return
+        if (fs.existsSync(cds.env.typer.output_directory)) return
         try {
             DEBUG?.('running cds-typer before cds watch')
             await typer.compileFromFile('*')
