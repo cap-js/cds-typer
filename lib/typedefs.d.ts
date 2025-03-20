@@ -188,6 +188,7 @@ export module config {
 
     export type Configuration = {
         outputDirectory: string,
+        cache: 'none' | 'blake2s256'
         logLevel: number,
         /**
          * `useEntitiesProxy = true` will wrap the `module.exports.<entityName>` in `Proxy` objects
