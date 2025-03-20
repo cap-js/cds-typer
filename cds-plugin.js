@@ -70,17 +70,6 @@ const rmFiles = async (dir, exts) => fs.existsSync(dir)
         return
     }
 
-    cds.on('watch', async () => {
-        if (fs.existsSync(cds.env.typer.output_directory)) return
-        try {
-            DEBUG?.('running cds-typer before cds watch')
-            await typer.compileFromFile('*')
-        } catch (error) {
-            // silently ignore if no (valid) model exists at initial startup
-            DEBUG?.(error)
-        }
-    })
-
     // requires @sap/cds-dk version >= 7.5.0
     cds.build?.register?.('typescript', class extends cds.build.Plugin {
         static taskDefaults = { src: '.' }
@@ -166,3 +155,16 @@ const rmFiles = async (dir, exts) => fs.existsSync(dir)
         }
     })
 })()
+
+if (cds.watched) {
+    if (fs.existsSync(cds.env.typer.output_directory)) return
+    try {
+        DEBUG?.('>> running cds-typer before cds watch')
+        module.exports = typer.compileFromFile('*')
+            .then(() => DEBUG?.('<< running cds-typer before cds watch')
+        )
+    } catch (error) {
+        // silently ignore if no (valid) model exists at initial startup
+        DEBUG?.(error)
+    }
+}
