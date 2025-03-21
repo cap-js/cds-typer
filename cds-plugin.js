@@ -57,6 +57,15 @@ const rmFiles = async (dir, exts) => fs.existsSync(dir)
 
 // IIFE to be able to return early
 ;(() => {
+    if (cds.watched) {
+        if (fs.existsSync(cds.env.typer.output_directory)) return
+        DEBUG?.('>> start cds-typer before cds watch')
+        module.exports = typer.compileFromFile('*')
+            .then(() => DEBUG?.('<< end cds-typer before cds watch'))
+            .catch(e => DEBUG?.(e))
+        return
+    }
+
     // FIXME: remove once cds7 has been phased out
     if (!cds?.version || cds.version < '8.0.0') {
         DEBUG?.('typescript build task requires @sap/cds-dk version >= 8.0.0, skipping registration')
@@ -155,16 +164,3 @@ const rmFiles = async (dir, exts) => fs.existsSync(dir)
         }
     })
 })()
-
-if (cds.watched) {
-    if (fs.existsSync(cds.env.typer.output_directory)) return
-    try {
-        DEBUG?.('>> start cds-typer before cds watch')
-        module.exports = typer.compileFromFile('*')
-            .then(() => DEBUG?.('<< end cds-typer before cds watch'))
-            .catch(e => DEBUG?.(e))
-    } catch (error) {
-        // silently ignore if no (valid) model exists at initial startup
-        DEBUG?.(error)
-    }
-}
