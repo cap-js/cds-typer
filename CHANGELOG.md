@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 ### Changed
+- Running `cds watch` will trigger `cds-typer "*"` before the initial startup
 ### Deprecated
 ### Removed
 ### Fixed

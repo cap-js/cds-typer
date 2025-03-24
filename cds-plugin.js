@@ -5,9 +5,12 @@ const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 const typer = require('./lib/compile')
 const { fs, path } = cds.utils
+const { configuration } = require('./lib/config')
+
 const DEBUG = cds.debug('cli|build')
 const BUILD_CONFIG = 'tsconfig.cdsbuild.json'
-const { configuration } = require('./lib/config')
+const DEFAULT_MODEL_DIRECTORY_NAME = '@cds-models'
+
 
 /**
  * Check if the project is a TypeScript project by looking for a dependency on TypeScript.
@@ -54,6 +57,15 @@ const rmFiles = async (dir, exts) => fs.existsSync(dir)
 
 // IIFE to be able to return early
 ;(() => {
+    if (cds.watched) {
+        if (fs.existsSync(cds.env.typer.output_directory)) return
+        DEBUG?.('>> start cds-typer before cds watch')
+        module.exports = typer.compileFromFile('*')
+            .then(() => DEBUG?.('<< end cds-typer before cds watch'))
+            .catch(e => DEBUG?.(e))
+        return
+    }
+
     // FIXME: remove once cds7 has been phased out
     if (!cds?.version || cds.version < '8.0.0') {
         DEBUG?.('typescript build task requires @sap/cds-dk version >= 8.0.0, skipping registration')
@@ -94,7 +106,7 @@ const rmFiles = async (dir, exts) => fs.existsSync(dir)
             } catch {
                 DEBUG?.('tsconfig.json not found, not parsable, or inconclusive. Using default model directory name')
             }
-            return '@cds-models'
+            return DEFAULT_MODEL_DIRECTORY_NAME
         }
 
         init() {
