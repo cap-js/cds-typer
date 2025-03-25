@@ -39,6 +39,6 @@ describe('cds watch', () => {
         logs.length = 0
         await require('../../cds-plugin')
         // should not run when models are already there
-        assert.ok(!logs.some(log => log.some(line => line.match(/>> start cds-typer/))))
+        assert.ok(!logs.some(log => log.some(line => line.match(/end.*cds-typer/))))
     })
 })
