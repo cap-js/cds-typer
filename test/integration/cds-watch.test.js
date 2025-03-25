@@ -35,7 +35,7 @@ describe('cds watch', () => {
         cds.env.typer = { output_directory: modelsDir }
         cds.env.log.levels.cli = 'debug'
         await require('../../cds-plugin')
-        assert.ok(logs.some(log => log.some(line => line.match(/>> start cds-typer/))))
+        assert.ok(logs.some(log => log.some(line => line.match(/start.*cds-typer/))))
         logs.length = 0
         await require('../../cds-plugin')
         // should not run when models are already there
