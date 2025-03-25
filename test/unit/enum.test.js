@@ -1,7 +1,8 @@
 'use strict'
 
 const path = require('path')
-const { beforeAll, describe, test, expect } = require('@jest/globals')
+const { describe, before, it } = require('node:test')
+const assert = require('assert')
 const { check, JSASTWrapper, checkFunction, ASTWrapper } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 
@@ -9,9 +10,9 @@ const { locations, prepareUnitTest } = require('../util')
 describe('Enum Action Parameters', () => {
     let astw
 
-    beforeAll(async () => astw = (await prepareUnitTest('enums/actions.cds', locations.testOutput('enums_test'))).astw)
+    before(async () => astw = (await prepareUnitTest('enums/actions.cds', locations.testOutput('enums_test'))).astw)
 
-    test('Coalescing Assignment Present', () => {
+    it('should validate coalescing assignment present', () => {
         const actions = astw.getAspectProperty('_FoobarAspect', 'actions')
         checkFunction(actions.type.members.find(fn => fn.name === 'f'), {
             parameterCheck: ({members: [fst]}) => fst.name === 'p'
@@ -22,7 +23,7 @@ describe('Enum Action Parameters', () => {
         })
     })
 
-    test('External Enum Definition Parameter', () => {
+    it('should validate external enum definition parameter', () => {
         const actions = astw.getAspectProperty('_FoobarAspect', 'actions')
         checkFunction(actions.type.members.find(fn => fn.name === 'g'), {
             parameterCheck: ({members: [fst]}) => fst.name === 'p'
@@ -31,34 +32,50 @@ describe('Enum Action Parameters', () => {
     })
 })
 
-
-describe('Nested Enums', () => {
+describe('Nested Enums CJS', () => {
     let astw
 
-    beforeAll(async () => {
+    before(async () => {
         const paths = (await prepareUnitTest('enums/nested.cds', locations.testOutput('enums_test'))).paths
         astw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'))
     })
 
-    test('Coalescing Assignment Present', () => {
+    it('should validate coalescing assignment present', () => {
         const stmts = astw.program.body
         const enm = stmts.find(n => n.type === 'ExpressionStatement' && n.expression.type === 'AssignmentExpression' && n.expression.operator === '??=')
-        expect(enm).toBeTruthy()
+        assert.ok(enm)
         const { left } = enm.expression
         // not checking the entire object chain here...
-        expect(left.property.name).toBe('someEnumProperty')
+        assert.strictEqual(left.property.name, 'someEnumProperty')
     })
 })
 
+describe('Nested Enums ESM', () => {
+    let astw
+
+    before(async () => {
+        const paths = (await prepareUnitTest('enums/nested.cds', locations.testOutput('enums_test'), { typerOptions: { targetModuleType: 'esm' } })).paths
+        astw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'), false, { sourceType: 'module' })
+    })
+
+    it('should validate coalescing assignment present', () => {
+        const stmts = astw.program.body
+        const enm = stmts.find(n => n.type === 'ExpressionStatement' && n.expression.type === 'AssignmentExpression' && n.expression.operator === '??=')
+        assert.ok(enm)
+        const { left } = enm.expression
+        // not checking the entire object chain here...
+        assert.strictEqual(left.property.name, 'someEnumProperty')
+    })
+})
 
 describe('Enum Types', () => {
     let astw
 
-    beforeAll(async () => astw = (await prepareUnitTest('enums/model.cds', locations.testOutput('enums_test'))).astw)
+    before(async () => astw = (await prepareUnitTest('enums/model.cds', locations.testOutput('enums_test'))).astw)
 
     describe('Anonymous', () => {
         describe('Within type Definition', () => {
-            test('Property References Artificially Named Enum', () => {
+            it('should validate property references artificially named enum', () => {
                 astw.exists(
                     '_TypeWithInlineEnumAspect',
                     'inlineEnumProperty',
@@ -68,92 +85,80 @@ describe('Enum Types', () => {
         })
 
         describe('String Enum', () => {
-            test('Definition Present', async () =>
-                expect(astw.tree.find(n => n.name === 'InlineEnum_gender'
+            it('should validate definition present', async () =>
+                assert.ok(astw.tree.find(n => n.name === 'InlineEnum_gender'
                 && n.initializer.expression.female === 'female'
                 && n.initializer.expression.male === 'male'
-                && n.initializer.expression.non_binary === 'non-binary'))
-                    .toBeTruthy())
+                && n.initializer.expression.non_binary === 'non-binary')))
 
-            test('Referring Property', async () =>
-                expect(astw.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
-                && members?.find(member => member.name === 'gender' && check.isNullable(member.type, [t => t?.full === 'InlineEnum_gender']))))
-                    .toBeTruthy())
-
+            it('should validate referring property', async () =>
+                assert.ok(astw.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
+                && members?.find(member => member.name === 'gender' && check.isNullable(member.type, [t => t?.full === 'InlineEnum_gender'])))))
         })
 
         describe('Int Enum', () => {
-            test('Definition Present', async () =>
-                expect(astw.tree.find(n => n.name === 'InlineEnum_status'
+            it('should validate definition present', async () =>
+                assert.ok(astw.tree.find(n => n.name === 'InlineEnum_status'
                 && n.initializer.expression.submitted === 1
                 && n.initializer.expression.fulfilled === 2
                 && n.initializer.expression.canceled === -1
-                && n.initializer.expression.shipped === 42))
-                    .toBeTruthy())
+                && n.initializer.expression.shipped === 42)))
 
-            test('Referring Property', async () =>
-                expect(astw.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
-                && members?.find(member => member.name === 'status' && check.isNullable(member.type, [t => t?.full === 'InlineEnum_status']))))
-                    .toBeTruthy())
+            it('should validate referring property', async () =>
+                assert.ok(astw.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
+                && members?.find(member => member.name === 'status' && check.isNullable(member.type, [t => t?.full === 'InlineEnum_status'])))))
         })
 
         describe('Mixed Enum', () => {
-            test('Definition Present', async () =>
-                expect(astw.tree.find(n => n.name === 'InlineEnum_yesno'
+            it('should validate definition present', async () =>
+                assert.ok(astw.tree.find(n => n.name === 'InlineEnum_yesno'
                 && n.initializer.expression.catchall === 42
                 && n.initializer.expression.no === false
                 && n.initializer.expression.yes === true
-                && n.initializer.expression.yesnt === false))
-                    .toBeTruthy())
+                && n.initializer.expression.yesnt === false)))
 
-            test('Referring Property', async () =>
-                expect(astw.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
-                && members?.find(member => member.name === 'yesno' &&  check.isNullable(member.type, [t => t?.full === 'InlineEnum_yesno']))))
-                    .toBeTruthy())
+            it('should validate referring property', async () =>
+                assert.ok(astw.getAspects().find(({name, members}) => name === '_InlineEnumAspect'
+                && members?.find(member => member.name === 'yesno' &&  check.isNullable(member.type, [t => t?.full === 'InlineEnum_yesno'])))))
         })
     })
 
     describe('Named', () => {
         describe('String Enum', () => {
-            test('Values', async () =>
-                expect(astw.tree.find(n => n.name === 'Gender'
+            it('should validate values', async () =>
+                assert.ok(astw.tree.find(n => n.name === 'Gender'
                 && n.initializer.expression.female === 'female'
                 && n.initializer.expression.male === 'male'
-                && n.initializer.expression.non_binary === 'non-binary'))
-                    .toBeTruthy())
+                && n.initializer.expression.non_binary === 'non-binary')))
 
-            test('Type Alias', async () =>
-                expect(astw.getTypeAliasDeclarations().find(n => n.name === 'Gender'
-                && ['male', 'female', 'non-binary'].every(t => n.types.includes(t))))
-                    .toBeTruthy())
+            it('should validate type alias', async () =>
+                assert.ok(astw.getTypeAliasDeclarations().find(n => n.name === 'Gender'
+                && ['male', 'female', 'non-binary'].every(t => n.types.includes(t)))))
         })
 
         describe('Int Enum', () => {
-            test('Values', async () =>
-                expect(astw.tree.find(n => n.name === 'Status'
+            it('should validate values', async () =>
+                assert.ok(astw.tree.find(n => n.name === 'Status'
                 && n.initializer.expression.submitted === 1
                 && n.initializer.expression.unknown === 0
-                && n.initializer.expression.cancelled === -1))
-                    .toBeTruthy())
+                && n.initializer.expression.cancelled === -1)))
 
-            test('Type Alias', async () =>
-                expect(astw.getTypeAliasDeclarations().find(n => n.name === 'Status'
-                && [-1, 0, 1].every(t => n.types.includes(t))))
-                    .toBeTruthy())
+            it('should validate type alias', async () =>
+                assert.ok(astw.getTypeAliasDeclarations().find(n => n.name === 'Status'
+                && [-1, 0, 1].every(t => n.types.includes(t)))))
         })
 
         describe('Mixed Enum', () => {
-            test('Values', async () =>
+            it('should validate values', async () =>
                 astw.tree.find(n => n.name === 'Truthy'
                 && n.yes === true
                 && n.no === false
                 && n.yesnt === false
                 && n.catchall === 42))
 
-            test('Type Alias', async () =>
-                expect(astw.getTypeAliasDeclarations().find(n => n.name === 'Truthy'
-                && [true, false, 42].every(t => n.types.includes(t))))
-                    .toBeTruthy())
+            it('should validate type alias', async () =>
+                assert.ok(astw.getTypeAliasDeclarations().find(n => n.name === 'Truthy'
+                && [true, false, 42].every(t => n.types.includes(t)))))
         })
     })
 })
@@ -161,21 +166,21 @@ describe('Enum Types', () => {
 describe('Imported Enums', () => {
     let paths
 
-    beforeAll(async () => paths = (await prepareUnitTest('enums/importing/service.cds', locations.testOutput('enums_test'))).paths)
+    before(async () => paths = (await prepareUnitTest('enums/importing/service.cds', locations.testOutput('enums_test'))).paths)
 
-    test('Is Type Alias and Constant in Service', () => {
+    it('should validate type alias and constant in service', () => {
         const service = new ASTWrapper(path.join(paths[1], 'index.ts')).tree
         const decls = service.filter(n => n.name === 'EnumExample')
-        expect(decls.some(check.isTypeAliasDeclaration)).toBe(true)
-        expect(decls.some(check.isVariableDeclaration)).toBe(true)
+        assert.ok(decls.some(check.isTypeAliasDeclaration))
+        assert.ok(decls.some(check.isVariableDeclaration))
     })
 
-    test('Is Enum Declaration in Schema', () => {
+    it('should validate enum declaration in schema', () => {
         const schema = new ASTWrapper(path.join(paths[2], 'index.ts')).tree
         const enumExampleNodes = schema.filter(n => n.name === 'EnumExample')
-        expect(enumExampleNodes.length).toBe(2)
-        expect(enumExampleNodes.find(n => n.nodeType === 'variableStatement')).toBeTruthy()
-        expect(enumExampleNodes.find(n => n.nodeType === 'typeAliasDeclaration')).toBeTruthy()
+        assert.strictEqual(enumExampleNodes.length, 2)
+        assert.ok(enumExampleNodes.find(n => n.nodeType === 'variableStatement'))
+        assert.ok(enumExampleNodes.find(n => n.nodeType === 'typeAliasDeclaration'))
     })
 })
 
@@ -189,12 +194,12 @@ describe('Enums of typeof', () => {
      */
     let astw
 
-    beforeAll(async () => {
+    before(async () => {
         const paths = (await prepareUnitTest('enums/enumtyperef.cds', locations.testOutput('enums_test'))).paths
         astw = new ASTWrapper(path.join(paths[2], 'index.ts'))
     })
 
-    test('Enum References in Parameters', () => {
+    it('should validate enum references in parameters', () => {
         // FIXME: returntypecheck currently broken: cds-typer can currently only deal with refs
         // that contain exactly one element. Type refs are of guise { ref: ['n.A', 'p'] }
         // so right now the property type reference is incorrectly resolved to n.A

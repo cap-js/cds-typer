@@ -103,10 +103,17 @@ function visitCallExpression(node) {
  * @returns {ModuleDeclaration}
  */
 function visitModuleDeclaration(node) {
+    const nodeNames = [node.name]
+    let body = node.body
+    // consider nested modules
+    while (!body.statements) {
+        nodeNames.push(body.name)
+        body = body.body
+    }
     return {
         nodeType: kinds.ModuleDeclaration,
-        name: visit(node.name),
-        body: node.body.statements.map(visit)
+        name: nodeNames.map(n => visit(n)).join('.'),
+        body: body.statements.map(visit)
     }
 }
 
@@ -326,9 +333,12 @@ class ASTWrapper {
         return this.tree.filter(n => n.nodeType === kinds.ImportDeclaration)
     }
 
-    /** @returns {FunctionDeclaration[]} */
-    getAspectFunctions() {
-        return this.tree.filter(n => n.nodeType === kinds.FunctionDeclaration
+    /**
+     * @param {object[]} [tree] - tree to be used
+     * @returns {FunctionDeclaration[]}
+     */
+    getAspectFunctions(tree) {
+        return (Array.isArray(tree) ? tree : this.tree).filter(n => n.nodeType === kinds.FunctionDeclaration
             && n.body.length === 1
             && n.body[0].nodeType === kinds.ClassExpression)
     }
@@ -371,17 +381,23 @@ class ASTWrapper {
     //         .filter(n => n.heritage?.at(0)?.subtypes?.at(0)?.keyword === keywords.ExpressionWithTypeArguments)
     // }
 
-    /** @returns {ClassDeclaration[]} */
-    getInlineClassDeclarations() {
+    /**
+     * @param {object[]} [tree] - tree to be used
+     * @returns {ClassDeclaration[]}
+     */
+    getInlineClassDeclarations(tree) {
         // this is total bogus, as its the same as getAspects...
-        return this.tree
+        return (Array.isArray(tree) ? tree : this.tree)
             .filter(n => n.nodeType === kinds.FunctionDeclaration)
             .map(fn => ({...fn.body[0], name: fn.name }))
     }
 
-    /** @returns {ClassExpression[]} */
-    getAspects() {
-        return this.getAspectFunctions().map(({name, body}) => ({...body[0], name}))
+    /**
+     * @param {object[]} [tree] - tree to be used
+     * @returns {ClassExpression[]}
+     */
+    getAspects(tree) {
+        return this.getAspectFunctions(tree).map(({name, body}) => ({...body[0], name}))
     }
 
     getAspect(name) {
@@ -398,8 +414,14 @@ class ASTWrapper {
     }
 
     exists(clazz, property, type, typeArg) {
-        const entities = this.getInlineClassDeclarations().concat(this.getAspects())
-        const clz = entities.find(c => c.name === clazz)
+        const getEntities = clazz => {
+            let tree = this.tree
+            const module = clazz.split('.').slice(0, -1).join('.')
+            if (module) tree = this.getModuleDeclaration(module).body
+            return this.getInlineClassDeclarations(tree).concat(this.getAspects(tree))
+        }
+        const entities = getEntities(clazz)
+        const clz = entities.find(c => c.name === clazz.split('.').at(-1))
         if (!clz) throw Error(`no class with name ${clazz}`)
         if (!property) return true
 
@@ -418,24 +440,29 @@ class ASTWrapper {
 }
 
 class JSASTWrapper {
-    static async initialise(file, proxyExports = false) {
-        return new JSASTWrapper(await fs.readFile(file, 'utf-8'), proxyExports)
+    static async initialise(file, proxyExports = true, acornOptions = {}) {
+        return new JSASTWrapper(await fs.readFile(file, 'utf-8'), proxyExports, acornOptions)
     }
 
-    constructor(code, proxyExports) {
+    constructor(code, proxyExports = true, acornOptions = {}) {
         this.proxyExports = proxyExports
-        this.program = acorn.parse(code, { ecmaVersion: 'latest'})
+        this.program = acorn.parse(code, {...{ ecmaVersion: 'latest'}, ...acornOptions})
     }
 
-    exportsAre(expected) {
-        if (expected.length < this.getExports().length) throw new Error(`there are more actual than expected exports. Expected ${expected.length}, found ${this.getExports().length}`)
+    /**
+     * @param {[string,string][]} expected - expected export as tuples of `[<export name>, <csn entity>]`
+     * @param {'enum' | 'entity'} [exportType] - the type of export
+     */
+    exportsAre(expected, exportType = 'entity') {
+        const exports = this.getExports()?.filter(e => e.type === exportType)
+        if (expected.length < exports.length) throw new Error(`there are more actual than expected exports. Expected ${expected.length}, found ${exports.length}`)
         for (const [lhs, rhs] of expected) {
             if (!this.hasExport(lhs, rhs)) throw new Error(`missing export module.exports.${lhs} = ${rhs}`)
         }
     }
 
     hasCdsEntitiesAccess() {
-        this.program.body.filter(node => {
+        return this.program.body.filter(node => {
             if (node.type !== 'VariableDeclaration') return false
             if (node.declarations[0].id !== 'csn') return false
             return node.declarations[0].init?.callee.object.name === 'cds'
@@ -455,30 +482,88 @@ class JSASTWrapper {
         if (!customProps.every(c => propKeys.includes(c))) throw new Error('not all expected custom props found in argument')
     }
 
+    getExport(name) {
+        return this.getExports().find(e => e.lhs === name)
+    }
+
     hasExport(lhs, rhs) {
         return this.getExports().find(exp => exp.lhs === lhs && (exp.rhs === rhs || exp.rhs.name === rhs))
     }
 
     /**
-     * @returns {{ lhs: string, rhs: string | { singular: boolean, name: string }}}
+     * Collects modules export in the following formats
+     * - `module.exports.A = createEntityProxy(['namespace', 'A'], { target: { is_singular: true }})`
+     * - `module.exports.A.sub = createEntityProxy(['namespace', 'A.sub'], { target: { is_singular: true }})`
+     * - `module.exports.A = { is_singular: true, __proto__: csn.A }`
+     * - `module.exports.A.sub = csn['A.sub']`
+     * - `module.exports.A.sub = { is_singular: true, __proto__: csn['A.sub']}`
+     * - `module.exports.A.type = { a: 'a', b: 'b', c: 'c' }
+     * @returns {{ lhs: string, rhs: string | { singular: boolean, name: string } | Record<string,any>, type: 'entity' | 'enum', proxyArgs?: any[]}[]}
      */
     getExports() {
-        const processObjectLiteral = ({properties}) => ({
-            singular: properties.find(p => p.key.name === 'is_singular' && p.value.value),
-            name: properties.find(p => p.key.name === '__proto__')?.value.property.name
-        })
+        const processRhsCallExpression = ({ type, callee, arguments: [fqParts, opts] }) => {
+            if (type !== 'CallExpression') return
+            if (callee.name !== 'createEntityProxy') return
+            return {
+                // find is_singular in the options argument of createEntityProxy
+                singular: Boolean(opts.properties.find(({key}) => key.name === 'target')
+                    ?.value.properties.find(({key}) => key.name === 'is_singular')
+                    ?.value.value),
+                name: fqParts.elements[1].value,
+            }
+        }
+        const processRhsObjLiteral = ({ type, properties }) => {
+            if (type !== 'ObjectExpression') return
+            const proto = properties.find(p => p.key.name === '__proto__')
+            return {
+                singular: !!properties.find(p => p.key.name === 'is_singular' && p.value.value),
+                name: proto?.value.property.name ?? proto?.value.property.value,
+            }
+        }
+        const isLhsCsnExport = obj => {
+            if (!obj || !('object' in obj) || !('property' in obj)) return false
+            return (obj.object?.name === 'module' && obj.property?.name === 'exports') || isLhsCsnExport(obj.object)
+        }
+        const getLhsExportId = (obj, expPath = []) => {
+            if (obj?.property?.name && obj.property.name !== 'exports') expPath.push(obj.property.name)
+            if (obj?.object?.name && obj.object.name !== 'module') expPath.push(obj.object.name)
+            if (obj.object?.object) return getLhsExportId(obj.object, expPath)
+            return expPath.reverse().join('.')
+        }
         return this.exports ??= this.program.body.filter(node => {
             if (node.type !== 'ExpressionStatement') return false
             if (node.expression.left.type !== 'MemberExpression') return false
-            const { object, property } = node.expression.left.object
-            return object.name === 'module' && property.name === 'exports'
+            if (
+                !node.expression.right.property?.name &&
+                !node.expression.right.property?.value &&
+                !node.expression.right.arguments &&
+                !node.expression.right.properties
+            ) return false
+            return isLhsCsnExport(node.expression.left.object)
         }).map(node => {
-            return {
-                lhs: node.expression.left.property.name,
-                rhs: this.proxyExports
-                    ? node.expression.right.arguments?.[0].elements[1].value
-                    : node.expression.right.property?.name ?? processObjectLiteral(node.expression.right),
-                proxyArgs: node.expression.right.arguments
+            const { left, right } = node.expression
+            const exportId = getLhsExportId(left)
+            if (node.expression.operator === '??=') {
+                return {
+                    lhs: exportId,
+                    type: 'enum',
+                    rhs: right.properties?.reduce((a, c) => {
+                        a[c.key.name] = c.value.value
+                        return a
+                    }, {}),
+                }
+            } else {
+                return {
+                    lhs: exportId,
+                    type: 'entity',
+                    rhs: this.proxyExports
+                        ? right.arguments?.[0].elements[1].value // proxy function arg -> 'A.sub'
+                        : right.property?.name ?? // csn.A
+                            right.property?.value ?? // csn['A.sub']
+                            processRhsObjLiteral(right) ?? // {__proto__: csn.A} | {__proto__: csn['A.sub']}
+                            processRhsCallExpression(right), // createEntityProxy(['namespace', 'A'], { target: { is_singular: true }})
+                    proxyArgs: right.arguments,
+                }
             }
         })
     }

@@ -1,0 +1,35 @@
+name: Check for Inconsistencies in Generated Schema
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-schema:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run script to generate schema
+        run: npm run write:cds-typer-shema
+
+      - name: Check for changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          if ! git diff --cached --exit-code; then
+            echo "Schema in package.json not consistent with CLI parameters. Run "npm run write:cds-typer-shema" and commit the resulting changes."
+            exit 1
+          fi

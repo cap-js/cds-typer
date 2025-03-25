@@ -1,7 +1,11 @@
-module.exports = [
-    //
+// aiife to allow dynamic import of cds/eslint.config.mjs
+module.exports = (async () => [
     {
-        ignores: ['**/test/integration/**'],
+        ignores: [
+            '**/test/integration/**',
+            '**/test/**/_out',  // no auto-transpiled test files
+            '**/@cds-models'  // no generated model files
+        ],
     },
     require('@eslint/js').configs.recommended,
     require('eslint-plugin-jsdoc').configs['flat/recommended-typescript-flavor-error'],
@@ -10,8 +14,7 @@ module.exports = [
             ecmaVersion: 'latest',
             sourceType: 'commonjs',
             globals: {
-                ...require('globals').node,
-                jest: true
+                ...(await import('@sap/cds/eslint.config.mjs')).defaults.languageOptions.globals
             }
         },
         files: ['**/*.js'],
@@ -92,4 +95,4 @@ module.exports = [
             'jsdoc/require-returns': 'off', // lsp can infer this most of the time, turn back on for doc extraction
         }
     }
-]
+])()

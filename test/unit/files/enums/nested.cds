@@ -6,3 +6,8 @@ entity Foobar {
    valueB;
  };
 }
+
+type TopLevel: String enum {
+  valueA;
+  valueB;
+}

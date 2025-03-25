@@ -4,12 +4,67 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-### Added 
+### Added
+- Improved performance of repeated `cds-typer` runs by introducing an option to cache CDS model between runs. By default, typer will only regenerate the files if the model has changed between runs, using `blake2s256` as algorithm.
 ### Changed
-- prefixed builtin types like `Promise` and `Record` with `globalThis.`, to allow using names of builtin types for entities without collisions
+- [breaking] The config `use_entities_proxy` (allowing for static imports) is now set to `true` as default. You can set it to `false` to revert to the old behaviour.
 ### Deprecated
 ### Removed
 ### Fixed
+### Security
+
+## [0.33.1] - 2025-03-07
+
+### Added
+### Changed
+- Running `cds watch` will trigger `cds-typer "*"` before the initial startup
+### Deprecated
+### Removed
+### Fixed
+- Enums are now exported in ESM style in ESM projects
+### Security
+
+## [0.33.0] - 2025-02-10
+
+### Added
+- Support new `cds.Map` type, which is emitted as `{[key:string]: unknown}`. The most appropriate type would in fact be `{[key:string]: any}`, which would also allow any and all keys. But would also cause issues with strict project configurations. Therefore, to effectively use `cds.Map`, users will have to cast the `unknown`s to the effective type they expect.
+- Introduce `cds.env.typer.build_task` to allow disabling the `typescript` build task shipped with cds-typer by setting it to `false`
+
+### Changed
+- [breaking] The types `cds.Binary` and `cds.LargeBinary` are now generated as `Buffer` and `Readable` respectively to reflect the behaviour of the new database packages `@cap-js/hana` and `@cap-js/sqlite`. You can switch back to the old behaviour by adding `legacy_binary_types: true` to your project configuration.
+- `CHANGELOG.md` and `LICENSE` files are no longer part of the npm package.
+
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [0.32.1] - 2025-01-20
+
+### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+- default value for `inline_declarations` in help command
+- entity scope and namespace are now added in the correct order to inflected type names
+### Security
+
+## [0.32.0] - 2025-01-14
+
+### Added
+- dedicated classes for inline compositions
+- dedicated text-classes for entities with `localized` elements
+
+### Changed
+- prefixed builtin types like `Promise` and `Record` with `globalThis.`, to allow using names of builtin types for entities without collisions
+- default export class representing the service itself is now exported without name
+- bumped peer-dependency to `@cap-js/cds-types` to `>=0.9`
+
+### Deprecated
+### Removed
+### Fixed
+- referencing another entity's property of type `cds.String` in an enum will now properly quote the generated values
 ### Security
 
 ## [0.31.0] - 2024-12-16

@@ -35,6 +35,8 @@ jobs:
       - name: Create new branch and push changes
         run: |
           BRANCH_NAME="prerelease-${{ steps.bump_version.outputs.prerelease_version }}"
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
           git checkout -b $BRANCH_NAME
           git push origin $BRANCH_NAME
           git push --tags

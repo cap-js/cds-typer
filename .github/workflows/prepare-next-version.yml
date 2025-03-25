@@ -18,53 +18,15 @@ permissions:
   contents: write
   pull-requests: write
 
-env:
-  INPUTS_INCREMENT: ${{ github.event.inputs.increment }}
-  CHANGELOG_FILE: CHANGELOG.md
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
 
 
 jobs:
-  create-pr:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 22
-        registry-url: https://registry.npmjs.org/
-
-    - name: Increment version
-      id: increment-version
-      run: |
-        npm version $INPUTS_INCREMENT --no-git-tag-version
-        echo "new-version=$(npm pkg get version | tr -d '"')" >> $GITHUB_OUTPUT
-
-    # -i for in-place editing, -E for extended regex including \s for whitespace
-    # double quotes needed for sed to work with variable replacement
-    # double backslashes needed for sed to work with double quotes
-    - name: Replace Unreleased entry in ${{ env.CHANGELOG_FILE }}
-      env:
-        NEW_VERSION: ${{ steps.increment-version.outputs.new-version }}
-      run: |
-        CURRENT_DATE=$(date +%Y-%m-%d)
-        sed -i -E "0,/^##\s+.*\[Unreleased\].*$/s//## [Unreleased]\\
-        \\
-        ### Added\\
-        ### Changed\\
-        ### Deprecated\\
-        ### Removed\\
-        ### Fixed\\
-        ### Security\\
-        \\
-        ## [${NEW_VERSION}] - ${CURRENT_DATE}/" $CHANGELOG_FILE
-        head -n 20 $CHANGELOG_FILE
-
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v7
-      with:
-        commit-message: chore/release-${{ steps.increment-version.outputs.new-version }}
-        title: "chore(version): ${{ env.INPUTS_INCREMENT}} version ${{ steps.increment-version.outputs.new-version }}"
-        body: Set version to ${{ steps.increment-version.outputs.new-version }}
-        branch: chore/release-${{ steps.increment-version.outputs.new-version }}
-        reviewers: ${{ github.actor }}
+  prepare-next-version:
+    uses: cap-js/.github/.github/workflows/prepare-next-version.yml@main
+    secrets: inherit
+    with:
+      increment: ${{ github.event.inputs.increment }}

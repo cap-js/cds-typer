@@ -19,11 +19,9 @@ import {
     getOneExternalType,
 } from '#cds-models/actions_test/S'
 
-import S2_default from '#cds-models/actions_test/S2'
-import { S2 } from '#cds-models/actions_test/S2'
-S2_default === S2
+import S2 from '#cds-models/actions_test/S2'
 
-import { S as S_} from '#cds-models/actions_test/S'
+import S_ from '#cds-models/actions_test/S'
 
 import { ExternalType, ExternalType2 } from '#cds-models/elsewhere'
 import { ExternalInRoot } from '#cds-models';
@@ -63,7 +61,7 @@ export class S extends cds.ApplicationService { override async init(){
   this.on(free4,      req => { return { extType2:1 } satisfies ExternalType2 })
 
   // calling actions
-  const s2:S2  = await cds.connect.to(S2)
+  const s2 = await cds.connect.to(S2)
   await s2.a1({p1: '', p2: [ { extType2: 1 } ]}) satisfies ExternalType | null
   await s2.a1('', [ { extType2: 1 } ]) satisfies ExternalType | null
   await s2.a2({p1: '', p3: 1}) satisfies ExternalType | null

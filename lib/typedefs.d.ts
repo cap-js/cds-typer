@@ -13,7 +13,7 @@ export module resolver {
         compositions?: { target: string }[]
         doc?: string,
         elements?: { [key: string]: EntityCSN }
-        key?: string // custom!!
+        key?: boolean // custom!!
         keys?: { [key:string]: any }
         kind: string,
         includes?: string[]
@@ -25,6 +25,8 @@ export module resolver {
         target?: string,
         type: string | ref,
         name: string,
+        '@singular'?: string,
+        '@plural'?: string,
         '@odata.draft.enabled'?: boolean // custom!
         _unresolved?: boolean
         isRefNotNull?: boolean // custom!
@@ -46,7 +48,8 @@ export module resolver {
 
 
     export type EnumCSN = EntityCSN & {
-        enum: {[key:name]: string}
+        enum: {[key:name]: string},
+        resolvedType?: string  // custom property! When .type points to a ref, the visitor will resolve the ref into this property
     }
 
     export type CSN = {
@@ -185,6 +188,7 @@ export module config {
 
     export type Configuration = {
         outputDirectory: string,
+        cache: 'none' | 'blake2s256'
         logLevel: number,
         /**
          * `useEntitiesProxy = true` will wrap the `module.exports.<entityName>` in `Proxy` objects
@@ -203,6 +207,10 @@ export module config {
          */
         IEEE754Compatible: boolean
         targetModuleType: 'cjs' | 'esm' | 'auto'
+        /**
+         * `legacyBinaryTypes = true` -> Binary and LargeBinary are generated as `string` and a union type respectively
+         */
+        legacyBinaryTypes: boolean
     }
 }
 
