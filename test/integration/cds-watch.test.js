@@ -7,7 +7,7 @@ const assert = require('node:assert')
 const { execSync } = require('node:child_process')
 const cds = require('@sap/cds')
 
-const dir = path.join(__dirname, '_out', 'dummy-project')
+const dir = path.join(__dirname, 'dummy-project')
 // use a slightly different model directory to avoid race-conditions with
 // vscode, as our extension eagerly creates @cds-models when creating a new .cds file
 // as part of our tests
@@ -16,11 +16,6 @@ const logs = []
 
 describe('cds watch', () => {
     before(async () => {
-        fs.rmSync(dir, { recursive: true, force: true })
-        fs.mkdirSync(dir, { recursive: true })
-        execSync('cds init', { cwd: dir })
-        fs.writeFileSync(path.join(dir, 'db', 'schema.cds'), 'entity Books {}')
-
         // spy on cds.debug('cli|build')
         const cdsLog = cds.debug
         cds.debug = (...args) => {
