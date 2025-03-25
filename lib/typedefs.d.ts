@@ -1,3 +1,5 @@
+import { normalise } from './components/identifier'
+
 export module resolver {
     type ref = {
         ref: string[],
@@ -140,12 +142,14 @@ export module util {
         '@plural'?: string
     }
 }
-
 export module visitor {
     export type Inflection = {
         typeName?: string,
         singular: string,
-        plural: string
+        plural: string,
+        normalised: {
+            plural?: ReturnType<typeof normalise>,
+        }
     }
 
     export type Context = {

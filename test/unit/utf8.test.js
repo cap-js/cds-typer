@@ -5,7 +5,7 @@ const assert = require('assert')
 const { check, checkFunction } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 
-const dir = locations.testOutput('not_null_test')
+const dir = locations.testOutput('utf8_test')
 
 describe('UTF8', () => {
     let astw
