@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Improved performance of repeated `cds-typer` runs by introducing an option to cache CDS model between runs. By default, typer will only regenerate the files if the model has changed between runs, using `blake2s256` as algorithm.
 ### Changed
 - [breaking] The config `use_entities_proxy` (allowing for static imports) is now set to `true` as default. You can set it to `false` to revert to the old behaviour.
+- Running `cds watch` will trigger `cds-typer "*"` before the initial startup
 ### Deprecated
 ### Removed
 ### Fixed
@@ -17,7 +18,6 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 ### Changed
-- Running `cds watch` will trigger `cds-typer "*"` before the initial startup
 ### Deprecated
 ### Removed
 ### Fixed
