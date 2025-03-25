@@ -21,3 +21,10 @@ entity 本 {  // Book
     作家: String;  // Author
     タイトル: ![C DÄ#]:![välue];  // Title
 }
+
+entity object {  // reserved word
+    key ID: Integer;
+    object: String;
+    for: String;
+    function: String;
+}
