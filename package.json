@@ -16,8 +16,8 @@
     "test:unit": "node test/testRunner.js ./test/unit ./test/unit/setup.mjs",
     "test:integration": "node test/testRunner.js ./test/integration ./test/integration/setup.mjs",
     "test:smoke": "node test/testRunner.js ./test/smoke ./test/smoke/setup.mjs",
-    "test:all": "npm run test:smoke && npm run test:unit",
-    "test": "npm run test:smoke && npm run test:unit",
+    "test:all": "npm run test:smoke && npm run test:unit && npm run test:integration",
+    "test": "npm run test:all",
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix",
     "cli": "node lib/cli.js",
@@ -57,7 +57,7 @@
       "inline_declarations": "flat",
       "target_module_type": "auto",
       "properties_optional": true,
-      "use_entities_proxy": false,
+      "use_entities_proxy": true,
       "build_task": true
     },
     "schema": {
@@ -70,6 +70,15 @@
           "type": "object",
           "description": "Configuration for CDS Typer",
           "properties": {
+            "cache": {
+              "type": "string",
+              "description": "How to cache typer runs.\nnone: fully run cds-typer whenever it is called\nblake2s256: only run if the blake2s256-hash of the model has changed. Hash is stored in a file between runs.",
+              "enum": [
+                "none",
+                "blake2s256"
+              ],
+              "default": "none"
+            },
             "output_directory": {
               "type": "string",
               "description": "Root directory to write the generated files to.",
@@ -100,7 +109,7 @@
             "use_entities_proxy": {
               "type": "boolean",
               "description": "If set to true the 'cds.entities' exports in the generated 'index.js'\nfiles will be wrapped in 'Proxy' objects\nso static import/require calls can be used everywhere.\n\nWARNING: entity properties can still only be accessed after\n'cds.entities' has been loaded",
-              "default": false
+              "default": true
             },
             "inline_declarations": {
               "type": "string",
