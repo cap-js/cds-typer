@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [0.34.0] - 2025-04-01
+
+### Added
 - Improved performance of repeated `cds-typer` runs by introducing an option to cache CDS model between runs. By default, typer will only regenerate the files if the model has changed between runs, using `blake2s256` as algorithm. The used version of cds-typer is included in the hash and will therefore be version-specific.
 ### Changed
 - [breaking] The config `use_entities_proxy` (allowing for static imports) is now set to `true` as default. You can set it to `false` to revert to the old behaviour.
