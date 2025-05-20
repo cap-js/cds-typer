@@ -204,4 +204,10 @@ describe('Actions', () => {
             parameterCheck: ({members: [fst]}) => check.isNullable(fst.type, [check.isIndexedAccessType])
         })
     })
+
+    it('should validate mandatory parameters to not be null or undefined', async () => {
+        checkFunction(astwUnbound.tree.find(node => node.name === 'actionWithMandatoryParameter'), {
+            parameterCheck: ({members: [fst]}) => !check.isNullable(fst.type)
+        })
+    })
 })
