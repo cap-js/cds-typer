@@ -95,3 +95,5 @@ entity Child: Parent {}
     actions {
         action b()
     }
+
+action actionWithMandatoryParameter( @mandatory parameter : String);
