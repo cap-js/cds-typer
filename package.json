@@ -1,6 +1,6 @@
 {
   "name": "@cap-js/cds-typer",
-  "version": "0.33.1",
+  "version": "0.34.0",
   "description": "Generates .ts files for a CDS model to receive code completion in VS Code",
   "main": "index.js",
   "repository": "github:cap-js/cds-typer",
@@ -16,8 +16,8 @@
     "test:unit": "node test/testRunner.js ./test/unit ./test/unit/setup.mjs",
     "test:integration": "node test/testRunner.js ./test/integration ./test/integration/setup.mjs",
     "test:smoke": "node test/testRunner.js ./test/smoke ./test/smoke/setup.mjs",
-    "test:all": "npm run test:smoke && npm run test:unit",
-    "test": "npm run test:smoke && npm run test:unit",
+    "test:all": "npm run test:smoke && npm run test:unit && npm run test:integration",
+    "test": "npm run test:all",
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix",
     "cli": "node lib/cli.js",
@@ -45,7 +45,6 @@
   },
   "devDependencies": {
     "@cap-js/cds-types": "^0",
-    "@sap/cds": "^8",
     "@stylistic/eslint-plugin-js": "^4.2.0",
     "acorn": "^8.10.0",
     "eslint": "^9",
@@ -123,7 +122,7 @@
             },
             "properties_optional": {
               "type": "boolean",
-              "description": "If set to true, properties in entities are\nalways generated as optional (a?: T).",
+              "description": "If set to true, properties in entities are\nalways generated as optional (a?: T).\nSetting it to false makes properties non-optional instead (a: T).",
               "default": true
             },
             "ieee754compatible": {
