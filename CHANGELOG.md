@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 ### Changed
+- action parameters annotated with `@mandatory` are no longer nullable
 ### Deprecated
 ### Removed
 ### Fixed
@@ -53,7 +54,6 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 ### Changed
-- action parameters annotated with `@mandatory` are no longer nullable
 ### Deprecated
 ### Removed
 ### Fixed
