@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Deprecated
 ### Removed
 ### Fixed
+- Using `cds.Map` as type will no longer result in the property not being printed at all.
 ### Security
 
 ## [0.34.0] - 2025-04-01
@@ -52,6 +53,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 ### Changed
+- action parameters annotated with `@mandatory` are no longer nullable
 ### Deprecated
 ### Removed
 ### Fixed
