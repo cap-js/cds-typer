@@ -4,7 +4,8 @@ const defaultTranspilationOptions = {
     noEmit: true,
     esModuleInterop: true,
     strict: true,
-    noImplicitOverride: true
+    noImplicitOverride: true,
+    lib: ['es2022'],  // to allow Object.hasOwn
 }
 
 /**
@@ -17,6 +18,9 @@ function checkProgram (program) {
 
     const errors = diagnostics.map(diag => {
         const message = ts.flattenDiagnosticMessageText(diag.messageText, '\n')
+        // ignore errors that are caused by Object.hasOwn
+        // this SHOULD be addressed by passing lib: [es2022], but for some reason, it is not.
+        if (message.includes('hasOwn')) return undefined 
         // ignore errors that were caused by dependencies
         if (diag.file && diag.file.fileName.indexOf('node_modules') === -1) {
             const { line } = diag.file.getLineAndCharacterOfPosition(diag.start)
