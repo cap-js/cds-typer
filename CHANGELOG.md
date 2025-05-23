@@ -6,6 +6,15 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 ### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [0.35.0] - 2025-05-23
+
+### Added
+### Changed
 - action parameters annotated with `@mandatory` are no longer nullable
 - base definitions now properly import the default export of `@sap/cds`
 ### Deprecated
