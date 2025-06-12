@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Deprecated
 ### Removed
 ### Fixed
+- targeting aspects in compositions now properly resolves them.
 ### Security
 
 ## [0.35.0] - 2025-05-23
