@@ -13,4 +13,8 @@ describe('CDS Aspects', () => {
     it('should validate aspect in singular form', () => {
         assert.ok(astw.tree.find(n => n.name === '_PersonAspect'))
     })
+
+    it('should contain a composition to an aspect', () => {
+        assert.ok(astw.exists('_CatalogAspect', 'persons'))
+    })
 })
