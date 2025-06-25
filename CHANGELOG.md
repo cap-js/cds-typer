@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 ### Removed
 ### Fixed
 - targeting aspects in compositions now properly resolves them.
+- transitive references to property types of other entities now also work for enums.
 ### Security
 
 ## [0.35.0] - 2025-05-23
