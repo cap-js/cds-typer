@@ -169,14 +169,14 @@ describe('Imported Enums', () => {
     before(async () => paths = (await prepareUnitTest('enums/importing/service.cds', locations.testOutput('enums_test'))).paths)
 
     it('should validate type alias and constant in service', () => {
-        const service = new ASTWrapper(path.join(paths[1], 'index.ts')).tree
+        const service = new ASTWrapper(path.join(paths.find(p => p.endsWith('ExampleService')), 'index.ts')).tree
         const decls = service.filter(n => n.name === 'EnumExample')
         assert.ok(decls.some(check.isTypeAliasDeclaration))
         assert.ok(decls.some(check.isVariableDeclaration))
     })
 
     it('should validate enum declaration in schema', () => {
-        const schema = new ASTWrapper(path.join(paths[2], 'index.ts')).tree
+        const schema = new ASTWrapper(path.join(paths.find(p => p.endsWith('imported_enum')), 'index.ts')).tree
         const enumExampleNodes = schema.filter(n => n.name === 'EnumExample')
         assert.strictEqual(enumExampleNodes.length, 2)
         assert.ok(enumExampleNodes.find(n => n.nodeType === 'variableStatement'))
