@@ -1,9 +1,12 @@
 using {imported_enum as schema} from './schema';
 
-entity ProjectedEntity as projection on schema.EntityWithEnum;
 
-type TypeReferringToProjectedEntity {
-  foo: ProjectedEntity:inline;
+entity EntityWithRefToEnum {
+  e: schema.EnumExample
+}
+
+type TypeWithTransitiveRefToEnum {
+  e: EntityWithRefToEnum:e
 }
 
 service ExampleService {
