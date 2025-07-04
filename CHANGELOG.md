@@ -9,6 +9,15 @@ All notable changes to this project will be documented in this file.
 ### Deprecated
 ### Removed
 ### Fixed
+### Security
+
+## [0.36.0] - 2025-07-04
+
+### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
 - targeting aspects in compositions now properly resolves them.
 - transitive references to property types of other entities now also work for enums.
 ### Security
