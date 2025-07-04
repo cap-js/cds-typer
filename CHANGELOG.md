@@ -12,6 +12,17 @@ All notable changes to this project will be documented in this file.
 - Added declare statement on type definitions
 ### Security
 
+## [0.36.0] - 2025-07-04
+
+### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+- targeting aspects in compositions now properly resolves them.
+- transitive references to property types of other entities now also work for enums.
+### Security
+
 ## [0.35.0] - 2025-05-23
 
 ### Added
