@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Deprecated
 ### Removed
 ### Fixed
+- Added declare statement on type definitions
 ### Security
 
 ## [0.36.0] - 2025-07-04
