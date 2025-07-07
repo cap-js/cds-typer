@@ -210,4 +210,18 @@ describe('Actions', () => {
             parameterCheck: ({members: [fst]}) => !check.isNullable(fst.type)
         })
     })
+
+    it('should validate that properties in action return type objects do not have declare modifiers', async () => {
+        const actions = astwBound.getAspectProperty('_EAspect', 'actions')
+        assert.ok(actions.modifiers.some(check.isStatic))
+        checkFunction(actions.type.members.find(fn => fn.name === 'h'), {
+            callCheck: signature => check.isTypeLiteral(signature),
+            parameterCheck: ({full, args}) => full === 'globalThis.Record'
+                && checkKeyword(args[0], 'never')
+                && checkKeyword(args[1], 'never'),
+            returnTypeCheck: returns => check.isTypeLiteral(returns)
+                && returns.members.every(member => !check.isDeclare(member)),
+            modifiersCheck: (modifiers = []) => !modifiers.some(check.isStatic),
+        })
+    })
 })
