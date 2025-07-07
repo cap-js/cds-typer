@@ -56,8 +56,27 @@ describe('Actions', () => {
                 && check.isNullable(type.subtypes[0].args[0].subtypes[0].members[0].type, [check.isNumber])
                 && type.subtypes[0].args[0].subtypes[0].members[1].name === 'b'
                 && check.isNullable(type.subtypes[0].args[0].subtypes[0].members[1].type, [check.isString]),
+            // unbound actions -> self === null
+            selfTypeCheck: check.isNull
         })
     })
+
+    it('should validate bound actions containing __self', async () => {
+        const actions = astwBound.getAspectProperty('_EAspect', 'actions')
+        assert.ok(actions.modifiers.some(check.isStatic))
+        checkFunction(actions.type.members.find(fn => fn.name === 'f'), {
+            selfTypeCheck: type => check.isTypeReference(type, 'E')
+        })
+
+        checkFunction(actions.type.members.find(fn => fn.name === 'k'), {
+            selfTypeCheck: type => check.isTypeReference(type, 'E')
+        })
+
+        checkFunction(actions.type.members.find(fn => fn.name === 'l'), {
+            selfTypeCheck: type => check.isTypeReference(type, 'E')
+        })
+    })
+
 
     it('should validate bound actions returning external type', async () => {
         const actions = astwBound.getAspectProperty('_EAspect', 'actions')
@@ -65,17 +84,17 @@ describe('Actions', () => {
         checkFunction(actions.type.members.find(fn => fn.name === 'f'), {
             callCheck: signature => check.isAny(signature),
             parameterCheck: ({members: [fst]}) => fst.name === 'x' && check.isNullable(fst.type, [check.isString]),
-            returnTypeCheck: returns => check.isAny(returns)
+            returnTypeCheck: returns => check.isAny(returns),
         })
 
         checkFunction(actions.type.members.find(fn => fn.name === 'k'), {
             callCheck: ({full}) => full === '_elsewhere.ExternalType',
-            returnTypeCheck: ({full}) => full === '_elsewhere.ExternalType'
+            returnTypeCheck: ({full}) => full === '_elsewhere.ExternalType',
         })
 
         checkFunction(actions.type.members.find(fn => fn.name === 'l'), {
             callCheck: ({full}) => full === '_.ExternalInRoot',
-            returnTypeCheck: ({full}) => full === '_.ExternalInRoot'
+            returnTypeCheck: ({full}) => full === '_.ExternalInRoot',
         })
     })
 
