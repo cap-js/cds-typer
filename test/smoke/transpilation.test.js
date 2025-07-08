@@ -31,6 +31,9 @@ describe('transpilation', () => {
                         transpilationCheck: true,
                         tsCompilerOptions: {
                             skipLibCheck: true,
+                        },
+                        typerOptions: {
+                            propertiesOptional: false
                         }
                     }
                 )

@@ -606,6 +606,7 @@ const check = {
     isStatic: node => checkKeyword(node, 'static'),
     isStaticMember: node => node?.modifiers?.find(m => checkKeyword(m, 'static')),
     isReadonlyMember: node => node?.modifiers?.find(m => checkKeyword(m, 'readonly')),
+    isDeclare: node => node?.modifiers?.find(m => checkKeyword(m, 'declare')),
     isIndexedAccessType: node => checkKeyword(node, 'indexedaccesstype'),
     isParenthesizedType: (node, of = undefined) => checkKeyword(node, 'parenthesizedtype') && (of === undefined || of(node.type)),
     isNull: node => checkKeyword(node, 'literaltype') && checkKeyword(node.literal, 'null'),
@@ -617,6 +618,7 @@ const check = {
     isOptional: node => node.optional,
     hasDeclareModifier: node => node?.modifiers?.some(mod => checkKeyword(mod, 'declare')),
     isLiteral: (node, literal = undefined) => checkKeyword(node, 'literaltype') && (literal === undefined || node.literal === literal),
+    isTypeLiteral: (node, literal = undefined) => checkKeyword(node, 'typeliteral'),
     isTypeReference: (node, full = undefined) => checkNodeType(node, 'typeReference') && (!full || node.full === full),
     isTypeQuery: node => checkKeyword(node, 'typequery'),  // FIXME: should actually check what is being queried
     isTypeAliasDeclaration: node => checkNodeType(node, 'typeAliasDeclaration'),
