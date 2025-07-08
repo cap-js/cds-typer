@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Allow non-alphanumeric characters in entity names
 ### Changed
 ### Deprecated
 ### Removed
