@@ -72,7 +72,7 @@ export type CdsMap = { [key: string]: unknown };
 
 
 export const createEntityProxy = function (fqParts: any, opts = {}) {
-    const { target, customProps } = { target: {}, customProps: [], ...opts }
+    const { target, customProps } = { target: {}, customProps: [] as any[], ...opts }
     const fq = fqParts.filter((p: any) => !!p).join('.')
     return new Proxy(target, {
         get: function (target:any, prop:any) {
