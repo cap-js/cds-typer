@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   check-changelog:
-    runs-on: [self-hosted, solinas]
+    runs-on: ubuntu-latest
     steps:
       - name: Check changelog
         uses: cap-js/.github/.github/actions/check-changelog@add/simplerChLogTest
