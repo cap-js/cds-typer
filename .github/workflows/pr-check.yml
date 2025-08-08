@@ -1,0 +1,17 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+    types: [edited, synchronize] # relevant triggers for title change, file modifications
+
+
+concurrency:
+  group: pr-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  check-changelog:
+    runs-on: [self-hosted, solinas]
+    steps:
+      - name: Check changelog
+        uses: cap-js/.github/.github/actions/check-changelog@add/simplerChLogTest
