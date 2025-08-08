@@ -4,7 +4,7 @@ permissions:
 
 on:
   pull_request:
-    types: [edited, synchronize] # relevant triggers for title change, file modifications
+    types: [edited, opened, synchronize] # relevant triggers for title change, file modifications
 
 
 concurrency:
