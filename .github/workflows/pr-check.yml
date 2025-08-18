@@ -16,4 +16,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check changelog
-        uses: cap-js/.github/.github/actions/check-changelog@add/simplerChLogTest
+        uses: cap-js/.github/.github/actions/check-changelog@main
