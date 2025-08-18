@@ -14,5 +14,3 @@ jobs:
   enforce-changelog:
     uses: cap-js/.github/.github/workflows/enforce-changelog.yml@main
     secrets: inherit
-    permissions:
-      pull-requests: write
