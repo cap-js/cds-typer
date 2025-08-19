@@ -6,8 +6,8 @@ permissions:
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
-    paths:
-      - '**/*.js'
+    # paths:
+    #   - '**/*.js'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref }}
