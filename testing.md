@@ -46,8 +46,8 @@ You can produce such a wrapped AST as follows:
 let astw
 beforeAll(async () => {
     const paths = await cds2ts.compileFromFile(locations.unit.files('X/model.cds'), { ... })
-    astw = new ASTWrapper(path.join(paths[1], 'index.ts'))
-}
+    astw = new ASTWrapper(path.join(paths[1], 'index.ts')) // or 'index.d.ts'
+})
 ```
 
 The downside of this process is that the wrapped AST only contains the nodes that are explicitly visited!
@@ -63,5 +63,5 @@ let ast
 beforeAll(async () => {
     const paths = await cds2ts.compileFromFile(locations.unit.files('X/model.cds'), { ... })
     const jsastw = new JSASTWrapper(code)
-}    
+})
 ```
