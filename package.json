@@ -54,6 +54,7 @@
   "cds": {
     "typer": {
       "output_directory": "@cds-models",
+      "output_d_ts_files": false,
       "inline_declarations": "flat",
       "target_module_type": "auto",
       "properties_optional": true,
@@ -83,6 +84,11 @@
               "type": "string",
               "description": "Root directory to write the generated files to.",
               "default": "@cds-models"
+            },
+            "output_d_ts_files": {
+              "type": "boolean",
+              "description": "(experimental) If set to true, *.d.ts files will be generated per each *.js files. If set to false (default), *.ts files will be generated per each *.js files.",
+              "default": false
             },
             "log_level": {
               "type": "string",
