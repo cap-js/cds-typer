@@ -1,0 +1,13 @@
+{
+  "name": "external",
+  "version": "1.0.0",
+  "private": true,
+  "cds": {
+    "requires": {
+      "CatalogService": {
+        "kind": "odata",
+        "model": "srv/external/CatalogService"
+      }
+    }
+  }
+}
