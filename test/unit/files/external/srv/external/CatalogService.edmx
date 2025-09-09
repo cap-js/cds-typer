@@ -10,7 +10,7 @@
     <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
   </edmx:Reference>
   <edmx:DataServices>
-    <Schema Namespace="CatalogService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+    <Schema Namespace="external.CatalogService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <Annotation Term="Core.Links">
         <Collection>
           <Record>
@@ -20,18 +20,17 @@
         </Collection>
       </Annotation>
       <EntityContainer Name="EntityContainer">
-        <EntitySet Name="Books" EntityType="CatalogService.Books"/>
+        <EntitySet Name="Books" EntityType="external.CatalogService.Books"/>
       </EntityContainer>
       <EntityType Name="Books">
         <Key>
           <PropertyRef Name="ID"/>
         </Key>
         <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
-        <Property Name="title" Type="Edm.String" MaxLength="10" Nullable="false"/>
-        <Property Name="metadata" Type="CatalogService.cds_Map"/>
+        <Property Name="metadata" Type="external.CatalogService.cds_Map"/>
       </EntityType>
       <ComplexType Name="cds_Map" OpenType="true"/>
-      <Annotations Target="CatalogService.EntityContainer/Books">
+      <Annotations Target="external.CatalogService.EntityContainer/Books">
         <Annotation Term="Capabilities.DeleteRestrictions">
           <Record Type="Capabilities.DeleteRestrictionsType">
             <PropertyValue Property="Deletable" Bool="false"/>
@@ -48,7 +47,7 @@
           </Record>
         </Annotation>
       </Annotations>
-      <Annotations Target="CatalogService.Books/ID">
+      <Annotations Target="external.CatalogService.Books/ID">
         <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
       </Annotations>
     </Schema>

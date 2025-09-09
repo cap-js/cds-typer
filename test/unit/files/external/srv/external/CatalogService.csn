@@ -15,11 +15,6 @@
      "notNull": true,
      "@Core.ComputedDefaultValue": true
     },
-    "title": {
-     "type": "cds.String",
-     "length": 10,
-     "notNull": true
-    },
     "metadata": {
      "type": "CatalogService.cds_Map"
     }
