@@ -9,6 +9,15 @@ All notable changes to this project will be documented in this file.
 ### Deprecated
 ### Removed
 ### Fixed
+### Security
+
+## [0.37.0] - 2025-09-10
+
+### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
 - Added declare statement on type definitions
 - Explicitly add an `any[]` type in generated boilerplate to avoid issues with `noImplicitAny`
 - Entities included via `cds import` now have their properties properly generated
