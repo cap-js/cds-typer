@@ -48,7 +48,7 @@
     "@stylistic/eslint-plugin-js": "^4.2.0",
     "acorn": "^8.10.0",
     "eslint": "^9",
-    "eslint-plugin-jsdoc": "^51.2.1",
+    "eslint-plugin-jsdoc": "^57.0.8",
     "typescript": ">=4.6.4"
   },
   "cds": {
