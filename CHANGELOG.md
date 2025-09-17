@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 ### Changed
+- unbound actions will now assume the `self` type of `never`, instead of the former `null`
 ### Deprecated
 ### Removed
 ### Fixed
