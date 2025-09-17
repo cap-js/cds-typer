@@ -87,7 +87,7 @@
             },
             "output_d_ts_files": {
               "type": "boolean",
-              "description": "(experimental) If set to true, *.d.ts files will be generated per each *.js files. If set to false (default), *.ts files will be generated per each *.js files.",
+              "description": "(experimental) If set to true, emits .d.ts files for each generated .js file. If set to false (default), emits .ts files instead.",
               "default": false
             },
             "log_level": {
