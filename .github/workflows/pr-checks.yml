@@ -1,0 +1,27 @@
+name: PR Checks
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited, labeled, unlabeled, ready_for_review, review_requested, review_request_removed, auto_merge_enabled, auto_merge_disabled]
+
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+
+jobs:
+  enforce-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check changelog
+        uses: cap-js/.github/.github/actions/check-changelog@main
+
+  check-pr-title:
+     runs-on: ubuntu-latest
+     steps:
+       - name: Check PR title
+         uses: cap-js/.github/.github/actions/check-pr-title@main
