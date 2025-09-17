@@ -610,6 +610,7 @@ const check = {
     isIndexedAccessType: node => checkKeyword(node, 'indexedaccesstype'),
     isParenthesizedType: (node, of = undefined) => checkKeyword(node, 'parenthesizedtype') && (of === undefined || of(node.type)),
     isNull: node => checkKeyword(node, 'literaltype') && checkKeyword(node.literal, 'null'),
+    isNever: node => checkKeyword(node, 'never'),
     isUnionType: (node, of = []) => checkKeyword(node, 'uniontype')
         && of.reduce((acc, predicate) => acc && node.subtypes.some(st => predicate(st)), true),
     isIntersectionType: (node, of = []) => checkKeyword(node, 'intersectiontype')
