@@ -56,8 +56,8 @@ describe('Actions', () => {
                 && check.isNullable(type.subtypes[0].args[0].subtypes[0].members[0].type, [check.isNumber])
                 && type.subtypes[0].args[0].subtypes[0].members[1].name === 'b'
                 && check.isNullable(type.subtypes[0].args[0].subtypes[0].members[1].type, [check.isString]),
-            // unbound actions -> self === null
-            selfTypeCheck: check.isNull
+            // unbound actions -> self === never
+            selfTypeCheck: check.isNever
         })
     })
 
