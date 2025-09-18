@@ -3,10 +3,10 @@
 const path = require('path')
 const { describe, it, before } = require('node:test')
 const assert = require('assert')
-const cds = require('@sap/cds')
 const { ASTWrapper } = require('../ast')
 const { locations, prepareUnitTest, createSpy } = require('../util')
 const { perEachTestConfig } = require('../config')
+const { configuration } = require('../../lib/config')
 
 const draftable_ = (entity, ast) => ast.find(n => n.name === entity && n.members.find(({name}) => name === 'drafts'))
 const draftable = (entity, ast, plural = e => `${e}_`) => draftable_(entity, ast) && draftable_(plural(entity), ast)
@@ -14,7 +14,7 @@ const draftable = (entity, ast, plural = e => `${e}_`) => draftable_(entity, ast
 perEachTestConfig(options =>{
     describe(`Bookshop (using output **/*/${options.output_file} files)`, () => {
         before(() => {
-            cds.env.typer.output_d_ts_files = options.output_d_ts_files
+            configuration.outputDTSFiles = options.output_d_ts_files
         })
 
         it('should validate draft via root and compositions', async () => {

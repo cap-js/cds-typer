@@ -3,17 +3,17 @@
 const path = require('path')
 const { before, describe, it } = require('node:test')
 const assert = require('assert')
-const cds = require('@sap/cds')
 const { ASTWrapper } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 const { perEachTestConfig } = require('../config')
+const { configuration } = require('../../lib/config')
 
 perEachTestConfig(options => {
     describe(`Excluding Clause Tests (using output **/*/${options.output_file} files)`, () => {
         let paths
 
         before(async () => {
-            cds.env.typer.output_d_ts_files = options.output_d_ts_files
+            configuration.outputDTSFiles = options.output_d_ts_files
             paths = (await prepareUnitTest('excluding/model.cds', locations.testOutput('excluding_test'))).paths
         })
 

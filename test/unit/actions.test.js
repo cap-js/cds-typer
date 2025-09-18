@@ -1,12 +1,12 @@
 'use strict'
 
-const cds = require('@sap/cds')
 const path = require('path')
 const { describe, before, it } = require('node:test')
 const assert = require('assert')
 const { checkFunction, check, ASTWrapper, checkKeyword } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 const { perEachTestConfig } = require('../config')
+const { configuration } = require('../../lib/config')
 
 perEachTestConfig(options => {
     describe(`Actions (using output **/*/${options.output_file} files)`, () => {
@@ -16,7 +16,7 @@ perEachTestConfig(options => {
         let astwUnbound
 
         before(async () => {
-            cds.env.typer.output_d_ts_files = options.output_d_ts_files
+            configuration.outputDTSFiles = options.output_d_ts_files
 
             sut = await prepareUnitTest('actions/model.cds', locations.testOutput('actions_test'))
             paths = sut.paths

@@ -3,10 +3,10 @@
 const path = require('path')
 const { describe, before, it } = require('node:test')
 const assert = require('assert')
-const cds = require('@sap/cds')
 const { check, JSASTWrapper, checkFunction, ASTWrapper } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 const { perEachTestConfig } = require('../config')
+const { configuration } = require('../../lib/config')
 
 // FIXME: missing: inline enums (entity Foo { bar: String enum { ... }})
 describe('Enum Action Parameters', () => {
@@ -171,7 +171,7 @@ perEachTestConfig(options => {
         let paths
 
         before(async () => {
-            cds.env.typer.output_d_ts_files = options.output_d_ts_files
+            configuration.outputDTSFiles = options.output_d_ts_files
             paths = (await prepareUnitTest('enums/importing/service.cds', locations.testOutput('enums_test'))).paths
         })
 
@@ -204,7 +204,7 @@ perEachTestConfig(options => {
         let astw
 
         before(async () => {
-            cds.env.typer.output_d_ts_files = options.output_d_ts_files
+            configuration.outputDTSFiles = options.output_d_ts_files
             const paths = (await prepareUnitTest('enums/enumtyperef.cds', locations.testOutput('enums_test'))).paths
             astw = new ASTWrapper(path.join(paths[2], options.output_file))
         })
