@@ -187,7 +187,7 @@ async function prepareUnitTest(model, outputDirectory, parameters = {}) {
 
     configuration.setMany({...{ outputDirectory: outputDirectory, inlineDeclarations: 'structured' }, ...parameters.typerOptions})
     const paths = await cds2ts(model)
-    const outputFile = configuration.outputDTSFiles ? 'index.d.ts' : 'index.ts'
+    const outputFile = configuration.outputDTsFiles ? 'index.d.ts' : 'index.ts'
 
     if (parameters.transpilationCheck) {
         const tsFiles = paths.map(p => path.join(p, outputFile))

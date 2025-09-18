@@ -171,7 +171,7 @@ perEachTestConfig(options => {
         let paths
 
         before(async () => {
-            configuration.outputDTSFiles = options.output_d_ts_files
+            configuration.outputDTsFiles = options.output_d_ts_files
             paths = (await prepareUnitTest('enums/importing/service.cds', locations.testOutput('enums_test'))).paths
         })
 
@@ -204,7 +204,7 @@ perEachTestConfig(options => {
         let astw
 
         before(async () => {
-            configuration.outputDTSFiles = options.output_d_ts_files
+            configuration.outputDTsFiles = options.output_d_ts_files
             const paths = (await prepareUnitTest('enums/enumtyperef.cds', locations.testOutput('enums_test'))).paths
             astw = new ASTWrapper(path.join(paths[2], options.output_file))
         })

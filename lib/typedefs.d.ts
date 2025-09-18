@@ -189,7 +189,7 @@ export module config {
 
     export type Configuration = {
         outputDirectory: string,
-        outputDTSFiles: boolean,
+        outputDTsFiles: boolean,
         cache: 'none' | 'blake2s256'
         logLevel: number,
         /**

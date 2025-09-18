@@ -16,7 +16,7 @@ perEachTestConfig(options => {
         let astwUnbound
 
         before(async () => {
-            configuration.outputDTSFiles = options.output_d_ts_files
+            configuration.outputDTsFiles = options.output_d_ts_files
 
             sut = await prepareUnitTest('actions/model.cds', locations.testOutput('actions_test'))
             paths = sut.paths

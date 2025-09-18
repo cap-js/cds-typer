@@ -13,7 +13,7 @@ perEachTestConfig(options => {
         let paths
 
         before(async () => {
-            configuration.outputDTSFiles = options.output_d_ts_files
+            configuration.outputDTsFiles = options.output_d_ts_files
             paths = (await prepareUnitTest('excluding/model.cds', locations.testOutput('excluding_test'))).paths
         })
 

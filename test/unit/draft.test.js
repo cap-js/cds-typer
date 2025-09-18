@@ -14,7 +14,7 @@ const draftable = (entity, ast, plural = e => `${e}_`) => draftable_(entity, ast
 perEachTestConfig(options =>{
     describe(`Bookshop (using output **/*/${options.output_file} files)`, () => {
         before(() => {
-            configuration.outputDTSFiles = options.output_d_ts_files
+            configuration.outputDTsFiles = options.output_d_ts_files
         })
 
         it('should validate draft via root and compositions', async () => {

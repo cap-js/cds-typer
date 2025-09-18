@@ -9,7 +9,7 @@ const { perEachTestConfig } = require('../config')
 perEachTestConfig(options => {
     describe(`Generate, TS Check, and Run Tests (using output **/*/${options.output_file} files)`, () => {
         before(() => {
-            configuration.outputDTSFiles = options.output_d_ts_files
+            configuration.outputDTsFiles = options.output_d_ts_files
         })
 
         const tsDirs = fs.readdirSync(locations.unit.files(''))
