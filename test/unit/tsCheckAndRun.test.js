@@ -6,10 +6,10 @@ const { fs } = cds.utils
 const { locations } = require('../util')
 const { perEachTestConfig } = require('../config')
 
-perEachTestConfig(({ output_file, output_d_ts_files }) => {
-    describe(`Generate, TS Check, and Run Tests (using output **/*/${output_file} files)`, () => {
+perEachTestConfig(options => {
+    describe(`Generate, TS Check, and Run Tests (using output **/*/${options.output_file} files)`, () => {
         before(() => {
-            cds.env.typer.output_d_ts_files = output_d_ts_files
+            cds.env.typer.output_d_ts_files = options.output_d_ts_files
         })
 
         const tsDirs = fs.readdirSync(locations.unit.files(''))
@@ -28,7 +28,7 @@ perEachTestConfig(({ output_file, output_d_ts_files }) => {
                 const modelPath = join(base, modelFile)
                 const tsFile = join(base, testFile)
                 const out = join(base, '_out')
-                await runTyperAndTsCheck(modelPath, tsFile, out, output_file)
+                await runTyperAndTsCheck(modelPath, tsFile, out, options.output_file)
 
                 // serve the services in a minimal way (no db, no express)
                 cds.root = base

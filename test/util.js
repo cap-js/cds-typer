@@ -2,7 +2,6 @@ const { configuration } = require('../lib/config')
 const fs = require('node:fs')
 const path = require('node:path')
 const os = require('node:os')
-const cds = require('@sap/cds')
 const typer = require('../lib/compile')
 const acorn = require('acorn')
 const { ASTWrapper } = require('./ast')
@@ -188,10 +187,10 @@ async function prepareUnitTest(model, outputDirectory, parameters = {}) {
 
     configuration.setMany({...{ outputDirectory: outputDirectory, inlineDeclarations: 'structured' }, ...parameters.typerOptions})
     const paths = await cds2ts(model)
-    const output_file = cds.env.typer.output_d_ts_files ? 'index.d.ts' : 'index.ts'
+    const outputFile = configuration.outputDTSFiles ? 'index.d.ts' : 'index.ts'
 
     if (parameters.transpilationCheck) {
-        const tsFiles = paths.map(p => path.join(p, output_file))
+        const tsFiles = paths.map(p => path.join(p, outputFile))
         // create a package.json w/ common dependencies in a higher dir so that they can be reused by many tests
         createProject(path.resolve(outputDirectory, '../..'))
         await checkTranspilation(tsFiles, parameters.tsCompilerOptions)
@@ -216,7 +215,7 @@ async function prepareUnitTest(model, outputDirectory, parameters = {}) {
         }
     }
     configuration.setFrom(configurationBefore)
-    return { astw: new ASTWrapper(path.join(parameters.fileSelector(paths), output_file)), paths }
+    return { astw: new ASTWrapper(path.join(parameters.fileSelector(paths), outputFile)), paths }
 }
 
 const createSpy = fn => {

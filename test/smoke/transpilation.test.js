@@ -2,10 +2,8 @@
 
 const fs = require('fs')
 const path = require('path')
-const { describe, it, before } = require('node:test')
-const cds = require('@sap/cds')
+const { describe, it } = require('node:test')
 const { locations, prepareUnitTest } = require('../util')
-const { perEachTestConfig } = require('../config')
 
 const modelDirs = fs.readdirSync(locations.smoke.files(''))
     .map(dir => {
@@ -22,68 +20,62 @@ const modelDirs = fs.readdirSync(locations.smoke.files(''))
     })
     .filter(Boolean)
 
-perEachTestConfig(({ output_file, output_d_ts_files }) => {
-    before(() => {
-        cds.env.typer.output_d_ts_files = output_d_ts_files
-    })
-
-    describe(`transpilation (using output **/*/${output_file} files)`, () => {
-        modelDirs.forEach(({ name, rootFile }) => {
-            it(name, async () => {
-                try {
-                    await prepareUnitTest(
-                        rootFile,
-                        locations.testOutput(name),
-                        {
-                            transpilationCheck: true,
-                            tsCompilerOptions: {
-                                skipLibCheck: true,
-                            },
-                            typerOptions: {
-                                propertiesOptional: false
-                            }
+describe('transpilation', () => {
+    modelDirs.forEach(({ name, rootFile }) => {
+        it(name, async () => {
+            try {
+                await prepareUnitTest(
+                    rootFile,
+                    locations.testOutput(name),
+                    {
+                        transpilationCheck: true,
+                        tsCompilerOptions: {
+                            skipLibCheck: true,
+                        },
+                        typerOptions: {
+                            propertiesOptional: false
                         }
-                    )
-                } catch (e) {
-                    // nodejs test runner just shows "x subtests failed" without any details
-                    // so we are artificially showing the error here for now
-                    // eslint-disable-next-line no-console
-                    console.error(e)
-                    throw e
+                    }
+                )
+            } catch (e) {
+                // nodejs test runner just shows "x subtests failed" without any details
+                // so we are artificially showing the error here for now
+                // eslint-disable-next-line no-console
+                console.error(e)
+                throw e
+            }
+        })
+    })
+})
+
+describe('index.js CommonJS', () => {
+    modelDirs.forEach(({ name, rootFile }) => {
+        it(name, async () => {
+            await prepareUnitTest(
+                rootFile,
+                locations.testOutput(name),
+                {
+                    javascriptCheck: true,
+                    javascriptCheckParameters: { ecmaVersion: 'latest'},
+                    typerOptions: { targetModuleType: 'cjs' }
                 }
-            })
+            )
         })
     })
+})
 
-    describe(`index.js CommonJS (using output **/*/${output_file} files)`, () => {
-        modelDirs.forEach(({ name, rootFile }) => {
-            it(name, async () => {
-                await prepareUnitTest(
-                    rootFile,
-                    locations.testOutput(name),
-                    {
-                        javascriptCheck: true,
-                        javascriptCheckParameters: { ecmaVersion: 'latest'},
-                        typerOptions: { targetModuleType: 'cjs' }
-                    }
-                )
-            })
-        })
-    })
-
-    describe(`index.js ESM (using output **/*/${output_file} files)`, () => {
-        modelDirs.forEach(({ name, rootFile }) => {
-            it(name, async () => {
-                await prepareUnitTest(
-                    rootFile,
-                    locations.testOutput(name),
-                    {
-                        javascriptCheck: true,
-                        javascriptCheckParameters: { ecmaVersion: 'latest', sourceType: 'module' },
-                        typerOptions: { targetModuleType: 'esm' },
-                    }
-                )
-            })
+describe('index.js ESM', () => {
+    modelDirs.forEach(({ name, rootFile }) => {
+        it(name, async () => {
+            await prepareUnitTest(
+                rootFile,
+                locations.testOutput(name),
+                {
+                    javascriptCheck: true,
+                    javascriptCheckParameters: { ecmaVersion: 'latest', sourceType: 'module' },
+                    typerOptions: { targetModuleType: 'esm' },
+                }
+            )
         })
     })
 })

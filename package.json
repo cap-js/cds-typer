@@ -87,7 +87,7 @@
             },
             "output_d_ts_files": {
               "type": "boolean",
-              "description": "(experimental) If set to true, emits .d.ts files for each generated .js file. If set to false (default), emits .ts files instead.",
+              "description": "(experimental) If set to true, emits .d.ts files for each generated .js file. If set to false (default), emits .ts files instead. Note: skipLibCheck must be set to true in your tsconfig for this option to work properly.",
               "default": false
             },
             "log_level": {
