@@ -19,9 +19,10 @@ module.exports = (async () => [
         },
         files: ['**/*.js'],
         plugins: {
-            '@stylistic/js': require('@stylistic/eslint-plugin-js')
+            '@stylistic/js': await import('@stylistic/eslint-plugin')
         },
         rules: {
+            'camelcase': ['error', { properties: 'never', ignoreDestructuring: true }],
             'array-callback-return': [ 'error', { checkForEach: true } ],
             'constructor-super': 'error',
             'for-direction': 'error',
@@ -84,10 +85,10 @@ module.exports = (async () => [
             'valid-typeof': [ 'error', { requireStringLiterals: true } ],
             'no-console': 'error',
             'arrow-parens': ['error', 'as-needed'],
-            '@stylistic/js/nonblock-statement-body-position': ['error', 'beside'],
-            '@stylistic/js/quotes': ['error', 'single'],
-            '@stylistic/js/indent': ['error', 4],
-            '@stylistic/js/semi': ['error', 'never', { 'beforeStatementContinuationChars': 'always'}],
+            '@/nonblock-statement-body-position': ['error', 'beside'],
+            '@/quotes': ['error', 'single'],
+            '@/indent': ['error', 4],
+            '@/semi': ['error', 'never', { 'beforeStatementContinuationChars': 'always'}],
             'jsdoc/require-hyphen-before-param-description': ['error', 'always'],
             'jsdoc/require-returns-type': 'off',
             'jsdoc/require-returns-description': 'off',
