@@ -13,8 +13,8 @@ describe('KeyOf', () => {
     })
 
     it('should correctly wrap type for key property', () => {
-        const c_ID = astw.getAspectProperty('_CAspect', 'c')
-        assert.ok(check.isKeyOf(c_ID.type, check.isString))
+        const cID = astw.getAspectProperty('_CAspect', 'c')
+        assert.ok(check.isKeyOf(cID.type, check.isString))
     })
 
     it('should have static key property present', () => {

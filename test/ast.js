@@ -619,7 +619,7 @@ const check = {
     isOptional: node => node.optional,
     hasDeclareModifier: node => node?.modifiers?.some(mod => checkKeyword(mod, 'declare')),
     isLiteral: (node, literal = undefined) => checkKeyword(node, 'literaltype') && (literal === undefined || node.literal === literal),
-    isTypeLiteral: (node, literal = undefined) => checkKeyword(node, 'typeliteral'),
+    isTypeLiteral: node => checkKeyword(node, 'typeliteral'),
     isTypeReference: (node, full = undefined) => checkNodeType(node, 'typeReference') && (!full || node.full === full),
     isTypeQuery: node => checkKeyword(node, 'typequery'),  // FIXME: should actually check what is being queried
     isTypeAliasDeclaration: node => checkNodeType(node, 'typeAliasDeclaration'),
