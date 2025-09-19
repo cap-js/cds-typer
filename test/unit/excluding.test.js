@@ -8,21 +8,21 @@ const { locations, prepareUnitTest } = require('../util')
 const { perEachTestConfig } = require('../config')
 const { configuration } = require('../../lib/config')
 
-perEachTestConfig(options => {
-    describe(`Excluding Clause Tests (using output **/*/${options.output_file} files)`, () => {
+perEachTestConfig(({ outputDTsFiles, outputFile }) => {
+    describe(`Excluding Clause Tests (using output **/*/${outputFile} files)`, () => {
         let paths
 
         before(async () => {
-            configuration.outputDTsFiles = options.output_d_ts_files
+            configuration.outputDTsFiles = outputDTsFiles
             paths = (await prepareUnitTest('excluding/model.cds', locations.testOutput('excluding_test'))).paths
         })
 
         it('should have the element present in the original', async () => {
-            assert.ok(new ASTWrapper(path.join(paths[1], options.output_file)).exists('_TestObjectAspect', 'dependencies'))
+            assert.ok(new ASTWrapper(path.join(paths[1], outputFile)).exists('_TestObjectAspect', 'dependencies'))
         })
 
         it('should have the element gone in the projection', async () => {
-            assert.strictEqual(new ASTWrapper(path.join(paths[2], options.output_file))
+            assert.strictEqual(new ASTWrapper(path.join(paths[2], outputFile))
                 .getAspect('_SlimTestObjectAspect')
                 .members
                 .find(({name}) => name === 'dependencies'), undefined)

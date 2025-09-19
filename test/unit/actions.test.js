@@ -8,20 +8,20 @@ const { locations, prepareUnitTest } = require('../util')
 const { perEachTestConfig } = require('../config')
 const { configuration } = require('../../lib/config')
 
-perEachTestConfig(options => {
-    describe(`Actions (using output **/*/${options.output_file} files)`, () => {
+perEachTestConfig(({ outputDTsFiles, outputFile }) => {
+    describe(`Actions (using output **/*/${outputFile} files)`, () => {
         let paths
         let sut
         let astwBound
         let astwUnbound
 
         before(async () => {
-            configuration.outputDTsFiles = options.output_d_ts_files
+            configuration.outputDTsFiles = outputDTsFiles
 
             sut = await prepareUnitTest('actions/model.cds', locations.testOutput('actions_test'))
             paths = sut.paths
-            astwBound = new ASTWrapper(path.join(paths.find(p => p.endsWith('S')), options.output_file))
-            astwUnbound = new ASTWrapper(path.join(paths.find(p => p.endsWith('actions_test')), options.output_file))
+            astwBound = new ASTWrapper(path.join(paths.find(p => p.endsWith('S')), outputFile))
+            astwUnbound = new ASTWrapper(path.join(paths.find(p => p.endsWith('actions_test')), outputFile))
         })
 
         it('should add import statement for builtin types', async () => {

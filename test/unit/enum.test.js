@@ -166,24 +166,24 @@ describe('Enum Types', () => {
 })
 
 
-perEachTestConfig(options => {
-    describe(`Imported Enums (using output **/*/${options.output_file} files)`, () => {
+perEachTestConfig(({ outputDTsFiles, outputFile }) => {
+    describe(`Imported Enums (using output **/*/${outputFile} files)`, () => {
         let paths
 
         before(async () => {
-            configuration.outputDTsFiles = options.output_d_ts_files
+            configuration.outputDTsFiles = outputDTsFiles
             paths = (await prepareUnitTest('enums/importing/service.cds', locations.testOutput('enums_test'))).paths
         })
 
         it('should validate type alias and constant in service', () => {
-            const service = new ASTWrapper(path.join(paths.find(p => p.endsWith('ExampleService')), options.output_file)).tree
+            const service = new ASTWrapper(path.join(paths.find(p => p.endsWith('ExampleService')), outputFile)).tree
             const decls = service.filter(n => n.name === 'EnumExample')
             assert.ok(decls.some(check.isTypeAliasDeclaration))
             assert.ok(decls.some(check.isVariableDeclaration))
         })
 
         it('should validate enum declaration in schema', () => {
-            const schema = new ASTWrapper(path.join(paths.find(p => p.endsWith('imported_enum')), options.output_file)).tree
+            const schema = new ASTWrapper(path.join(paths.find(p => p.endsWith('imported_enum')), outputFile)).tree
             const enumExampleNodes = schema.filter(n => n.name === 'EnumExample')
             assert.strictEqual(enumExampleNodes.length, 2)
             assert.ok(enumExampleNodes.find(n => n.nodeType === 'variableStatement'))
@@ -192,8 +192,8 @@ perEachTestConfig(options => {
     })
 })
 
-perEachTestConfig(options => {
-    describe(`Enums of typeof (using output **/*/${options.output_file} files)`, () => {
+perEachTestConfig(({ outputDTsFiles, outputFile }) => {
+    describe(`Enums of typeof (using output **/*/${outputFile} files)`, () => {
         /* FIXME: these should actually be inline-defined enums of the referenced type with explicit values
          * ```cds
          * entity X { y: String };
@@ -204,9 +204,9 @@ perEachTestConfig(options => {
         let astw
 
         before(async () => {
-            configuration.outputDTsFiles = options.output_d_ts_files
+            configuration.outputDTsFiles = outputDTsFiles
             const paths = (await prepareUnitTest('enums/enumtyperef.cds', locations.testOutput('enums_test'))).paths
-            astw = new ASTWrapper(path.join(paths[2], options.output_file))
+            astw = new ASTWrapper(path.join(paths[2], outputFile))
         })
 
         it('should validate enum references in parameters', () => {

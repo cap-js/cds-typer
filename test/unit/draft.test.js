@@ -11,16 +11,16 @@ const { configuration } = require('../../lib/config')
 const draftable_ = (entity, ast) => ast.find(n => n.name === entity && n.members.find(({name}) => name === 'drafts'))
 const draftable = (entity, ast, plural = e => `${e}_`) => draftable_(entity, ast) && draftable_(plural(entity), ast)
 
-perEachTestConfig(options =>{
-    describe(`Bookshop (using output **/*/${options.output_file} files)`, () => {
+perEachTestConfig(({ outputDTsFiles, outputFile }) =>{
+    describe(`Bookshop (using output **/*/${outputFile} files)`, () => {
         before(() => {
-            configuration.outputDTsFiles = options.output_d_ts_files
+            configuration.outputDTsFiles = outputDTsFiles
         })
 
         it('should validate draft via root and compositions', async () => {
             const paths = (await prepareUnitTest('draft/catalog-service.cds', locations.testOutput('bookshop_projection'))).paths
-            const service = new ASTWrapper(path.join(paths[1], options.output_file)).tree
-            const model = new ASTWrapper(path.join(paths[2], options.output_file)).tree
+            const service = new ASTWrapper(path.join(paths[1], outputFile)).tree
+            const model = new ASTWrapper(path.join(paths[2], outputFile)).tree
 
             // root and composition become draft enabled
             assert.ok(draftable('Book', service, () => 'Books'))
