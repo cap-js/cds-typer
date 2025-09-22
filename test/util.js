@@ -187,9 +187,10 @@ async function prepareUnitTest(model, outputDirectory, parameters = {}) {
 
     configuration.setMany({...{ outputDirectory: outputDirectory, inlineDeclarations: 'structured' }, ...parameters.typerOptions})
     const paths = await cds2ts(model)
+    const outputFile = configuration.outputDTsFiles ? 'index.d.ts' : 'index.ts'
 
     if (parameters.transpilationCheck) {
-        const tsFiles = paths.map(p => path.join(p, 'index.ts'))
+        const tsFiles = paths.map(p => path.join(p, outputFile))
         // create a package.json w/ common dependencies in a higher dir so that they can be reused by many tests
         createProject(path.resolve(outputDirectory, '../..'))
         await checkTranspilation(tsFiles, parameters.tsCompilerOptions)
@@ -214,7 +215,7 @@ async function prepareUnitTest(model, outputDirectory, parameters = {}) {
         }
     }
     configuration.setFrom(configurationBefore)
-    return { astw: new ASTWrapper(path.join(parameters.fileSelector(paths), 'index.ts')), paths }
+    return { astw: new ASTWrapper(path.join(parameters.fileSelector(paths), outputFile)), paths }
 }
 
 const createSpy = fn => {

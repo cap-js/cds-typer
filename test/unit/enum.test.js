@@ -5,6 +5,8 @@ const { describe, before, it } = require('node:test')
 const assert = require('assert')
 const { check, JSASTWrapper, checkFunction, ASTWrapper } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
+const { perEachTestConfig } = require('../config')
+const { configuration } = require('../../lib/config')
 
 // FIXME: missing: inline enums (entity Foo { bar: String enum { ... }})
 describe('Enum Action Parameters', () => {
@@ -163,49 +165,58 @@ describe('Enum Types', () => {
     })
 })
 
-describe('Imported Enums', () => {
-    let paths
 
-    before(async () => paths = (await prepareUnitTest('enums/importing/service.cds', locations.testOutput('enums_test'))).paths)
+perEachTestConfig(({ outputDTsFiles, outputFile }) => {
+    describe(`Imported Enums (using output **/*/${outputFile} files)`, () => {
+        let paths
 
-    it('should validate type alias and constant in service', () => {
-        const service = new ASTWrapper(path.join(paths.find(p => p.endsWith('ExampleService')), 'index.ts')).tree
-        const decls = service.filter(n => n.name === 'EnumExample')
-        assert.ok(decls.some(check.isTypeAliasDeclaration))
-        assert.ok(decls.some(check.isVariableDeclaration))
-    })
+        before(async () => {
+            configuration.outputDTsFiles = outputDTsFiles
+            paths = (await prepareUnitTest('enums/importing/service.cds', locations.testOutput('enums_test'))).paths
+        })
 
-    it('should validate enum declaration in schema', () => {
-        const schema = new ASTWrapper(path.join(paths.find(p => p.endsWith('imported_enum')), 'index.ts')).tree
-        const enumExampleNodes = schema.filter(n => n.name === 'EnumExample')
-        assert.strictEqual(enumExampleNodes.length, 2)
-        assert.ok(enumExampleNodes.find(n => n.nodeType === 'variableStatement'))
-        assert.ok(enumExampleNodes.find(n => n.nodeType === 'typeAliasDeclaration'))
+        it('should validate type alias and constant in service', () => {
+            const service = new ASTWrapper(path.join(paths.find(p => p.endsWith('ExampleService')), outputFile)).tree
+            const decls = service.filter(n => n.name === 'EnumExample')
+            assert.ok(decls.some(check.isTypeAliasDeclaration))
+            assert.ok(decls.some(check.isVariableDeclaration))
+        })
+
+        it('should validate enum declaration in schema', () => {
+            const schema = new ASTWrapper(path.join(paths.find(p => p.endsWith('imported_enum')), outputFile)).tree
+            const enumExampleNodes = schema.filter(n => n.name === 'EnumExample')
+            assert.strictEqual(enumExampleNodes.length, 2)
+            assert.ok(enumExampleNodes.find(n => n.nodeType === 'variableStatement'))
+            assert.ok(enumExampleNodes.find(n => n.nodeType === 'typeAliasDeclaration'))
+        })
     })
 })
 
-describe('Enums of typeof', () => {
-    /* FIXME: these should actually be inline-defined enums of the referenced type with explicit values
-     * ```cds
-     * entity X { y: String };
-     * type T: X:y { a }  // should produce a string enum with value `a`
-     * ```
-     * but as a first step, they'll be just a value of the referenced type
-     */
-    let astw
+perEachTestConfig(({ outputDTsFiles, outputFile }) => {
+    describe(`Enums of typeof (using output **/*/${outputFile} files)`, () => {
+        /* FIXME: these should actually be inline-defined enums of the referenced type with explicit values
+         * ```cds
+         * entity X { y: String };
+         * type T: X:y { a }  // should produce a string enum with value `a`
+         * ```
+         * but as a first step, they'll be just a value of the referenced type
+         */
+        let astw
 
-    before(async () => {
-        const paths = (await prepareUnitTest('enums/enumtyperef.cds', locations.testOutput('enums_test'))).paths
-        astw = new ASTWrapper(path.join(paths[2], 'index.ts'))
-    })
+        before(async () => {
+            configuration.outputDTsFiles = outputDTsFiles
+            const paths = (await prepareUnitTest('enums/enumtyperef.cds', locations.testOutput('enums_test'))).paths
+            astw = new ASTWrapper(path.join(paths[2], outputFile))
+        })
 
-    it('should validate enum references in parameters', () => {
-        // FIXME: returntypecheck currently broken: cds-typer can currently only deal with refs
-        // that contain exactly one element. Type refs are of guise { ref: ['n.A', 'p'] }
-        // so right now the property type reference is incorrectly resolved to n.A
-        checkFunction(astw.tree.find(node => node.name === 'EnumInParamAndReturn'), {
-            //returnTypeCheck: type =>  check.isNullable(type, [check.isIndexedAccessType]),
-            parameterCheck: ({members: [fst]}) => check.isNullable(fst.type, [check.isIndexedAccessType])
+        it('should validate enum references in parameters', () => {
+            // FIXME: returntypecheck currently broken: cds-typer can currently only deal with refs
+            // that contain exactly one element. Type refs are of guise { ref: ['n.A', 'p'] }
+            // so right now the property type reference is incorrectly resolved to n.A
+            checkFunction(astw.tree.find(node => node.name === 'EnumInParamAndReturn'), {
+                //returnTypeCheck: type =>  check.isNullable(type, [check.isIndexedAccessType]),
+                parameterCheck: ({members: [fst]}) => check.isNullable(fst.type, [check.isIndexedAccessType])
+            })
         })
     })
 })
