@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [0.38.0] - 2025-09-24
+
+### Added
 - Added (experimental) flag `cds.env.typer.output_d_ts_files` for generating output `*.d.ts` files instead of `*.ts` ones
 ### Changed
 - unbound actions will now assume the `self` type of `never`, instead of the former `null`
