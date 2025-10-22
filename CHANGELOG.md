@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Added (experimental) flag `cds.env.typer.output_d_ts_files` for generating output `*.d.ts` files instead of `*.ts` ones
 ### Changed
 - unbound actions will now assume the `self` type of `never`, instead of the former `null`
+- events will now have a static field `kind: 'event'`, akin to the one in entities
 ### Deprecated
 ### Removed
 ### Fixed
