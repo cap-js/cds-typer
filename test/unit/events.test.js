@@ -21,10 +21,11 @@ describe('Events Tests', () => {
     describe('Event Type Presence', () => {
         it('should have a top-level event with correct members', async () => {
             assert.ok(astw.tree.find(cls => cls.name === 'Bar'
-                && cls.members.length === 3
-                && cls.members[0].name === 'id' && check.isNullable(cls.members[0].type, [check.isNumber])
-                && cls.members[1].name === 'name' && check.isNullable(cls.members[1].type, [check.isIndexedAccessType])
-                && cls.members[2].name === 'createdOn' && check.isNullable(cls.members[2].type, [check.isTypeReference])
+                && cls.members.length === 4
+                && cls.members[0].name === 'kind' && check.isStaticMember(cls.members[0])
+                && cls.members[1].name === 'id' && check.isNullable(cls.members[1].type, [check.isNumber])
+                && cls.members[2].name === 'name' && check.isNullable(cls.members[2].type, [check.isIndexedAccessType])
+                && cls.members[3].name === 'createdOn' && check.isNullable(cls.members[3].type, [check.isTypeReference])
             ))
         })
     })
