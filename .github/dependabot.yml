@@ -8,6 +8,10 @@ updates:
 - package-ecosystem: npm
   directory: /
   versioning-strategy: increase-if-necessary
+  commit-message:
+    prefix: chore
+    prefix-development: chore
+    include: scope
   schedule:
     interval: "weekly"
   groups:
