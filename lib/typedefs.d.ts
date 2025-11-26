@@ -1,3 +1,5 @@
+import type { normalise } from './components/identifier'
+
 export module resolver {
     type ref = {
         ref: string[],
@@ -95,9 +97,9 @@ export module resolver {
          *
          * They only exist in the original defined form in the CSN and LinkedCSN but not in the compiled
          * OData or SQL models (i.e. `cds.compile(..).for.odata()`).
-         * 
+         *
          * Therefore they need to be flattened down like inline structs.
-         * 
+         *
          * ```cds
          * // model.cds
          * type Adress {
@@ -109,12 +111,12 @@ export module resolver {
          *   address: Adress
          * }
          * ```
-         * 
+         *
          * // service.js
          * ```js
          * const {title, address_street, address_zipCode} = await SELECT.from(Persons);
          * ```
-         * 
+         *
          */
         forceInlineStructs?: boolean
     }
@@ -146,7 +148,11 @@ export module visitor {
     export type Inflection = {
         typeName?: string,
         singular: string,
-        plural: string
+        plural: string,
+        normalised: {
+            singular?: ReturnType<typeof normalise>,
+            plural?: ReturnType<typeof normalise>
+        }
     }
 
     export type Context = {
