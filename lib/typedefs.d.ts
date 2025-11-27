@@ -95,9 +95,9 @@ export module resolver {
          *
          * They only exist in the original defined form in the CSN and LinkedCSN but not in the compiled
          * OData or SQL models (i.e. `cds.compile(..).for.odata()`).
-         * 
+         *
          * Therefore they need to be flattened down like inline structs.
-         * 
+         *
          * ```cds
          * // model.cds
          * type Adress {
@@ -109,12 +109,12 @@ export module resolver {
          *   address: Adress
          * }
          * ```
-         * 
+         *
          * // service.js
          * ```js
          * const {title, address_street, address_zipCode} = await SELECT.from(Persons);
          * ```
-         * 
+         *
          */
         forceInlineStructs?: boolean
     }
@@ -213,6 +213,8 @@ export module config {
          * `legacyBinaryTypes = true` -> Binary and LargeBinary are generated as `string` and a union type respectively
          */
         legacyBinaryTypes: boolean
+        /** `brandedPrimitiveTypes = true` -> all generated primitive types will be branded */
+        brandedPrimitiveTypes: boolean
     }
 }
 

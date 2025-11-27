@@ -95,4 +95,18 @@ describe('Type Definitions Tests', () => {
             assert.ok(members.find(({name, type}) => name === 'pos_geoData_longitude' && type?.subtypes?.[0].keyword === 'number'))
         })
     })
+
+    describe('Branded Primitives', () => {
+        let astw
+
+        before(async () => astw = (await prepareUnitTest('type/model.cds', locations.testOutput('type_test'), { typerOptions: { brandedPrimitiveTypes: true } })).astw)
+
+        it('should generate primitive CDS types as branded TS types', async () => {
+            const intType = astw.tree.find(def => def.name === 'IntAlias')
+            assert.ok(check.isIntersectionType(intType.type, [check.isNumber]))
+            // only primitives!
+            const refType = astw.tree.find(def => def.name === 'Ref')
+            assert.ok(!check.isIntersectionType(refType.type, [check.isNumber]))
+        })
+    })
 })
