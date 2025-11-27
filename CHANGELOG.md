@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Added flag `cds.env.typer.branded_primitive_types` for branding CDS `type` definitions aliasing primitive TS types
 ### Changed
 ### Deprecated
 ### Removed

@@ -155,6 +155,11 @@
               "type": "boolean",
               "description": "If set to true, the typescript build task will not be registered/ executed.\nThis value must be set in your project configuration.\nPassing it as parameter to the cds-typer CLI has no effect.",
               "default": true
+            },
+            "branded_primitive_types": {
+              "type": "boolean",
+              "description": "If set to true, generated primitive types will be branded to prevent accidental mixing of types with the same underlying primitive.\nE.g., type CustomerID = string & { __brand: 'CustomerID' }",
+              "default": false
             }
           }
         }
