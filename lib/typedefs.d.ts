@@ -219,6 +219,8 @@ export module config {
          * `legacyBinaryTypes = true` -> Binary and LargeBinary are generated as `string` and a union type respectively
          */
         legacyBinaryTypes: boolean
+        /** `brandedPrimitiveTypes = true` -> all generated primitive types will be branded */
+        brandedPrimitiveTypes: boolean
     }
 }
 
