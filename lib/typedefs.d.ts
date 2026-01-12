@@ -1,4 +1,4 @@
-import type { normalise } from './components/identifier'
+import type { Identifier } from './components/identifier'
 
 export module resolver {
     type ref = {
@@ -147,16 +147,12 @@ export module util {
 export module visitor {
     export type Inflection = {
         typeName?: string,
-        singular: string,
-        plural: string,
-        normalised: {
-            singular?: ReturnType<typeof normalise>,
-            plural?: ReturnType<typeof normalise>
-        }
+        singular: Identifier,
+        plural: Identifier
     }
 
     export type Context = {
-        entity: string
+        entity: Identifier
     }
 
     export type ParamInfo = {
