@@ -339,7 +339,8 @@ class ASTWrapper {
      * @returns {FunctionDeclaration[]}
      */
     getAspectFunctions(tree) {
-        return (Array.isArray(tree) ? tree : this.tree).filter(n => n.nodeType === kinds.FunctionDeclaration
+        return (Array.isArray(tree) ? tree : this.tree).filter(n =>
+            n.nodeType === kinds.FunctionDeclaration
             && n.body.length === 1
             && n.body[0].nodeType === kinds.ClassExpression)
     }
