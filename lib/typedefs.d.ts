@@ -58,6 +58,46 @@ export module resolver {
     }
 
     /**
+     * Base type for all type resolution states.
+     * This is the minimal guaranteed state during type resolution.
+     */
+    export type BaseTypeInfo = {
+        isBuiltin: boolean
+        isNotNull: boolean
+        isInlineDeclaration: boolean
+        isForeignKeyReference: boolean
+        isArray: boolean
+    }
+
+    /**
+     * State after resolveByTypeName for builtin types.
+     * @example 'cds.String', 'cds.Integer', '$self'
+     */
+    export type BuiltinTypeInfo = BaseTypeInfo & {
+        isBuiltin: true
+        type: string
+        plainName?: string  // only set for special builtins like '$self'
+    }
+
+    /**
+     * State after resolveByTypeName for user-defined or library types.
+     * @example 'my.namespace.Book', 'sap.common.CodeList'
+     */
+    export type UserDefinedTypeInfo = BaseTypeInfo & {
+        isBuiltin: false
+        type: string
+        plainName: string
+        path: Path
+        csn: EntityCSN
+    }
+
+    /**
+     * Union of possible states after basic name resolution.
+     */
+    export type NameResolvedTypeInfo = BuiltinTypeInfo | UserDefinedTypeInfo
+
+    /**
+     * State after resolving an inline declaration.
      * When nested inline types require additional imports. E.g.:
      * ```cds
      * // mymodel.cds
@@ -68,6 +108,45 @@ export module resolver {
      * }
      * ```
      */
+    export type InlineDeclarationTypeInfo = BaseTypeInfo & {
+        isInlineDeclaration: true
+        type: string
+        structuredType?: {[key: string]: {typeName: string, typeInfo: TypeResolveInfo}}
+        imports?: Path[]
+        plainName?: string
+    }
+
+    /**
+     * State after resolving a foreign key reference.
+     */
+    export type ForeignKeyTypeInfo = NameResolvedTypeInfo & {
+        isForeignKeyReference: true
+    }
+
+    /**
+     * State after resolving an array type.
+     */
+    export type ArrayTypeInfo = BaseTypeInfo & {
+        isArray: true
+        isBuiltin: true
+        inner?: TypeResolveInfo
+    }
+
+    /**
+     * State after complete resolution including inflection and imports.
+     */
+    export type FullyResolvedTypeInfo = (NameResolvedTypeInfo | InlineDeclarationTypeInfo | ForeignKeyTypeInfo) & {
+        inflection?: visitor.Inflection
+        isDeepRequire?: boolean
+        typeName?: string
+    }
+
+    /**
+     * The general type used throughout resolution.
+     * This is intentionally broad as the exact state depends on the resolution path.
+     * 
+     * For more specific typing, use the state-specific types above and type guards.
+     */
     export type TypeResolveInfo = {
         isBuiltin?: boolean,
         isDeepRequire?: boolean,
@@ -77,14 +156,36 @@ export module resolver {
         isArray?: boolean,
         type?: string,
         path?: Path,
-        csn?: EntityCSNCSN,
+        csn?: EntityCSN,
         imports?: Path[]
         inner?: TypeResolveInfo,
-        structuredType?: {[key: string]: {typeName: string, typeInfo: TypeResolveInfo}}  // FIXME: same as inner?
-        plainName: string,
-        typeName?: string // FIXME: same as plainName?
+        structuredType?: {[key: string]: {typeName: string, typeInfo: TypeResolveInfo}}
+        plainName?: string,
+        typeName?: string
         inflection?: visitor.Inflection
     }
+
+    /**
+     * Type guard to check if a TypeResolveInfo is a user-defined type.
+     * @example
+     * ```js
+     * if (isUserDefined(typeInfo)) {
+     *   // typeInfo.path, typeInfo.csn, typeInfo.plainName are guaranteed to exist
+     *   file.addImport(typeInfo.path)
+     * }
+     * ```
+     */
+    export function isUserDefined(info: TypeResolveInfo): info is UserDefinedTypeInfo
+
+    /**
+     * Type guard to check if a TypeResolveInfo is a builtin type.
+     */
+    export function isBuiltinType(info: TypeResolveInfo): info is BuiltinTypeInfo
+
+    /**
+     * Type guard to check if a TypeResolveInfo has been fully resolved with inflection.
+     */
+    export function isFullyResolved(info: TypeResolveInfo): info is FullyResolvedTypeInfo
 
     /**
      * Custom options to be used during type resolvement
