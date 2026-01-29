@@ -77,6 +77,10 @@ export module resolver {
         isBuiltin: true
         type: string
         plainName?: string  // only set for special builtins like '$self'
+        // Properties added during resolution
+        inflection?: visitor.Inflection
+        isDeepRequire?: boolean
+        typeName?: string
     }
 
     /**
@@ -89,6 +93,10 @@ export module resolver {
         plainName: string
         path: Path
         csn: EntityCSN
+        // Properties added during resolution
+        inflection?: visitor.Inflection
+        isDeepRequire?: boolean
+        typeName?: string
     }
 
     /**
@@ -114,6 +122,11 @@ export module resolver {
         structuredType?: {[key: string]: {typeName: string, typeInfo: TypeResolveInfo}}
         imports?: Path[]
         plainName?: string
+        // Properties added during resolution
+        csn?: EntityCSN
+        inflection?: visitor.Inflection
+        isDeepRequire?: boolean
+        typeName?: string
     }
 
     /**
@@ -144,7 +157,7 @@ export module resolver {
     /**
      * The general type used throughout resolution.
      * This is intentionally broad as the exact state depends on the resolution path.
-     * 
+     *
      * For more specific typing, use the state-specific types above and type guards.
      */
     export type TypeResolveInfo = {
