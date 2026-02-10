@@ -1,3 +1,5 @@
+import type { Identifier } from './components/identifier'
+
 export module resolver {
     type ref = {
         ref: string[],
@@ -145,12 +147,12 @@ export module util {
 export module visitor {
     export type Inflection = {
         typeName?: string,
-        singular: string,
-        plural: string
+        singular: Identifier,
+        plural: Identifier
     }
 
     export type Context = {
-        entity: string
+        entity: Identifier
     }
 
     export type ParamInfo = {
