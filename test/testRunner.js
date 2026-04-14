@@ -25,4 +25,4 @@ if (testFiles.length === 0) {
     process.exit(1)
 }
 
-execFileSync('node', ['--import', setupFile, '--test', ...testFiles], { stdio: 'inherit' })
+execFileSync('node', ['--import', setupFile, '--test', '--test-reporter=spec', ...testFiles], { stdio: 'inherit' })
