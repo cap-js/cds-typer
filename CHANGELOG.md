@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Added flag `cds.env.typer.branded_primitive_types` for branding CDS `type` definitions aliasing primitive TS types
+- Added support for non-ASCII identifiers in .cds files. Such identifiers will be sanitised and, at worst, replaced by random hashes, rather than causing cds-typer to crash. This only happens when the identifier consists entirely of non-ASCII characters, such as Kanji.
 ### Changed
 ### Deprecated
 ### Removed
