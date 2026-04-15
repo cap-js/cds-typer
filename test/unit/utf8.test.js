@@ -101,7 +101,7 @@ describe('UTF8', () => {
             const objProp = aspect.members.find(member => member.name === 'object')
             const forProp = aspect.members.find(member => member.name === 'for')
             const funcProp = aspect.members.find(member => member.name === 'function')
-            
+
             assert.ok(objProp, 'object property should exist')
             assert.ok(forProp, 'for property should exist')
             assert.ok(funcProp, 'function property should exist')
