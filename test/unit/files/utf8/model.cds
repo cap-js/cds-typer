@@ -1,4 +1,4 @@
-using { ![A/B] as ab, ![T Y P E] as T } from './lib';
+using { ![A/B] as ab, ![T Y P E] as T, while } from './lib';
 
 entity ![C DÄ#] {
     key ID: Integer;
@@ -24,7 +24,14 @@ entity 本 {  // Book
 
 entity object {  // reserved word
     key ID: Integer;
-    object: String;
-    for: String;
-    function: String;
+    object: while;
+    for: class;
+    function: String enum {  // reserved word
+        A; B; C;
+    }
+
+}
+
+type class: String enum { // reserved word
+    A; B; C;
 }
