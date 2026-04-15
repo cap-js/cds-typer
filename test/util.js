@@ -186,7 +186,6 @@ async function prepareUnitTest(model, outputDirectory, parameters = {}) {
     parameters = { ...defaults, ...parameters }
 
     configuration.setMany({...{ outputDirectory: outputDirectory, inlineDeclarations: 'structured' }, ...parameters.typerOptions})
-    console.log(configuration)
     const paths = await cds2ts(model)
     const outputFile = configuration.outputDTsFiles ? 'index.d.ts' : 'index.ts'
 
