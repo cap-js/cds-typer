@@ -1,5 +1,8 @@
 using { ![A/B] as ab, ![T Y P E] as T, while } from './lib';
 
+service S {
+    function ![dummy-function]() returns String;
+}
 entity ![C DÄ#] {
     key ID: Integer;
     ![välue]: String;
