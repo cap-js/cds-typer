@@ -11,7 +11,10 @@ describe('UTF8', () => {
     let astw
 
     before(async () => {
-        astw = (await prepareUnitTest('utf8/model.cds', dir)).astw
+        astw = (await prepareUnitTest('utf8/model.cds', dir, {
+            // ignore service S, which we just verify through the transpilation tests
+            fileSelector: paths => (paths ?? []).find(p => p.endsWith('utf8_test')),
+        })).astw
     })
 
     describe('Entities with Sanitized Names', () => {
