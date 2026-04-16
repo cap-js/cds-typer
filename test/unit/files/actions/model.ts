@@ -23,7 +23,9 @@ import S2 from '#cds-models/actions_test/S2'
 
 import S_ from '#cds-models/actions_test/S'
 
-import { ExternalType, ExternalType2 } from '#cds-models/elsewhere'
+import * as elsewhere from '#cds-models/elsewhere'
+import { ExternalType } from '#cds-models/elsewhere'
+import type { ExternalType2 } from '#cds-models/elsewhere'
 import { ExternalInRoot } from '#cds-models';
 
 // see https://dev.to/hesxenon/how-to-correctly-check-if-properties-are-optional-3453
@@ -58,7 +60,7 @@ export class S extends cds.ApplicationService { override async init(){
   this.on(free3,      req => { return {extRoot:1} satisfies ExternalInRoot})
   this.on(freevoid,   req => { return undefined satisfies void })
   this.on(freetypeof, req => { req.data.p! satisfies number })
-  this.on(free4,      req => { return { extType2:1 } satisfies ExternalType2 })
+  this.on(free4,      req => { return { extType2:1 } as {foo?: elsewhere.ExternalType2 | null} satisfies {foo?: elsewhere.ExternalType2 | null} })
 
   // calling actions
   const s2 = await cds.connect.to(S2)
@@ -73,11 +75,11 @@ export class S extends cds.ApplicationService { override async init(){
 
   // docs -> hover over actions
   // provider side
-  this.on(aDocOneLine,    req => { const {val1, val2} = req.data; return {e1:val1?.e1} satisfies E  | null})
+  this.on(aDocOneLine,    req => { const {val1, val2} = req.data; const _result = {e1:val1?.e1} satisfies E  | null; })
   // caller side
   s_.aDocOneLine({val1: {}, val2: {}})
   // provider side
-  this.on(aDocMoreLinesWithBadChar, req => { const {val} = req.data; return {e1:val?.e1} satisfies E | null})
+  this.on(aDocMoreLinesWithBadChar, req => { const {val} = req.data; const _result = {e1:val?.e1} satisfies E | null; })
   // caller side
   s_.aDocMoreLinesWithBadChar({val: {}})
 
