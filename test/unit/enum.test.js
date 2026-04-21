@@ -192,6 +192,50 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
     })
 })
 
+describe('Inline Enum in Association Key referenced from Service', () => {
+    const fs = require('node:fs')
+    let schemaNsAstw
+    let serviceAstw
+    let schemaNsSource
+
+    before(async () => {
+        const paths = (await prepareUnitTest('enums/association-key/service.cds', locations.testOutput('enums_association_key'))).paths
+        // paths[0] = _, paths[1] = CatalogService, paths[2] = enum_association_key
+        const schemaNsFile = path.join(paths[2], 'index.ts')
+        schemaNsAstw  = new ASTWrapper(schemaNsFile)
+        serviceAstw   = new ASTWrapper(path.join(paths[1], 'index.ts'))
+        schemaNsSource = fs.readFileSync(schemaNsFile, 'utf-8')
+    })
+
+    it('should export the inline enum from the source namespace', () => {
+        // The enum must carry the export modifier so it is accessible via namespace imports
+        assert.ok(
+            schemaNsSource.includes('export const BookID_ID'),
+            'BookID_ID const must be exported so it is accessible cross-namespace'
+        )
+        assert.ok(
+            schemaNsSource.includes('export type BookID_ID'),
+            'BookID_ID type must be exported so it is accessible cross-namespace'
+        )
+    })
+
+    it('should type the foreign key in the source entity using the inline enum', () => {
+        assert.ok(
+            schemaNsAstw.exists('_BookIDAspect', 'ID', ({type}) => check.isKeyOf(type, t => check.isTypeReference(t, 'BookID_ID'))),
+            '_BookIDAspect.ID should be typed as Key<BookID_ID>'
+        )
+    })
+
+    it('should type the foreign key in the service projection using the namespaced inline enum', () => {
+        assert.ok(
+            serviceAstw.exists('_BookAspect', 'ID_ID', ({type}) =>
+                check.isKeyOf(type, t => check.isTypeReference(t, '_enum_association_key.BookID_ID'))
+            ),
+            '_BookAspect.ID_ID should be typed as Key<_enum_association_key.BookID_ID>'
+        )
+    })
+})
+
 perEachTestConfig(({ outputDTsFiles, outputFile }) => {
     describe(`Enums of typeof (using output **/*/${outputFile} files)`, () => {
         /* FIXME: these should actually be inline-defined enums of the referenced type with explicit values
