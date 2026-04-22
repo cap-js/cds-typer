@@ -105,7 +105,9 @@ describe('Compilation Tests', () => {
 
     describe('Builtin Types Tests', () => {
         it('should verify primitive types with default settings', async () => {
-            const astw = (await prepareUnitTest('builtins/model.cds', locations.testOutput('output_test/builtin'))).astw
+            const astw = (await prepareUnitTest('builtins/model.cds', locations.testOutput('output_test/builtin_primitive'), {
+                typerOptions: { IEEE754Compatible: false }
+            })).astw
             assert.ok(astw.exists('_EAspect', 'uuid', m => check.isNullable(m.type, [check.isString])))
             assert.ok(astw.exists('_EAspect', 'str', m => check.isNullable(m.type, [check.isString])))
             assert.ok(astw.exists('_EAspect', 'bin', m => check.isNullable(m.type, [st => check.isTypeReference(st, 'Buffer') ])))
@@ -129,7 +131,7 @@ describe('Compilation Tests', () => {
 
         it('should verify IEEE754 types', async () => {
             const ieee754 = m => check.isParenthesizedType(m, st => check.isUnionType(st, [check.isNumber, check.isString]))
-            const astw = (await prepareUnitTest('builtins/model.cds', locations.testOutput('output_test/builtin'), {
+            const astw = (await prepareUnitTest('builtins/model.cds', locations.testOutput('output_test/builtin_ieee754'), {
                 typerOptions: { IEEE754Compatible: true }
             })).astw
             assert.ok(astw.exists('_EAspect', 'integ', m => check.isNullable(m.type, [check.isNumber])))
@@ -143,7 +145,7 @@ describe('Compilation Tests', () => {
         })
 
         it('should verify legacy binary types', async () => {
-            const astw = (await prepareUnitTest('builtins/model.cds', locations.testOutput('output_test/builtin'), {
+            const astw = (await prepareUnitTest('builtins/model.cds', locations.testOutput('output_test/builtin_legacy_binary'), {
                 typerOptions: { legacyBinaryTypes: true }
             })).astw
             assert.ok(astw.exists('_EAspect', 'bin', m => check.isNullable(m.type, [check.isString])))
