@@ -2,7 +2,7 @@
 
 const { describe, it, before } = require('node:test')
 const assert = require('assert')
-const { check, checkFunction } = require('../ast')
+const { check } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 
 const dir = locations.testOutput('utf8_test')

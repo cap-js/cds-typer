@@ -33,6 +33,7 @@ export module resolver {
         '@odata.draft.enabled'?: boolean // custom!
         _unresolved?: boolean
         isRefNotNull?: boolean // custom!
+        _targetEntity?: string // custom! Name of the target entity when this element is a composition or association
     }
 
     export type OperationCSN = EntityCSN & {

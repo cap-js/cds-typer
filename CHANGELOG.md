@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 ### Deprecated
 ### Removed
 ### Fixed
+- Association keys pointing to entities with inline enum types are now correctly typed in service projections across namespace boundaries
 ### Security
 
 ## [0.38.0] - 2025-09-24
