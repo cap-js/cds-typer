@@ -23,10 +23,18 @@ const isTypeScriptProject = () => {
 }
 
 /**
+ * Get the expected location of the tsconfig file with respect for a custom project root.
+ * @param {string} src - The project root
+ * @returns {string}
+ */
+const buildConfigLocation = (src) => path.join(src, BUILD_CONFIG)
+
+/**
  * Check if separate tsconfig file that is used for building the project.
+ * @param {string} src - The project root
  * @returns {boolean}
  */
-const buildConfigExists = () => fs.existsSync(BUILD_CONFIG)
+const buildConfigExists = (src) => fs.existsSync(buildConfigLocation(src))
 
 /**
  * @param {string} dir - The directory to remove.
@@ -99,18 +107,20 @@ const rmFiles = async (dir, exts) => fs.existsSync(dir)
                 // expected format: { '#cds-models/*': [ './@cds-models/*' ] }
                 //                                          ^^^^^^^^^^^
                 //                             relevant part - may be changed by user
-                const config = JSON.parse(fs.readFileSync ('tsconfig.json', 'utf8'))
+                const config = JSON.parse(fs.readFileSync (path.join(this.task.src, 'tsconfig.json'), 'utf8'))
                 const alias = config.compilerOptions.paths['#cds-models/*'][0]
                 const directory = alias.match(/(?:\.\/)?(.*)\/\*/)[1]
-                return normalize(directory)  // could contain forward slashes in tsconfig.json
+                return path.join(this.task.src, normalize(directory))  // could contain forward slashes in tsconfig.json
             } catch {
                 DEBUG?.('tsconfig.json not found, not parsable, or inconclusive. Using default model directory name')
             }
-            return DEFAULT_MODEL_DIRECTORY_NAME
+            return path.join(this.task.src, DEFAULT_MODEL_DIRECTORY_NAME)
         }
 
         init() {
-            this.task.dest = path.join(cds.root, cds.env.build.target, cds.env.folders.srv)
+            if (this.task.dest === path.join(cds.root, cds.env.build.target)) {
+                this.task.dest = path.join(cds.root, cds.env.build.target, cds.env.folders.srv)
+            }
         }
 
         async #runCdsTyper () {
@@ -123,15 +133,15 @@ const rmFiles = async (dir, exts) => fs.existsSync(dir)
         async #buildWithConfig () {
         // possibly referencing their tsconfig.json via "extends", specifying the "compilerOptions.outDir" and
         // manually adding irrelevant folders (read: gen/ and app/) to the "exclude" array.
-            DEBUG?.(`building with config ${BUILD_CONFIG}`)
-            return exec(`npx tsc --project ${BUILD_CONFIG}`)
+            DEBUG?.(`building with config ${buildConfigLocation(this.task.src)}`)
+            return exec(`npx tsc --project ${buildConfigLocation(this.task.src)}`)
         }
 
         async #buildWithoutConfig () {
             DEBUG?.('building without config')
             // this will include gen/ that was created by the nodejs task
             // _within_ the project directory. So we need to remove it afterwards.
-            await exec(`npx tsc --outDir "${this.task.dest.replace(/\\/g, '/')}"`) // see https://github.com/cap-js/cds-typer/issues/374
+            await exec(`npx tsc --outDir "${this.task.dest.replace(/\\/g, '/')}" --rootDir "${this.task.src.replace(/\\/g, '/')}"`) // see https://github.com/cap-js/cds-typer/issues/374
             rmDirIfExists(path.join(this.task.dest, cds.env.build.target))
             rmDirIfExists(path.join(this.task.dest, this.#appFolder))
         }
@@ -151,7 +161,7 @@ const rmFiles = async (dir, exts) => fs.existsSync(dir)
             await rmFiles(this.task.dest, ['.js', '.ts'])
 
             try {
-                await (buildConfigExists()
+                await (buildConfigExists(this.task.src)
                     ? this.#buildWithConfig()
                     : this.#buildWithoutConfig()
                 )
