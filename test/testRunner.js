@@ -14,15 +14,19 @@ const fs = require('fs')
 
 const testDir = process.argv[2]
 const setupFile = process.argv[3]
+try {
+    const testFiles = fs.readdirSync(testDir)
+        .filter(file => file.endsWith('.test.js'))
+        .map(file => path.join(testDir, file))
 
-const testFiles = fs.readdirSync(testDir)
-    .filter(file => file.endsWith('.test.js'))
-    .map(file => path.join(testDir, file))
-
-if (testFiles.length === 0) {
+    if (testFiles.length === 0) {
+        // eslint-disable-next-line no-console
+        console.error(`No test files found in ${testDir}`)
+        process.exit(1)
+    }
+    execFileSync('node', ['--import', setupFile, '--test', '--test-reporter=spec', ...testFiles], { stdio: 'inherit' })
+} catch (err) {
     // eslint-disable-next-line no-console
-    console.error(`No test files found in ${testDir}`)
+    console.error(`Error running tests: ${err.message}\nArgs: ${process.argv}`)
     process.exit(1)
 }
-
-execFileSync('node', ['--import', setupFile, '--test', ...testFiles], { stdio: 'inherit' })
