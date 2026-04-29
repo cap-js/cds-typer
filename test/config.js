@@ -20,9 +20,10 @@ const CDS_TEST_CONFIG_OPTIONS = [
  * @returns {void}
  */
 function perEachTestConfig(callback) {
-    for (const options of CDS_TEST_CONFIG_OPTIONS) {
-        callback(options)
-    }
+    // Explicitly unroll the loop to help with test discovery
+    // Call callback immediately for each config option
+    callback(CDS_TEST_CONFIG_OPTIONS[0])
+    callback(CDS_TEST_CONFIG_OPTIONS[1])
 }
 
 module.exports = { CDS_TEST_CONFIG_OPTIONS, perEachTestConfig }
