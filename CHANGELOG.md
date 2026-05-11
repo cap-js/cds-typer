@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [0.39.0] - 2026-05-11
+
+### Added
 - Added flag `cds.env.typer.branded_primitive_types` for branding CDS `type` definitions aliasing primitive TS types
 - Added support for non-ASCII identifiers in .cds files. Non-ASCII characters in identifiers are sanitised to valid TypeScript names. Identifiers consisting entirely of non-ASCII characters (e.g., Kanji) are replaced with random hashes. All affected identifiers are exported under their sanitised/hashed name and also as an alias preserving the original name. To use the original name, import it with `import ... as '...'` syntax.
 ### Changed
