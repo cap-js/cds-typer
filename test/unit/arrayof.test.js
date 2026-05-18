@@ -46,6 +46,20 @@ describe('Array Of', () => {
         })
     })
 
+    describe('Entity Properties (flat inline declarations)', () => {
+        let aspectFlat
+        before(async () => {
+            const result = await prepareUnitTest('arrayof/model.cds', locations.testOutput('arrayof_test_flat'), { typerOptions: { inlineDeclarations: 'flat' } })
+            aspectFlat = result.astw.tree.find(n => n.name === '_EAspect').body[0]
+        })
+
+        it('should validate array of externally defined type in flat mode', async () => {
+            assert.ok(aspectFlat.members.find(m => m.name === 'extz'
+                && m.type.full === 'Array'
+                && m.type.args[0].full === '_elsewhere.ExternalType'))
+        })
+    })
+
     describe('Function', () => {
         let func
         before(async () => func = astw.tree.find(n => n.name === 'fn'))
