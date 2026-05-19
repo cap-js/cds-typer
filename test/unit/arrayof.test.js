@@ -53,10 +53,35 @@ describe('Array Of', () => {
             aspectFlat = result.astw.tree.find(n => n.name === '_EAspect').body[0]
         })
 
+        it('should validate array of String in flat mode', async () => {
+            assert.ok(aspectFlat.members.find(m => m.name === 'stringz'
+                && m.type.full === 'Array'
+                && check.isString(m.type.args[0])))
+        })
+
+        it('should validate many Integer in flat mode', async () => {
+            assert.ok(aspectFlat.members.find(m => m.name === 'numberz'
+                && m.type.full === 'Array'
+                && check.isNumber(m.type.args[0])))
+        })
+
+        it('should validate array of locally defined type in flat mode', async () => {
+            assert.ok(aspectFlat.members.find(m => m.name === 'tz'
+                && m.type.full === 'Array'
+                && m.type.args[0].full === 'T'))
+        })
+
         it('should validate array of externally defined type in flat mode', async () => {
             assert.ok(aspectFlat.members.find(m => m.name === 'extz'
                 && m.type.full === 'Array'
                 && m.type.args[0].full === '_elsewhere.ExternalType'))
+        })
+
+        it('should validate array of inline type in flat mode', async () => {
+            assert.ok(aspectFlat.members.find(m => m.name === 'inlinez'
+                && m.type.full === 'Array'
+                && m.type.args[0].keyword === 'typeliteral'
+                && m.type.args[0].members.length === 2))
         })
     })
 
