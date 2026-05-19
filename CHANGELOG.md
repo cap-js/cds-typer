@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Deprecated
 ### Removed
 ### Fixed
+- Properly import entities from other services that are used in arrays/ compositions of many/ associations to many
 ### Security
 
 ## [0.39.0] - 2026-05-11
