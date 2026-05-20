@@ -31,7 +31,7 @@ jobs:
     needs: smoke-tests # to avoid writing over each others output
     strategy:
       matrix:
-        version: [22, 18]
+        version: [22, 24]
         platform: [ macos-latest, ubuntu-latest, windows-latest ]
     runs-on: ${{ matrix.platform }}
 
@@ -50,7 +50,7 @@ jobs:
     needs: smoke-tests
     strategy:
       matrix:
-        version: [22, 18]
+        version: [22, 24]
         platform: [ macos-latest, ubuntu-latest, windows-latest ]
     runs-on: ${{ matrix.platform }}
 
