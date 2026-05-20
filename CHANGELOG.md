@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Deprecated
 ### Removed
 ### Fixed
+- Entities with name conflicts with any of their ancestors now have their aspect name generated properly again
 ### Security
 
 ## [0.39.1] - 2026-05-19
