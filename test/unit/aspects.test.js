@@ -32,7 +32,10 @@ describe('Aspect Naming Collision', () => {
     })
 
     it('should reference _BooksAspect (not _BookAspect) when extending the colliding aspect', () => {
-        const [eAspect] = astw.tree.find(n => n.name === '_EAspect').body
+        const eAspectNode = astw.tree.find(n => n.name === '_EAspect')
+        assert.ok(eAspectNode, '_EAspect function should exist in the AST')
+        const [eAspect] = eAspectNode.body
+
         assert.ok(checkInheritance(eAspect, ['_BooksAspect']))
         assert.ok(!checkInheritance(eAspect, ['_BookAspect']), 'should not reference _BookAspect (premature inflection)')
     })
