@@ -1,0 +1,3 @@
+namespace base;
+
+aspect Books {}
