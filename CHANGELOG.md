@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Types now support singular and plural annotations
 ### Changed
 ### Deprecated
 ### Removed
