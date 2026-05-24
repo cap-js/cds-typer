@@ -40,6 +40,26 @@ describe('Type Definitions Tests', () => {
             assert.ok(!astw.tree.find(def => def.name === 'Ref_'))
         })
 
+        it('should respect @singular annotation on type definitions', () => {
+            // type NamedType with @singular: 'NamedTypeSingular' should be exported as NamedTypeSingular
+            assert.ok(
+                astw.tree.find(({name, nodeType}) => name === 'NamedTypeSingular' && nodeType === 'typeAliasDeclaration'),
+                'Expected typeAliasDeclaration named NamedTypeSingular (from @singular annotation) but it was not found'
+            )
+            assert.ok(
+                !astw.tree.find(({name, nodeType}) => name === 'NamedType' && nodeType === 'typeAliasDeclaration'),
+                'Expected original name NamedType to be absent when @singular is set, but it was found'
+            )
+        })
+
+        it('should respect @plural annotation on type definitions', () => {
+            // type NamedType with @plural: 'NamedTypePlural' should produce an array export NamedTypePlural
+            assert.ok(
+                astw.tree.find(({name, nodeType}) => name === 'NamedTypePlural' && nodeType === 'typeAliasDeclaration'),
+                'Expected typeAliasDeclaration named NamedTypePlural (from @plural annotation) but it was not found'
+            )
+        })
+
         it('should verify type has static .kind = "type" property', async () => {
             const members = astw.tree.find(def => def.name === '_PointsAspect').body[0].members
             const kind = members.find(member => member.name === 'kind')

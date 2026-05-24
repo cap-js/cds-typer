@@ -27,3 +27,7 @@ entity Wrapper {
 }
 
 type Ref: Wrapper:e;
+
+@singular: 'NamedTypeSingular'
+@plural: 'NamedTypePlural'
+type NamedType : String;
