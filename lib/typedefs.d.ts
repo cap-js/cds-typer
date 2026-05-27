@@ -1,4 +1,5 @@
 import type { Identifier } from './components/identifier'
+import { EntityCSN } from './csn'
 
 export module resolver {
     type ref = {
@@ -162,6 +163,26 @@ export module visitor {
         type: string,
         doc?: string
     }
+}
+
+export module traverser {
+    export type EventPayload = {
+        entity: EntityCSN,
+        operation: OperationCSN,
+        aspect: EntityCSN,
+        type: EntityCSN,
+        event: EntityCSN,
+        service: EntityCSN
+    }
+
+    export type TraversalEvent = keyof EventPayload
+
+    export type Selector = TraversalEvent | `${TraversalEvent}:exit` | `${TraversalEvent} > ${string}`
+
+    export type HandlerOptions = { parent?: object }
+
+    export type Handler<T extends TraversalEvent> =
+        (fq: string, definition: EventPayload[T], options?: HandlerOptions) => void
 }
 
 export module config {
