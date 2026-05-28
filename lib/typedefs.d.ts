@@ -245,3 +245,31 @@ export module config {
 export module file {
     export type Namespace = Object<string, Buffer>
 }
+
+export module printer {
+    import { Buffer } from '../file'
+    import { EntityCSN, EntityInfo } from './resolver'
+
+    /**
+     * Context object containing all data that may be needed for printing TypeScript output.
+     * Different printers can use different subsets of this context.
+     */
+    export interface PrintContext {
+        /** The name of the aspect function to print */
+        aspectFunctionName?: string
+        /** The cleaned name of the aspect */
+        clean?: string
+        /** Entity CSN definition */
+        entity?: EntityCSN
+        /** List of ancestor entity infos */
+        ancestorInfos?: EntityInfo[]
+        /** The list of ancestor aspects to extend */
+        ancestorsAspects?: string
+        /** Buffer containing instance properties */
+        properties?: Buffer
+        /** Buffer containing static members */
+        staticMembers?: Buffer
+        /** Whether the aspect is being printed inside a namespace */
+        isInNamespace?: boolean
+    }
+}
