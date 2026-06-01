@@ -273,4 +273,16 @@ export module printer {
         /** Whether the aspect is being printed inside a namespace */
         isInNamespace?: boolean
     }
+
+    /**
+     * Context object for printing enum constants.
+     */
+    export interface EnumPrintContext {
+        /** The name of the enum */
+        name: string
+        /** Key-value pairs for the enum */
+        kvs: [string, string][]
+        /** Whether the enum should be exported */
+        isExported: boolean
+    }
 }
