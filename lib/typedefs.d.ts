@@ -253,6 +253,7 @@ export module printer {
     /**
      * Context object containing all data that may be needed for printing TypeScript output.
      * Different printers can use different subsets of this context.
+     * As the output can be vastly different, we intentionally pass a rich context.
      */
     export interface PrintContext {
         /** The name of the aspect function to print */
