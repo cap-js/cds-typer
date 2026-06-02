@@ -1,5 +1,6 @@
 import type { Identifier } from './components/identifier'
 import { EntityCSN } from './csn'
+import { Buffer } from './file'
 
 export module resolver {
     type ref = {
@@ -247,9 +248,6 @@ export module file {
 }
 
 export module printer {
-    import { Buffer } from '../file'
-    import { EntityCSN, EntityInfo } from './resolver'
-
     /**
      * Context object containing all data that may be needed for printing TypeScript output.
      * Different printers can use different subsets of this context.
@@ -270,8 +268,12 @@ export module printer {
         properties?: Buffer
         /** Buffer containing static members */
         staticMembers?: Buffer
+        /** Buffer containing keys, elements, and actions */
+        keysElementsActions?: Buffer
         /** Whether the aspect is being printed inside a namespace */
         isInNamespace?: boolean
+        /** The complete body content (for printAspectFunction) */
+        body?: string
     }
 
     /**
