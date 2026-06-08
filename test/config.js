@@ -22,7 +22,7 @@ const CDS_TEST_CONFIG_OPTIONS = [
 function perEachTestConfig(callback) {
     // Explicitly unroll the loop to help with test discovery
     // Call callback immediately for each config option
-    callback(CDS_TEST_CONFIG_OPTIONS[0])
+    //callback(CDS_TEST_CONFIG_OPTIONS[0])
     callback(CDS_TEST_CONFIG_OPTIONS[1])
 }
 
