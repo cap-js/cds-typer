@@ -145,7 +145,7 @@ function visitBooleanLiteral(node) {
     if (node.kind === ts.SyntaxKind.FalseKeyword) return false
 }
 
-/** @param { {operator: number, operand: {}} } node - the node to visit */
+/** @param { {operator: number, operand: object} } node - the node to visit */
 function visitPrefixUnaryExpression(node) {
     if (node.operator === ts.SyntaxKind.MinusToken) return -visit(node.operand)
 }
@@ -391,7 +391,8 @@ class ASTWrapper {
         // this is total bogus, as its the same as getAspects...
         return (Array.isArray(tree) ? tree : this.tree)
             .filter(n => n.nodeType === kinds.FunctionDeclaration)
-            .map(fn => ({...fn.body[0], name: fn.name }))
+            .map(fn =>
+                ({...fn.body[0], name: fn.name }))
     }
 
     /**
