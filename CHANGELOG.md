@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 ### Changed
+- `cds.env.typer.output_d_ts_files` now emits proper type declarations, instead of just suffixing the output files with .d.ts instead of .ts
 ### Deprecated
 ### Removed
 ### Fixed
