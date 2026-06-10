@@ -185,12 +185,22 @@ function visitHeritageClause(node) {
  * @returns {VariableStatement}
  */
 function visitVariableStatement(node) {
-    return node.declarationList.declarations.map(vd => ({
-        name: visit(vd.name),
-        type: visit(vd.type),
-        initializer: visit(vd.initializer),
-        nodeType: kinds.VariableStatement
-    }))
+    return node.declarationList.declarations.map(vd => {
+        const name = visit(vd.name)
+        const type = visit(vd.type)
+        let initializer = visit(vd.initializer)
+        // .d.ts const enums: no initializer, TypeLiteral type with PropertySignature members
+        // synthesise an initializer.expression compatible with what .ts output produces
+        if (!initializer && vd.type && ts.isTypeLiteralNode(vd.type)) {
+            const expression = Object.fromEntries(
+                vd.type.members
+                    .filter(m => ts.isPropertySignature(m) && m.type)
+                    .map(m => [visit(m.name), visit(m.type)?.literal ?? visit(m.type)])
+            )
+            initializer = { expression }
+        }
+        return { name, type, initializer, nodeType: kinds.VariableStatement }
+    })
 }
 
 /**
@@ -291,14 +301,49 @@ function visitClassDeclaration(node) {
 }
 
 /**
- * @typedef {{name: string, body: any[], nodeType: string}} FunctionDeclaration
+ * Builds a flat members array from a .d.ts aspect function's TypeLiteral return type.
+ * The TypeLiteral contains a ConstructSignature (holding instance + static-ish members
+ * in an IntersectionType) and top-level PropertySignatures (keys, elements, actions).
+ * @param {ts.TypeLiteralNode} typeLiteral
+ * @returns {any[]}
+ */
+function membersFromDeclarationAspect(typeLiteral) {
+    const members = []
+    for (const member of typeLiteral.members) {
+        if (ts.isConstructSignatureDeclaration(member)) {
+            // IntersectionType: TypeLiteral (instance props) & TypeLiteral (static-ish) & TypeReference (TBase)
+            const retType = member.type
+            if (retType && ts.isIntersectionTypeNode(retType)) {
+                for (const part of retType.types) {
+                    if (ts.isTypeLiteralNode(part)) {
+                        members.push(...part.members.map(visit))
+                    }
+                }
+            }
+        } else {
+            members.push(visit(member))
+        }
+    }
+    return members
+}
+
+/**
+ * @typedef {{name: string, body: any[] | undefined, members: any[] | undefined, nodeType: string}} FunctionDeclaration
  * @param {ts.FunctionDeclaration} node - the node to visit
  * @returns {FunctionDeclaration}
  */
 function visitFunctionDeclaration(node) {
     const name = node.name.text
-    const body = visit(node.body)
-    return { name, body, nodeType: kinds.FunctionDeclaration }
+    if (node.body) {
+        const body = visit(node.body)
+        return { name, body, nodeType: kinds.FunctionDeclaration }
+    }
+    // .d.ts style: no body, TypeLiteral return type (declare function _XAspect(...): { ... })
+    if (node.type && ts.isTypeLiteralNode(node.type)) {
+        const members = membersFromDeclarationAspect(node.type)
+        return { name, body: undefined, members, nodeType: kinds.FunctionDeclaration }
+    }
+    return { name, body: visit(node.body), nodeType: kinds.FunctionDeclaration }
 }
 
 /** @param {ts.Node} node - the node that was unsuccessfully handled */
@@ -341,8 +386,13 @@ class ASTWrapper {
     getAspectFunctions(tree) {
         return (Array.isArray(tree) ? tree : this.tree).filter(n =>
             n.nodeType === kinds.FunctionDeclaration
-            && n.body.length === 1
-            && n.body[0].nodeType === kinds.ClassExpression)
+            && (
+                // .ts style: function with body containing a single class expression
+                (n.body?.length === 1 && n.body[0].nodeType === kinds.ClassExpression)
+                // .d.ts style: declare function with TypeLiteral return type (no body, has members)
+                || (n.body === undefined && n.members !== undefined)
+            )
+        )
     }
 
     /** @returns {ClassDeclaration[]} */
@@ -391,8 +441,11 @@ class ASTWrapper {
         // this is total bogus, as its the same as getAspects...
         return (Array.isArray(tree) ? tree : this.tree)
             .filter(n => n.nodeType === kinds.FunctionDeclaration)
-            .map(fn =>
-                ({...fn.body[0], name: fn.name }))
+            .map(fn => {
+                if (fn.body) return {...fn.body[0], name: fn.name}
+                // .d.ts style: members directly on function node
+                return { name: fn.name, members: fn.members, nodeType: kinds.ClassExpression, heritage: [] }
+            })
     }
 
     /**
@@ -400,7 +453,11 @@ class ASTWrapper {
      * @returns {ClassExpression[]}
      */
     getAspects(tree) {
-        return this.getAspectFunctions(tree).map(({name, body}) => ({...body[0], name}))
+        return this.getAspectFunctions(tree).map(fn => {
+            if (fn.body) return {...fn.body[0], name: fn.name}
+            // .d.ts style: members are directly on the function node
+            return { name: fn.name, members: fn.members, nodeType: kinds.ClassExpression, heritage: [] }
+        })
     }
 
     getAspect(name) {
