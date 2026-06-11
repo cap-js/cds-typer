@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 ### Removed
 ### Fixed
 - Entities with name conflicts with any of their ancestors now have their aspect name generated properly again
+- Fixed sporadic occurrence of `[Object object]` in logs
 ### Security
 
 ## [0.39.1] - 2026-05-19
