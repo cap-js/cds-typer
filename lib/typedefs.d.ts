@@ -200,6 +200,7 @@ export module config {
                 postprocess?: (value: string) => any,
                 camel?: string,
                 snake?: string
+                value?: any
             }
         }
 
