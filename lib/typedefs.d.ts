@@ -1,4 +1,6 @@
 import type { Identifier } from './components/identifier'
+import { EntityCSN } from './csn'
+import { Buffer } from './file'
 
 export module resolver {
     type ref = {
@@ -164,6 +166,26 @@ export module visitor {
     }
 }
 
+export module traverser {
+    export type EventPayload = {
+        entity: EntityCSN,
+        operation: OperationCSN,
+        aspect: EntityCSN,
+        type: EntityCSN,
+        event: EntityCSN,
+        service: EntityCSN
+    }
+
+    export type TraversalEvent = keyof EventPayload
+
+    export type Selector = TraversalEvent | `${TraversalEvent}:exit` | `${TraversalEvent} > ${string}`
+
+    export type HandlerOptions = { parent?: object }
+
+    export type Handler<T extends TraversalEvent> =
+        (fq: string, definition: EventPayload[T], options?: HandlerOptions) => void
+}
+
 export module config {
     export module cli {
         export type CLIFlags = 'version' | 'help'
@@ -178,6 +200,7 @@ export module config {
                 postprocess?: (value: string) => any,
                 camel?: string,
                 snake?: string
+                value?: any
             }
         }
 
@@ -223,4 +246,46 @@ export module config {
 
 export module file {
     export type Namespace = Object<string, Buffer>
+}
+
+export module printer {
+    /**
+     * Context object containing all data that may be needed for printing TypeScript output.
+     * Different printers can use different subsets of this context.
+     * As the output can be vastly different, we intentionally pass a rich context.
+     */
+    export interface PrintContext {
+        /** The name of the aspect function to print */
+        aspectFunctionName?: string
+        /** The cleaned name of the aspect */
+        clean?: string
+        /** Entity CSN definition */
+        entity?: EntityCSN
+        /** List of ancestor entity infos */
+        ancestorInfos?: EntityInfo[]
+        /** The list of ancestor aspects to extend */
+        ancestorsAspects?: string
+        /** Buffer containing instance properties */
+        properties?: Buffer
+        /** Buffer containing static members */
+        staticMembers?: Buffer
+        /** Buffer containing keys, elements, and actions */
+        keysElementsActions?: Buffer
+        /** Whether the aspect is being printed inside a namespace */
+        isInNamespace?: boolean
+        /** The complete body content (for printAspectFunction) */
+        body?: string | string[]
+    }
+
+    /**
+     * Context object for printing enum constants.
+     */
+    export interface EnumPrintContext {
+        /** The name of the enum */
+        name: string
+        /** Key-value pairs for the enum */
+        kvs: [string, string][]
+        /** Whether the enum should be exported */
+        isExported: boolean
+    }
 }

@@ -199,7 +199,7 @@ describe('Inline Enum in Association Key referenced from Service', () => {
     let schemaNsSource
 
     before(async () => {
-        const paths = (await prepareUnitTest('enums/association-key/service.cds', locations.testOutput('enums_association_key'))).paths
+        const paths = (await prepareUnitTest('enums/association-key/service.cds', locations.testOutput('enums_association_key'), { typerOptions: { outputDTsFiles: false } })).paths
         // paths[0] = _, paths[1] = CatalogService, paths[2] = enum_association_key
         const schemaNsFile = path.join(paths[2], 'index.ts')
         schemaNsAstw  = new ASTWrapper(schemaNsFile)

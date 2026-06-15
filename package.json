@@ -54,7 +54,7 @@
   "cds": {
     "typer": {
       "output_directory": "@cds-models",
-      "output_d_ts_files": false,
+      "output_d_ts_files": true,
       "inline_declarations": "flat",
       "target_module_type": "auto",
       "properties_optional": true,
