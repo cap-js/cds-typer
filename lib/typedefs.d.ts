@@ -273,7 +273,7 @@ export module printer {
         /** Whether the aspect is being printed inside a namespace */
         isInNamespace?: boolean
         /** The complete body content (for printAspectFunction) */
-        body?: string
+        body?: string | string[]
     }
 
     /**
