@@ -12,7 +12,7 @@ describe('Array Of', () => {
 
     describe('Entity Properties', () => {
         let aspect
-        before(async () => aspect = astw.tree.find(n => n.name === '_EAspect').body[0])
+        before(async () => aspect = astw.getAspect('_EAspect'))
 
         it('should validate array of String', async () => {
             assert.ok(aspect.members.find(m => m.name === 'stringz'
@@ -50,7 +50,7 @@ describe('Array Of', () => {
         let aspectFlat
         before(async () => {
             const result = await prepareUnitTest('arrayof/model.cds', locations.testOutput('arrayof_test_flat'), { typerOptions: { inlineDeclarations: 'flat' } })
-            aspectFlat = result.astw.tree.find(n => n.name === '_EAspect').body[0]
+            aspectFlat = result.astw.getAspect('_EAspect')
         })
 
         it('should validate array of String in flat mode', async () => {

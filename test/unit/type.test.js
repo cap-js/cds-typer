@@ -20,7 +20,7 @@ describe('Type Definitions Tests', () => {
         })
 
         it('should verify types as properties', () => {
-            const members = astw.tree.find(def => def.name === '_PersonAspect').body[0].members
+            const members = astw.getAspect('_PersonAspect').members
             assert.ok(members.find(({name, type}) => name === 'id' && type?.subtypes[0].full === 'IntAlias'))
             assert.ok(members.find(({name, type}) => name === 'pos' && type?.subtypes[0].full === 'Points'))
             assert.ok(members.find(({name, type}) => name === 'history' && type.full === 'Array' && type.args[0].full === 'Points'))
@@ -41,22 +41,20 @@ describe('Type Definitions Tests', () => {
         })
 
         it('should verify type has static .kind = "type" property', async () => {
-            const members = astw.tree.find(def => def.name === '_PointsAspect').body[0].members
+            const members = astw.getAspect('_PointsAspect').members
             const kind = members.find(member => member.name === 'kind')
             assert.ok(kind)
-            assert.ok(check.isStaticMember(kind))
             assert.ok(check.isReadonlyMember(kind))
-            assert.strictEqual(kind.initializer, 'type')
+            assert.strictEqual(kind.type?.literal, 'type')
         })
 
         it('should verify entity has static .kind = "entity" property', async () => {
             // FIXME: this test case might fit better elsewhere
-            const members = astw.tree.find(def => def.name === '_PersonAspect').body[0].members
+            const members = astw.getAspect('_PersonAspect').members
             const kind = members.find(member => member.name === 'kind')
             assert.ok(kind)
-            assert.ok(check.isStaticMember(kind))
             assert.ok(check.isReadonlyMember(kind))
-            assert.strictEqual(kind.initializer, 'entity')
+            assert.strictEqual(kind.type?.literal, 'entity')
         })
     })
 
@@ -66,7 +64,7 @@ describe('Type Definitions Tests', () => {
         before(async () => astw = (await prepareUnitTest('type/model.cds', locations.testOutput('type_test'), { typerOptions: { inlineDeclarations: 'flat' } })).astw)
 
         it('should check elements of compiled model against generated type properties', async () => {
-            const members = astw.tree.find(def => def.name === '_PersonAspect').body[0].members.map(m => m.name)
+            const members = astw.getAspect('_PersonAspect').members.map(m => m.name)
             const model = cds.linked(await cds.load(path.join(__dirname, 'files', 'type', 'model.cds')))
 
             // check odata model
@@ -87,7 +85,7 @@ describe('Type Definitions Tests', () => {
         })
 
         it('should check existence of flattened type elements', () => {
-            const members = astw.tree.find(def => def.name === '_PersonAspect').body[0].members
+            const members = astw.getAspect('_PersonAspect').members
 
             assert.ok(members.find(({name, type}) => name === 'pos_x' && type?.subtypes?.[0].keyword === 'number'))
             assert.ok(members.find(({name, type}) => name === 'pos_y' && type?.subtypes?.[0].keyword === 'number'))

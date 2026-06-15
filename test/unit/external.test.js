@@ -12,7 +12,7 @@ describe('EDMX Imports', () => {
     let paths
 
     before(async () => {
-        paths = (await prepareUnitTest('external/srv/external/CatalogService.csn', locations.testOutput('external_test'))).paths
+        paths = (await prepareUnitTest('external/srv/external/CatalogService.csn', locations.testOutput('external_test'), { typerOptions: { outputDTsFiles: false } })).paths
     })
 
     it('should generate types for EDMX imports', async () => {

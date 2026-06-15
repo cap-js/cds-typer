@@ -7,7 +7,7 @@ const { locations, prepareUnitTest } = require('../util')
 
 describe('Inline Type Declarations', () => {
     it('should verify structured inline type declarations', async () => {
-        const astw = (await prepareUnitTest('inline/model.cds', locations.testOutput('inline_test_structured'))).astw
+        const astw = (await prepareUnitTest('inline/model.cds', locations.testOutput('inline_test_structured'), { typerOptions: { outputDTsFiles: false } })).astw
         assert.ok(astw.exists('_BarAspect', 'x', node => {
             const { name, type } = node
             const [nonNullType] = type.subtypes
@@ -32,7 +32,7 @@ describe('Inline Type Declarations', () => {
         const astw = (await prepareUnitTest(
             'inline/model.cds',
             locations.testOutput('inline_test_flat'),
-            { typerOptions: { inlineDeclarations: 'flat' } }
+            { typerOptions: { inlineDeclarations: 'flat', outputDTsFiles: false } }
         )).astw
         assert.ok(astw.exists('_BarAspect', 'x_a_b', node => check.hasDeclareModifier(node) && check.isNullable(node.type, [check.isNumber])))
         assert.ok(astw.exists('_BarAspect', 'x_y', node => check.hasDeclareModifier(node) && check.isNullable(node.type, [check.isString])))

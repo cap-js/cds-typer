@@ -8,7 +8,7 @@ const { checkInheritance } = require('../ast')
 describe('Inheritance', () => {
     let ast
     before(async () => {
-        ast = (await prepareUnitTest('inheritance/model.cds', locations.testOutput('inheritance_test'))).astw.tree
+        ast = (await prepareUnitTest('inheritance/model.cds', locations.testOutput('inheritance_test'), { typerOptions: { outputDTsFiles: false } })).astw.tree
     })
 
     it('should verify inheritance for Entity, Type <- Entity', async () => {
@@ -42,7 +42,7 @@ describe('Inheritance', () => {
     })
 
     it('should verify multilevel inheritance', async () => {
-        const ast = (await prepareUnitTest('inheritance/multilevel.cds', locations.testOutput('inheritance_test'))).astw.tree
+        const ast = (await prepareUnitTest('inheritance/multilevel.cds', locations.testOutput('inheritance_test'), { typerOptions: { outputDTsFiles: false } })).astw.tree
         // we can't really check the transitive inheritance relationship here, which would manifest in instances of E owning the properties from A1...
         assert.ok(checkInheritance(ast.find(n => n.name === '_EAspect').body[0], ['_A2Aspect']))
         assert.ok(checkInheritance(ast.find(n => n.name === '_A2Aspect').body[0], ['_A1Aspect']))

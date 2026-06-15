@@ -20,13 +20,13 @@ describe('KeyOf', () => {
     it('should have static key property present', () => {
         const keys = astw.getAspectProperty('_CAspect', 'keys')
         assert.ok(keys)
-        assert.ok(check.isStaticMember(keys))
+        assert.ok(check.isReadonlyMember(keys))
     })
 
     it('should inherit key type', () => {
         const keys = astw.getAspectProperty('_FooAspect', 'keys')
         assert.ok(astw.getAspectProperty('_CAspect', 'keys'))
-        assert.ok(check.isStaticMember(keys))
+        assert.ok(check.isReadonlyMember(keys))
         assert.strictEqual(keys.type.subtypes.length, 2)  // just Foo and cuid, no type for SomethingWithoutKey -> 2
         assert.ok(check.isIntersectionType(keys.type, [
             st => check.isTypeReference(st, '___.KeysOf'),

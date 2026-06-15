@@ -24,7 +24,7 @@ describe('CDS Aspects', () => {
 describe('Aspect Naming Collision', () => {
     let astw
 
-    before(async () => astw = (await prepareUnitTest('aspects-collision/model.cds', locations.testOutput('aspects_collision_test'))).astw)
+    before(async () => astw = (await prepareUnitTest('aspects-collision/model.cds', locations.testOutput('aspects_collision_test'), { typerOptions: { outputDTsFiles: false } })).astw)
 
     it('should use entityName (_BooksAspect) for aspect with collision, not singular (_BookAspect)', () => {
         assert.ok(astw.tree.find(n => n.name === '_BooksAspect'), 'aspect function should be named _BooksAspect')
