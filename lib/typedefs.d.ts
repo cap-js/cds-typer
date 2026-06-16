@@ -262,7 +262,7 @@ export module printer {
         /** Entity CSN definition */
         entity?: EntityCSN
         /** List of ancestor entity infos */
-        ancestorInfos?: EntityInfo[]
+        ancestorInfos: EntityInfo[]
         /** The list of ancestor aspects to extend */
         ancestorsAspects?: string
         /** Buffer containing instance properties */
