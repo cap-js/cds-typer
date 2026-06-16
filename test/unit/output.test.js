@@ -6,7 +6,6 @@ const assert = require('assert')
 const { JSASTWrapper, check } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 const { perEachTestConfig } = require('../config')
-const { configuration } = require('../../lib/config')
 
 perEachTestConfig(({ outputDTsFiles, outputFile }) => {
     describe(`Compilation Tests (using output **/*/${outputFile} files)`, () => {
@@ -16,8 +15,9 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
         describe('Bookshoplet Tests', () => {
 
             before(async () => {
-                configuration.outputDTsFiles = outputDTsFiles
-                ;({paths, astw} = await prepareUnitTest('bookshoplet/model.cds', locations.testOutput('output_test/bookshoplet')))
+                ;({paths, astw} = await prepareUnitTest('bookshoplet/model.cds', locations.testOutput('output_test/bookshoplet'), {
+                    typerOptions: { outputDTsFiles }
+                }))
             })
 
             it('should verify exports in index.js', async () => {
@@ -110,57 +110,68 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
         })
 
         describe('Builtin Types Tests', () => {
-            it('should verify primitive types with default settings', async () => {
-                configuration.outputDTsFiles = outputDTsFiles
-                const astw = (await prepareUnitTest('builtins/model.cds', locations.testOutput('output_test/builtin_primitive'), {
-                    typerOptions: { IEEE754Compatible: false }
+            let primitiveAstw
+            let ieee754Astw
+            let legacyBinaryAstw
+
+            before(async () => {
+                // run sequentially to avoid concurrent configuration mutation
+                primitiveAstw = (await prepareUnitTest('builtins/model.cds', locations.testOutput('output_test/builtin_primitive'), {
+                    typerOptions: { outputDTsFiles, IEEE754Compatible: false }
                 })).astw
-                assert.ok(astw.exists('_EAspect', 'uuid', m => check.isNullable(m.type, [check.isString])))
-                assert.ok(astw.exists('_EAspect', 'str', m => check.isNullable(m.type, [check.isString])))
-                assert.ok(astw.exists('_EAspect', 'bin', m => check.isNullable(m.type, [st => check.isTypeReference(st, 'Buffer') ])))
-                assert.ok(astw.exists('_EAspect', 'lstr', m => check.isNullable(m.type, [check.isString])))
-                assert.ok(astw.exists('_EAspect', 'lbin', m => check.isUnionType(m.type, [check.isLiteral])))
-                assert.ok(astw.exists('_EAspect', 'integ', m => check.isNullable(m.type, [check.isNumber])))
-                assert.ok(astw.exists('_EAspect', 'uint8', m => check.isNullable(m.type, [check.isNumber])))
-                assert.ok(astw.exists('_EAspect', 'int16', m => check.isNullable(m.type, [check.isNumber])))
-                assert.ok(astw.exists('_EAspect', 'int32', m => check.isNullable(m.type, [check.isNumber])))
-                assert.ok(astw.exists('_EAspect', 'int64', m => check.isNullable(m.type, [check.isNumber])))
-                assert.ok(astw.exists('_EAspect', 'integer64', m => check.isNullable(m.type, [check.isNumber])))
-                assert.ok(astw.exists('_EAspect', 'dec', m => check.isNullable(m.type, [check.isNumber])))
-                assert.ok(astw.exists('_EAspect', 'doub', m => check.isNullable(m.type, [check.isNumber])))
-                assert.ok(astw.exists('_EAspect', 'd', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsDate')])))
-                assert.ok(astw.exists('_EAspect', 't', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTime')])))
-                assert.ok(astw.exists('_EAspect', 'dt', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsDateTime')])))
-                assert.ok(astw.exists('_EAspect', 'ts', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTimestamp')])))
-                assert.ok(astw.exists('_EAspect', 'map', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsMap')])))
+                ieee754Astw = (await prepareUnitTest('builtins/model.cds', locations.testOutput('output_test/builtin_ieee754'), {
+                    typerOptions: { outputDTsFiles, IEEE754Compatible: true }
+                })).astw
+                legacyBinaryAstw = (await prepareUnitTest('builtins/model.cds', locations.testOutput('output_test/builtin_legacy_binary'), {
+                    typerOptions: { outputDTsFiles, legacyBinaryTypes: true }
+                })).astw
             })
 
-            it('should verify IEEE754 types', async () => {
-                configuration.outputDTsFiles = outputDTsFiles
-                const ieee754 = m => check.isParenthesizedType(m, st => check.isUnionType(st, [check.isNumber, check.isString]))
-                const astw = (await prepareUnitTest('builtins/model.cds', locations.testOutput('output_test/builtin_ieee754'), {
-                    typerOptions: { IEEE754Compatible: true }
-                })).astw
-                assert.ok(astw.exists('_EAspect', 'integ', m => check.isNullable(m.type, [check.isNumber])))
-                assert.ok(astw.exists('_EAspect', 'uint8', m => check.isNullable(m.type, [check.isNumber])))
-                assert.ok(astw.exists('_EAspect', 'int16', m => check.isNullable(m.type, [check.isNumber])))
-                assert.ok(astw.exists('_EAspect', 'int32', m => check.isNullable(m.type, [check.isNumber])))
-                assert.ok(astw.exists('_EAspect', 'int64', m => check.isNullable(m.type, [check.isNumber])))
-                assert.ok(astw.exists('_EAspect', 'integer64', m => check.isNullable(m.type, [check.isNumber])))
-                assert.ok(astw.exists('_EAspect', 'dec', m => check.isNullable(m.type, [ieee754])))
-                assert.ok(astw.exists('_EAspect', 'doub', m => check.isNullable(m.type, [ieee754])))
+            describe('Primitive Types', () => {
+                it('should verify primitive types with default settings', async () => {
+                    assert.ok(primitiveAstw.exists('_EAspect', 'uuid', m => check.isNullable(m.type, [check.isString])))
+                    assert.ok(primitiveAstw.exists('_EAspect', 'str', m => check.isNullable(m.type, [check.isString])))
+                    assert.ok(primitiveAstw.exists('_EAspect', 'bin', m => check.isNullable(m.type, [st => check.isTypeReference(st, 'Buffer') ])))
+                    assert.ok(primitiveAstw.exists('_EAspect', 'lstr', m => check.isNullable(m.type, [check.isString])))
+                    assert.ok(primitiveAstw.exists('_EAspect', 'lbin', m => check.isUnionType(m.type, [check.isLiteral])))
+                    assert.ok(primitiveAstw.exists('_EAspect', 'integ', m => check.isNullable(m.type, [check.isNumber])))
+                    assert.ok(primitiveAstw.exists('_EAspect', 'uint8', m => check.isNullable(m.type, [check.isNumber])))
+                    assert.ok(primitiveAstw.exists('_EAspect', 'int16', m => check.isNullable(m.type, [check.isNumber])))
+                    assert.ok(primitiveAstw.exists('_EAspect', 'int32', m => check.isNullable(m.type, [check.isNumber])))
+                    assert.ok(primitiveAstw.exists('_EAspect', 'int64', m => check.isNullable(m.type, [check.isNumber])))
+                    assert.ok(primitiveAstw.exists('_EAspect', 'integer64', m => check.isNullable(m.type, [check.isNumber])))
+                    assert.ok(primitiveAstw.exists('_EAspect', 'dec', m => check.isNullable(m.type, [check.isNumber])))
+                    assert.ok(primitiveAstw.exists('_EAspect', 'doub', m => check.isNullable(m.type, [check.isNumber])))
+                    assert.ok(primitiveAstw.exists('_EAspect', 'd', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsDate')])))
+                    assert.ok(primitiveAstw.exists('_EAspect', 't', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTime')])))
+                    assert.ok(primitiveAstw.exists('_EAspect', 'dt', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsDateTime')])))
+                    assert.ok(primitiveAstw.exists('_EAspect', 'ts', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsTimestamp')])))
+                    assert.ok(primitiveAstw.exists('_EAspect', 'map', m => check.isNullable(m.type, [st => check.isTypeReference(st, '___.CdsMap')])))
+                })
             })
 
-            it('should verify legacy binary types', async () => {
-                configuration.outputDTsFiles = outputDTsFiles
-                const astw = (await prepareUnitTest('builtins/model.cds', locations.testOutput('output_test/builtin_legacy_binary'), {
-                    typerOptions: { legacyBinaryTypes: true }
-                })).astw
-                assert.ok(astw.exists('_EAspect', 'bin', m => check.isNullable(m.type, [check.isString])))
-                assert.ok(astw.exists('_EAspect', 'lbin', m => check.isUnionType(m.type, [
-                    st => st.full === 'Buffer',
-                    check.isString
-                ])))
+            describe('IEEE754 Types', () => {
+                it('should verify IEEE754 types', async () => {
+                    const ieee754 = m => check.isParenthesizedType(m, st => check.isUnionType(st, [check.isNumber, check.isString]))
+                    assert.ok(ieee754Astw.exists('_EAspect', 'integ', m => check.isNullable(m.type, [check.isNumber])))
+                    assert.ok(ieee754Astw.exists('_EAspect', 'uint8', m => check.isNullable(m.type, [check.isNumber])))
+                    assert.ok(ieee754Astw.exists('_EAspect', 'int16', m => check.isNullable(m.type, [check.isNumber])))
+                    assert.ok(ieee754Astw.exists('_EAspect', 'int32', m => check.isNullable(m.type, [check.isNumber])))
+                    assert.ok(ieee754Astw.exists('_EAspect', 'int64', m => check.isNullable(m.type, [check.isNumber])))
+                    assert.ok(ieee754Astw.exists('_EAspect', 'integer64', m => check.isNullable(m.type, [check.isNumber])))
+                    assert.ok(ieee754Astw.exists('_EAspect', 'dec', m => check.isNullable(m.type, [ieee754])))
+                    assert.ok(ieee754Astw.exists('_EAspect', 'doub', m => check.isNullable(m.type, [ieee754])))
+                })
+            })
+
+            describe('Legacy Binary Types', () => {
+                it('should verify legacy binary types', async () => {
+                    assert.ok(legacyBinaryAstw.exists('_EAspect', 'bin', m => check.isNullable(m.type, [check.isString])))
+                    assert.ok(legacyBinaryAstw.exists('_EAspect', 'lbin', m => check.isUnionType(m.type, [
+                        st => st.full === 'Buffer',
+                        check.isString
+                    ])))
+                })
             })
         })
 
@@ -169,8 +180,9 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
             let astw
 
             before(async () => {
-                configuration.outputDTsFiles = outputDTsFiles
-                ;({paths, astw} = await prepareUnitTest('inflection/model.cds', locations.testOutput('output_test/inflection')))
+                ;({paths, astw} = await prepareUnitTest('inflection/model.cds', locations.testOutput('output_test/inflection'), {
+                    typerOptions: { outputDTsFiles }
+                }))
             })
 
             it('should verify generated paths', () => assert.strictEqual(paths.length, 2))

@@ -51,7 +51,10 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
                 const kind = members.find(member => member.name === 'kind')
                 assert.ok(kind)
                 assert.ok(check.isReadonlyMember(kind))
-                assert.strictEqual(kind.type?.literal, 'type')
+                // .d.ts: readonly kind: 'type' — literal is in type
+                // .ts:   static readonly kind: '...' = 'type' — literal is in initializer
+                const kindValue = outputDTsFiles ? kind.type?.literal : kind.initializer
+                assert.strictEqual(kindValue, 'type')
             })
 
             it('should verify entity has static .kind = "entity" property', async () => {
@@ -60,7 +63,8 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
                 const kind = members.find(member => member.name === 'kind')
                 assert.ok(kind)
                 assert.ok(check.isReadonlyMember(kind))
-                assert.strictEqual(kind.type?.literal, 'entity')
+                const kindValue = outputDTsFiles ? kind.type?.literal : kind.initializer
+                assert.strictEqual(kindValue, 'entity')
             })
         })
 
