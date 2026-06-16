@@ -176,12 +176,21 @@ const createProject = (projDir, options = {}) => {
 // mutex to prevent concurrent calls from corrupting shared configuration state
 let prepareUnitTestLock = Promise.resolve()
 
+
+/**
+ * @type {typeof _prepareUnitTest}
+ */
 async function prepareUnitTest(model, outputDirectory, parameters = {}) {
     const done = prepareUnitTestLock.then(() => _prepareUnitTest(model, outputDirectory, parameters))
     prepareUnitTestLock = done.catch(() => {})
     return done
 }
 
+/**
+ * @param {CSN} model - model
+ * @param {string} outputDirectory - output directory
+ * @param {object} parameters - parameters
+ */
 async function _prepareUnitTest(model, outputDirectory, parameters = {}) {
     const configurationBefore = configuration.clone()
     const defaults = {
