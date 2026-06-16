@@ -173,7 +173,16 @@ const createProject = (projDir, options = {}) => {
  * @param {string} outputDirectory - the path to the output directory
  * @param {PrepareUnitTestParameters} parameters - additional parameters
  */
+// mutex to prevent concurrent calls from corrupting shared configuration state
+let prepareUnitTestLock = Promise.resolve()
+
 async function prepareUnitTest(model, outputDirectory, parameters = {}) {
+    const done = prepareUnitTestLock.then(() => _prepareUnitTest(model, outputDirectory, parameters))
+    prepareUnitTestLock = done.catch(() => {})
+    return done
+}
+
+async function _prepareUnitTest(model, outputDirectory, parameters = {}) {
     const configurationBefore = configuration.clone()
     const defaults = {
         typerOptions: {},
