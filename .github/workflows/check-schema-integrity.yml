@@ -22,7 +22,7 @@ jobs:
         run: npm install
 
       - name: Run script to generate schema
-        run: npm run write:cds-typer-shema
+        run: npm run write:cds-typer-schema
 
       - name: Check for changes
         run: |
@@ -30,6 +30,6 @@ jobs:
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add .
           if ! git diff --cached --exit-code; then
-            echo "Schema in package.json not consistent with CLI parameters. Run "npm run write:cds-typer-shema" and commit the resulting changes."
+            echo "Schema in package.json not consistent with CLI parameters. Run "npm run write:cds-typer-schema" and commit the resulting changes."
             exit 1
           fi
