@@ -95,6 +95,7 @@ module.exports = (async () => [
             'jsdoc/require-param-description': 'warn',
             'jsdoc/require-returns': 'off', // lsp can infer this most of the time, turn back on for doc extraction
             'jsdoc/reject-any-type': 'warn',
+            'jsdoc/ts-no-empty-object-type': 'off',
         }
     }
 ])()
