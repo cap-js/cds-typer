@@ -6,13 +6,13 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 ### Changed
-- `cds.env.typer.output_d_ts_files` now emits proper type declarations, instead of just suffixing the output files with .d.ts instead of .ts
-- Changed default value of `cds.env.typer.output_d_ts_files` to `true`. You can restore the former behaviour by setting it to `false`
+- `output_d_ts_files: true` now emits proper `.d.ts` declaration files instead of merely renaming `.ts` files. This prevents build tools from treating generated type declarations as source files and inadvertently overwriting the runtime `.js` artifacts.
+- `output_d_ts_files` defaults to `true`. Set it to `false` to restore the previous behaviour.
 ### Deprecated
 ### Removed
 ### Fixed
 - Entities with name conflicts with any of their ancestors now have their aspect name generated properly again
-- Fixed sporadic occurrence of `[Object object]` in logs
+- Fixed sporadic `[Object object]` appearing in log output
 ### Security
 
 ## [0.39.1] - 2026-05-19
