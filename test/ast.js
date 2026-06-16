@@ -301,22 +301,52 @@ function visitClassDeclaration(node) {
 }
 
 /**
+ * Extracts ancestor aspect names from an InstanceType<ReturnType<typeof X<ReturnType<...>>>> chain.
+ * Returns names like '_AAspect', '_._ExtEAspect' in outermost-first order.
+ * @param {ts.TypeNode} typeRef - should be a ReturnType<typeof X<...>> TypeReference
+ * @returns {string[]}
+ */
+function extractDtsAncestorNames(typeRef) {
+    const names = []
+    if (!ts.isTypeReferenceNode(typeRef)) return names
+    const refName = typeRef.typeName.escapedText ?? typeRef.typeName.right?.escapedText
+    if (refName !== 'ReturnType') return names
+    const typeQuery = typeRef.typeArguments?.[0]
+    if (!typeQuery || !ts.isTypeQueryNode(typeQuery)) return names
+    const exprName = typeQuery.exprName
+    if (ts.isIdentifier(exprName)) {
+        names.push(exprName.escapedText)
+    } else if (ts.isQualifiedName(exprName)) {
+        names.push(`${exprName.left.escapedText}.${exprName.right.escapedText}`)
+    }
+    const nextArg = typeQuery.typeArguments?.[0]
+    if (nextArg) names.push(...extractDtsAncestorNames(nextArg))
+    return names
+}
+
+/**
  * Builds a flat members array from a .d.ts aspect function's TypeLiteral return type.
  * The TypeLiteral contains a ConstructSignature (holding instance + static-ish members
  * in an IntersectionType) and top-level PropertySignatures (keys, elements, actions).
+ * Also extracts the ancestor chain from the InstanceType<ReturnType<...>> part.
  * @param {ts.TypeLiteralNode} typeLiteral
- * @returns {any[]}
+ * @returns {{ members: any[], dtsInheritance: string[] }}
  */
 function membersFromDeclarationAspect(typeLiteral) {
     const members = []
+    let dtsInheritance = []
     for (const member of typeLiteral.members) {
         if (ts.isConstructSignatureDeclaration(member)) {
-            // IntersectionType: TypeLiteral (instance props) & TypeLiteral (static-ish) & TypeReference (TBase)
             const retType = member.type
             if (retType && ts.isIntersectionTypeNode(retType)) {
                 for (const part of retType.types) {
                     if (ts.isTypeLiteralNode(part)) {
                         members.push(...part.members.map(visit))
+                    } else if (ts.isTypeReferenceNode(part)) {
+                        const refName = part.typeName.escapedText ?? part.typeName.right?.escapedText
+                        if (refName === 'InstanceType' && part.typeArguments?.length) {
+                            dtsInheritance = extractDtsAncestorNames(part.typeArguments[0])
+                        }
                     }
                 }
             }
@@ -324,7 +354,7 @@ function membersFromDeclarationAspect(typeLiteral) {
             members.push(visit(member))
         }
     }
-    return members
+    return { members, dtsInheritance }
 }
 
 /**
@@ -340,8 +370,8 @@ function visitFunctionDeclaration(node) {
     }
     // .d.ts style: no body, TypeLiteral return type (declare function _XAspect(...): { ... })
     if (node.type && ts.isTypeLiteralNode(node.type)) {
-        const members = membersFromDeclarationAspect(node.type)
-        return { name, body: undefined, members, nodeType: kinds.FunctionDeclaration }
+        const { members, dtsInheritance } = membersFromDeclarationAspect(node.type)
+        return { name, body: undefined, members, dtsInheritance, nodeType: kinds.FunctionDeclaration }
     }
     return { name, body: visit(node.body), nodeType: kinds.FunctionDeclaration }
 }
@@ -444,7 +474,7 @@ class ASTWrapper {
             .map(fn => {
                 if (fn.body) return {...fn.body[0], name: fn.name}
                 // .d.ts style: members directly on function node
-                return { name: fn.name, members: fn.members, nodeType: kinds.ClassExpression, heritage: [] }
+                return { name: fn.name, members: fn.members, dtsInheritance: fn.dtsInheritance ?? [], nodeType: kinds.ClassExpression, heritage: [] }
             })
     }
 
@@ -456,7 +486,7 @@ class ASTWrapper {
         return this.getAspectFunctions(tree).map(fn => {
             if (fn.body) return {...fn.body[0], name: fn.name}
             // .d.ts style: members are directly on the function node
-            return { name: fn.name, members: fn.members, nodeType: kinds.ClassExpression, heritage: [] }
+            return { name: fn.name, members: fn.members, dtsInheritance: fn.dtsInheritance ?? [], nodeType: kinds.ClassExpression, heritage: [] }
         })
     }
 
@@ -732,11 +762,24 @@ const checkInheritance = (node, ancestors) => {
 }
 
 
+/**
+ * Checks that a .d.ts aspect node's InstanceType<ReturnType<...>> chain includes all given ancestors.
+ * @param {object} node - aspect node (from getAspects()) with a dtsInheritance array
+ * @param {string[]} ancestors - aspect names expected in the chain (e.g. '_AAspect', '_._ExtEAspect')
+ * @returns {boolean}
+ */
+const checkDtsInheritance = (node, ancestors) => {
+    const chain = node.dtsInheritance ?? []
+    return ancestors.every(a => chain.includes(a))
+}
+
+
 module.exports = {
     ASTWrapper,
     JSASTWrapper,
     checkFunction,
     checkInheritance,
+    checkDtsInheritance,
     checkKeyword,
     check: check
 }
