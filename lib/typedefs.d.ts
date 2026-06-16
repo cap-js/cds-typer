@@ -262,9 +262,11 @@ export module printer {
         /** Entity CSN definition */
         entity?: EntityCSN
         /** List of ancestor entity infos */
-        ancestorInfos: EntityInfo[]
-        /** The list of ancestor aspects to extend */
-        ancestorsAspects?: string
+        ancestorInfos?: EntityInfo[]
+        /** Function to derive the aspect function identifier from a name */
+        identAspect?: (name: string) => string
+        /** The file path, used for qualifying relative references */
+        filePath?: import('./file').Path
         /** Buffer containing instance properties */
         properties?: Buffer
         /** Buffer containing static members */
