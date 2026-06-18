@@ -1,6 +1,6 @@
 import type { Identifier } from './components/identifier'
-import { EntityCSN } from './csn'
-import { Buffer } from './file'
+import type { EntityCSN } from './csn'
+import type { Buffer } from './file'
 
 export module resolver {
     type ref = {
