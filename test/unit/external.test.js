@@ -7,20 +7,25 @@ const { before, describe, it } = require('node:test')
 const assert = require('assert')
 const { ASTWrapper } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
+const { perEachTestConfig } = require('../config')
+const { configuration } = require('../../lib/config')
 
-describe('EDMX Imports', () => {
-    let paths
+perEachTestConfig(({ outputDTsFiles, outputFile }) => {
+    describe(`EDMX Imports (using output **/*/${outputFile} files)`, () => {
+        let paths
 
-    before(async () => {
-        paths = (await prepareUnitTest('external/srv/external/CatalogService.csn', locations.testOutput('external_test'))).paths
-    })
+        before(async () => {
+            configuration.outputDTsFiles = outputDTsFiles
+            paths = (await prepareUnitTest('external/srv/external/CatalogService.csn', locations.testOutput('external_test'))).paths
+        })
 
-    it('should generate types for EDMX imports', async () => {
-        assert.ok(fs.existsSync(path.join(paths.find(p => p.endsWith('CatalogService'), 'index.ts'))))
-    })
+        it('should generate types for EDMX imports', async () => {
+            assert.ok(fs.existsSync(path.join(paths.find(p => p.endsWith('CatalogService')), outputFile)))
+        })
 
-    it('should have the element present', async () => {
-        const astw = new ASTWrapper(path.join(paths.find(p => p.endsWith('CatalogService')), 'index.ts'))
-        assert.ok(astw.exists('_BookAspect', 'metadata'))
+        it('should have the element present', async () => {
+            const astw = new ASTWrapper(path.join(paths.find(p => p.endsWith('CatalogService')), outputFile))
+            assert.ok(astw.exists('_BookAspect', 'metadata'))
+        })
     })
 })

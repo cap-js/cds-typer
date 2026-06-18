@@ -4,29 +4,34 @@ const { before, describe, it } = require('node:test')
 const assert = require('assert')
 const { check } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
+const { perEachTestConfig } = require('../config')
+const { configuration } = require('../../lib/config')
 
-describe('Events Tests', () => {
-    let astw
+perEachTestConfig(({ outputDTsFiles, outputFile }) => {
+    describe(`Events Tests (using output **/*/${outputFile} files)`, () => {
+        let astw
 
-    before(async () => {
-        astw = (await prepareUnitTest('events/model.cds', locations.testOutput('events_test'))).astw
-    })
-
-    describe('Builtin Imports Generation', () => {
-        it('should generate _ module import for builtin types', () => {
-            assert.strictEqual(astw.getImports()[0].module, './../_')
+        before(async () => {
+            configuration.outputDTsFiles = outputDTsFiles
+            astw = (await prepareUnitTest('events/model.cds', locations.testOutput('events_test'))).astw
         })
-    })
 
-    describe('Event Type Presence', () => {
-        it('should have a top-level event with correct members', async () => {
-            assert.ok(astw.tree.find(cls => cls.name === 'Bar'
-                && cls.members.length === 4
-                && cls.members[0].name === 'kind' && check.isStaticMember(cls.members[0])
-                && cls.members[1].name === 'id' && check.isNullable(cls.members[1].type, [check.isNumber])
-                && cls.members[2].name === 'name' && check.isNullable(cls.members[2].type, [check.isIndexedAccessType])
-                && cls.members[3].name === 'createdOn' && check.isNullable(cls.members[3].type, [check.isTypeReference])
-            ))
+        describe('Builtin Imports Generation', () => {
+            it('should generate _ module import for builtin types', () => {
+                assert.strictEqual(astw.getImports()[0].module, './../_')
+            })
+        })
+
+        describe('Event Type Presence', () => {
+            it('should have a top-level event with correct members', async () => {
+                assert.ok(astw.tree.find(cls => cls.name === 'Bar'
+                    && cls.members.length === 4
+                    && cls.members[0].name === 'kind' && check.isReadonlyMember(cls.members[0])
+                    && cls.members[1].name === 'id' && check.isNullable(cls.members[1].type, [check.isNumber])
+                    && cls.members[2].name === 'name' && check.isNullable(cls.members[2].type, [check.isIndexedAccessType])
+                    && cls.members[3].name === 'createdOn' && check.isNullable(cls.members[3].type, [check.isTypeReference])
+                ))
+            })
         })
     })
 })

@@ -30,7 +30,7 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
 
         it('should validate bound actions', async () => {
             const actions = astwBound.getAspectProperty('_EAspect', 'actions')
-            assert.ok(actions.modifiers.some(check.isStatic))
+            assert.ok(outputDTsFiles ? actions.modifiers.some(m => checkKeyword(m, 'readonly')) : actions.modifiers.some(check.isStatic))
             checkFunction(actions.type.members.find(fn => fn.name === 'f'), {
                 parameterCheck: ({ members: [fst] }) => fst.name === 'x' && check.isNullable(fst.type, [check.isString])
             })
@@ -68,7 +68,7 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
 
         it('should validate bound actions containing __self', async () => {
             const actions = astwBound.getAspectProperty('_EAspect', 'actions')
-            assert.ok(actions.modifiers.some(check.isStatic))
+            assert.ok(outputDTsFiles ? actions.modifiers.some(m => checkKeyword(m, 'readonly')) : actions.modifiers.some(check.isStatic))
             checkFunction(actions.type.members.find(fn => fn.name === 'f'), {
                 selfTypeCheck: type => check.isTypeReference(type, 'E')
             })
@@ -85,7 +85,7 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
 
         it('should validate bound actions returning external type', async () => {
             const actions = astwBound.getAspectProperty('_EAspect', 'actions')
-            assert.ok(actions.modifiers.some(check.isStatic))
+            assert.ok(outputDTsFiles ? actions.modifiers.some(m => checkKeyword(m, 'readonly')) : actions.modifiers.some(check.isStatic))
             checkFunction(actions.type.members.find(fn => fn.name === 'f'), {
                 callCheck: signature => check.isAny(signature),
                 parameterCheck: ({ members: [fst] }) => fst.name === 'x' && check.isNullable(fst.type, [check.isString]),
@@ -129,7 +129,7 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
 
         it('should validate bound actions expecting $self arguments', async () => {
             const actions = astwBound.getAspectProperty('_EAspect', 'actions')
-            assert.ok(actions.modifiers.some(check.isStatic))
+            assert.ok(outputDTsFiles ? actions.modifiers.some(m => checkKeyword(m, 'readonly')) : actions.modifiers.some(check.isStatic))
             // mainly make sure $self parameter is not present at all
             checkFunction(actions.type.members.find(fn => fn.name === 's1'), {
                 callCheck: signature => check.isAny(signature),
@@ -237,7 +237,7 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
 
         it('should validate that properties in action return type objects do not have declare modifiers', async () => {
             const actions = astwBound.getAspectProperty('_EAspect', 'actions')
-            assert.ok(actions.modifiers.some(check.isStatic))
+            assert.ok(outputDTsFiles ? actions.modifiers.some(m => checkKeyword(m, 'readonly')) : actions.modifiers.some(check.isStatic))
             checkFunction(actions.type.members.find(fn => fn.name === 'h'), {
                 callCheck: signature => check.isTypeLiteral(signature),
                 parameterCheck: ({ full, args }) => full === 'globalThis.Record'
