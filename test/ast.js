@@ -329,7 +329,7 @@ function extractDtsAncestorNames(typeRef) {
  * The TypeLiteral contains a ConstructSignature (holding instance + static-ish members
  * in an IntersectionType) and top-level PropertySignatures (keys, elements, actions).
  * Also extracts the ancestor chain from the InstanceType<ReturnType<...>> part.
- * @param {ts.TypeLiteralNode} typeLiteral
+ * @param {ts.TypeLiteralNode} typeLiteral - type literal
  * @returns {{ members: any[], dtsInheritance: string[] }}
  */
 function membersFromDeclarationAspect(typeLiteral) {
