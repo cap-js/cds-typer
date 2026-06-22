@@ -39,6 +39,9 @@
   "bin": {
     "cds-typer": "./lib/cli.js"
   },
+  "engines": {
+    "node": ">=22"
+  },
   "peerDependencies": {
     "@cap-js/cds-types": ">=0.9",
     "@sap/cds": ">=8"
