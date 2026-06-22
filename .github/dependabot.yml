@@ -8,6 +8,11 @@ updates:
 - package-ecosystem: npm
   directory: /
   versioning-strategy: increase-if-necessary
+  cooldown:
+    default-days: 5
+    semver-major-days: 30
+    semver-minor-days: 7
+    semver-patch-days: 3
   commit-message:
     prefix: chore
     prefix-development: chore

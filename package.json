@@ -39,16 +39,20 @@
   "bin": {
     "cds-typer": "./lib/cli.js"
   },
+  "engines": {
+    "node": ">=22"
+  },
   "peerDependencies": {
     "@cap-js/cds-types": ">=0.9",
     "@sap/cds": ">=8"
   },
   "devDependencies": {
     "@cap-js/cds-types": "^0",
-    "@stylistic/eslint-plugin": "^5.3.1",
-    "acorn": "^8.10.0",
-    "eslint": "^9",
-    "eslint-plugin-jsdoc": "^61.4.1",
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "acorn": "^8.16.0",
+    "eslint": "^10",
+    "eslint-plugin-jsdoc": "^63.0.2",
     "typescript": ">=4.6.4"
   },
   "cds": {
