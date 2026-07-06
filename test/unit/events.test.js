@@ -63,16 +63,59 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
             })
 
             it('should emit dotted event as object literal in JS when scope prefix has no matching entity', async () => {
-                // `Scoped` is not an entity in MyService, so `Scoped.OrderPlaced = '...'` would throw
-                // at runtime. Instead the output must be `module.exports.Scoped = { OrderPlaced: 'Scoped.OrderPlaced' }`.
-                const node = serviceJsw.program.body.find(n =>
+                // `Scoped` is not an entity — emit `Scoped = {}` first, then `Scoped.OrderPlaced = '...'`.
+                const initNode = serviceJsw.program.body.find(n =>
                     n.type === 'ExpressionStatement' &&
                     n.expression.left?.property?.name === 'Scoped' &&
-                    n.expression.right?.type === 'ObjectExpression'
+                    n.expression.right?.type === 'ObjectExpression' &&
+                    n.expression.right?.properties?.length === 0
                 )
-                assert.ok(node, 'module.exports.Scoped object literal assignment should exist in index.js')
-                const prop = node.expression.right.properties.find(p => p.key.name === 'OrderPlaced')
-                assert.strictEqual(prop?.value?.value, 'Scoped.OrderPlaced')
+                assert.ok(initNode, 'module.exports.Scoped = {} initialiser should exist in index.js')
+                const assignNode = serviceJsw.program.body.find(n =>
+                    n.type === 'ExpressionStatement' &&
+                    n.expression.left?.property?.name === 'OrderPlaced' &&
+                    n.expression.left?.object?.property?.name === 'Scoped'
+                )
+                assert.ok(assignNode, 'module.exports.Scoped.OrderPlaced assignment should exist in index.js')
+                assert.strictEqual(assignNode.expression.right?.value, 'Scoped.OrderPlaced')
+            })
+
+            it('should nest namespaces for events with more than one dot', async () => {
+                const ns = serviceAstw.getModuleDeclaration('Deeply')
+                assert.ok(ns, 'namespace Deeply should exist')
+                const innerNs = ns.body.find(n => n.name === 'Scoped')
+                assert.ok(innerNs, 'namespace Deeply.Scoped should exist')
+                assert.ok(innerNs.body.find(cls => cls.name === 'OrderPlaced'
+                    && cls.members.length === 2
+                    && cls.members[0].name === 'kind' && check.isReadonlyMember(cls.members[0])
+                    && cls.members[1].name === 'id' && check.isNullable(cls.members[1].type, [check.isNumber])
+                ))
+            })
+
+            it('should emit deeply dotted event with lazy intermediate initialisation in JS', async () => {
+                // `Deeply.Scoped.OrderPlaced`: emit `Deeply = {}`, `Deeply.Scoped ??= {}`, then the leaf.
+                const initNode = serviceJsw.program.body.find(n =>
+                    n.type === 'ExpressionStatement' &&
+                    n.expression.left?.property?.name === 'Deeply' &&
+                    n.expression.right?.type === 'ObjectExpression' &&
+                    n.expression.right?.properties?.length === 0
+                )
+                assert.ok(initNode, 'module.exports.Deeply = {} initialiser should exist')
+                const coalesceNode = serviceJsw.program.body.find(n =>
+                    n.type === 'ExpressionStatement' &&
+                    n.expression.operator === '??=' &&
+                    n.expression.left?.property?.name === 'Scoped' &&
+                    n.expression.left?.object?.property?.name === 'Deeply'
+                )
+                assert.ok(coalesceNode, 'module.exports.Deeply.Scoped ??= {} coalesce should exist')
+                const assignNode = serviceJsw.program.body.find(n =>
+                    n.type === 'ExpressionStatement' &&
+                    n.expression.left?.property?.name === 'OrderPlaced' &&
+                    n.expression.left?.object?.property?.name === 'Scoped' &&
+                    n.expression.left?.object?.object?.property?.name === 'Deeply'
+                )
+                assert.ok(assignNode, 'module.exports.Deeply.Scoped.OrderPlaced assignment should exist')
+                assert.strictEqual(assignNode.expression.right?.value, 'Deeply.Scoped.OrderPlaced')
             })
         })
     })

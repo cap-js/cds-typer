@@ -17,5 +17,8 @@ service MyService {
   event Scoped.OrderPlaced : {
     id : Integer;
   };
+  event Deeply.Scoped.OrderPlaced : {
+    id : Integer;
+  };
 }
 
