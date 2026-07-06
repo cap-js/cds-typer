@@ -3,7 +3,7 @@
 const path = require('path')
 const { before, describe, it } = require('node:test')
 const assert = require('assert')
-const { check } = require('../ast')
+const { check, JSASTWrapper } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
 const { perEachTestConfig } = require('../config')
 const { configuration } = require('../../lib/config')
@@ -12,6 +12,7 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
     describe(`Events Tests (using output **/*/${outputFile} files)`, () => {
         let astw
         let serviceAstw
+        let serviceJsw
 
         before(async () => {
             configuration.outputDTsFiles = outputDTsFiles
@@ -21,6 +22,7 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
             assert.ok(servicePath, 'MyService namespace path should exist in output')
             const { ASTWrapper } = require('../ast')
             serviceAstw = new ASTWrapper(path.join(servicePath, outputFile))
+            serviceJsw = await JSASTWrapper.initialise(path.join(servicePath, 'index.js'))
         })
 
         describe('Builtin Imports Generation', () => {
@@ -58,6 +60,19 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
                     && cls.members[0].name === 'kind' && check.isReadonlyMember(cls.members[0])
                     && cls.members[1].name === 'id' && check.isNullable(cls.members[1].type, [check.isNumber])
                 ))
+            })
+
+            it('should emit dotted event as object literal in JS when scope prefix has no matching entity', async () => {
+                // `Scoped` is not an entity in MyService, so `Scoped.OrderPlaced = '...'` would throw
+                // at runtime. Instead the output must be `module.exports.Scoped = { OrderPlaced: 'Scoped.OrderPlaced' }`.
+                const node = serviceJsw.program.body.find(n =>
+                    n.type === 'ExpressionStatement' &&
+                    n.expression.left?.property?.name === 'Scoped' &&
+                    n.expression.right?.type === 'ObjectExpression'
+                )
+                assert.ok(node, 'module.exports.Scoped object literal assignment should exist in index.js')
+                const prop = node.expression.right.properties.find(p => p.key.name === 'OrderPlaced')
+                assert.strictEqual(prop?.value?.value, 'Scoped.OrderPlaced')
             })
         })
     })
