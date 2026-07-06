@@ -18,10 +18,9 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
             const result = await prepareUnitTest('events/model.cds', locations.testOutput('events_test'))
             astw = result.astw
             const servicePath = result.paths.find(p => p.endsWith(path.join('events', 'MyService')))
-            if (servicePath) {
-                const { ASTWrapper } = require('../ast')
-                serviceAstw = new ASTWrapper(path.join(servicePath, outputFile))
-            }
+            assert.ok(servicePath, 'MyService namespace path should exist in output')
+            const { ASTWrapper } = require('../ast')
+            serviceAstw = new ASTWrapper(path.join(servicePath, outputFile))
         })
 
         describe('Builtin Imports Generation', () => {
