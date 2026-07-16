@@ -10,3 +10,15 @@ event Bar : {
   createdOn : Timestamp;
 };
 
+service MyService {
+  event OrderPlaced : {
+    id : Integer;
+  };
+  event Scoped.OrderPlaced : {
+    id : Integer;
+  };
+  event Deeply.Scoped.OrderPlaced : {
+    id : Integer;
+  };
+}
+
