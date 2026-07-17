@@ -9,6 +9,8 @@ All notable changes to this project will be documented in this file.
 ### Deprecated
 ### Removed
 ### Fixed
+- Events with dotted names (e.g. `service S { event X.Y : {...} }`) now generate a properly namespaced class `namespace X { class Y }` instead of producing duplicate top-level identifiers.
+- Event names now use the service-relative name (e.g. `'X.Y'` without preceeding `S`), matching the name the CDS runtime uses when registering and emitting such events.
 ### Security
 
 ## [0.40.0] - 2026-06-22
