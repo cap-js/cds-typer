@@ -25,11 +25,16 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
                 (outputDTsFiles || check.hasDeclareModifier(node))
                 && check.isNullable(node.type, [t => check.isTypeReference(t, 'Author')])
             ))
+            // structured mode must not emit flat sub-properties
+            assert.throws(() => astw.exists('_BookAspect', 'author_firstName'), /does not feature a property/)
+            assert.throws(() => astw.exists('_BookAspect', 'author_lastName'), /does not feature a property/)
             // structured mode: ContentVersion: ContentVersionType  →  ContentVersion?: ContentVersionType | null
             assert.ok(astw.exists('_ContentItemAspect', 'ContentVersion', node =>
                 (outputDTsFiles || check.hasDeclareModifier(node))
                 && check.isNullable(node.type, [t => check.isTypeReference(t, 'ContentVersionType')])
             ))
+            assert.throws(() => astw.exists('_ContentItemAspect', 'ContentVersion_Development'), /does not feature a property/)
+            assert.throws(() => astw.exists('_ContentItemAspect', 'ContentVersion_Production'), /does not feature a property/)
         })
 
         it('should flatten named struct type in flat mode (issue #347)', async () => {
@@ -48,6 +53,8 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
                 (outputDTsFiles || check.hasDeclareModifier(node))
                 && check.isNullable(node.type, [check.isString])
             ))
+            // flat mode must not emit the parent property pointing to the named type
+            assert.throws(() => astw.exists('_BookAspect', 'author'), /does not feature a property/)
             // flat mode: ContentVersion: ContentVersionType  →  ContentVersion_Development, ContentVersion_Production
             assert.ok(astw.exists('_ContentItemAspect', 'ContentVersion_Development', node =>
                 (outputDTsFiles || check.hasDeclareModifier(node))
@@ -57,17 +64,6 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
                 (outputDTsFiles || check.hasDeclareModifier(node))
                 && check.isNullable(node.type, [check.isString])
             ))
-        })
-
-        it('should not produce a named type reference property in flat mode', async () => {
-            configuration.outputDTsFiles = outputDTsFiles
-            const astw = (await prepareUnitTest(
-                'inline/named-struct-model.cds',
-                locations.testOutput('inline_named_struct_flat_noref'),
-                { typerOptions: { inlineDeclarations: 'flat' } }
-            )).astw
-            // flat mode must not emit the parent property pointing to the named type
-            assert.throws(() => astw.exists('_BookAspect', 'author'), /does not feature a property/)
             assert.throws(() => astw.exists('_ContentItemAspect', 'ContentVersion'), /does not feature a property/)
         })
 
@@ -87,15 +83,6 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
                 (outputDTsFiles || check.hasDeclareModifier(node))
                 && check.isNullable(node.type, [check.isString])
             ))
-        })
-
-        it('should not produce a named type reference property in aspect in flat mode', async () => {
-            configuration.outputDTsFiles = outputDTsFiles
-            const astw = (await prepareUnitTest(
-                'inline/named-struct-model.cds',
-                locations.testOutput('inline_named_struct_aspect_flat_noref'),
-                { typerOptions: { inlineDeclarations: 'flat' } }
-            )).astw
             assert.throws(() => astw.exists('_ContentAspectAspect', 'ContentVersion'), /does not feature a property/)
         })
     })
