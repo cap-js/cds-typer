@@ -1,4 +1,4 @@
-namespace inline;
+espace inline;
 
 // named struct type used as element type (issue #347, user report)
 type Author : {
@@ -11,6 +11,10 @@ type ContentVersionType : {
     Production  : String;
 }
 
+aspect ContentAspect {
+    ContentVersion : ContentVersionType;
+}
+
 entity Books {
     key ID    : UUID;
     title     : String;
@@ -20,4 +24,8 @@ entity Books {
 entity ContentItem {
     key ID             : UUID;
     ContentVersion     : ContentVersionType;
+}
+
+entity ContentItemWithAspect : ContentAspect {
+    key ID : UUID;
 }

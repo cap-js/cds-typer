@@ -70,6 +70,34 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
             assert.throws(() => astw.exists('_BookAspect', 'author'), /does not feature a property/)
             assert.throws(() => astw.exists('_ContentItemAspect', 'ContentVersion'), /does not feature a property/)
         })
+
+        it('should flatten named struct type in aspect in flat mode', async () => {
+            configuration.outputDTsFiles = outputDTsFiles
+            const astw = (await prepareUnitTest(
+                'inline/named-struct-model.cds',
+                locations.testOutput('inline_named_struct_aspect_flat'),
+                { typerOptions: { inlineDeclarations: 'flat' } }
+            )).astw
+            // flat mode: ContentVersion: ContentVersionType inside an aspect must also flatten
+            assert.ok(astw.exists('_ContentAspectAspect', 'ContentVersion_Development', node =>
+                (outputDTsFiles || check.hasDeclareModifier(node))
+                && check.isNullable(node.type, [check.isString])
+            ))
+            assert.ok(astw.exists('_ContentAspectAspect', 'ContentVersion_Production', node =>
+                (outputDTsFiles || check.hasDeclareModifier(node))
+                && check.isNullable(node.type, [check.isString])
+            ))
+        })
+
+        it('should not produce a named type reference property in aspect in flat mode', async () => {
+            configuration.outputDTsFiles = outputDTsFiles
+            const astw = (await prepareUnitTest(
+                'inline/named-struct-model.cds',
+                locations.testOutput('inline_named_struct_aspect_flat_noref'),
+                { typerOptions: { inlineDeclarations: 'flat' } }
+            )).astw
+            assert.throws(() => astw.exists('_ContentAspectAspect', 'ContentVersion'), /does not feature a property/)
+        })
     })
 
     describe(`Inline Type Declarations (using output **/*/${outputFile} files)`, () => {
