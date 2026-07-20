@@ -1,4 +1,4 @@
-espace inline;
+namespace inline;
 
 // named struct type used as element type (issue #347, user report)
 type Author : {
