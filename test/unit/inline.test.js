@@ -8,6 +8,85 @@ const { perEachTestConfig } = require('../config')
 const { configuration } = require('../../lib/config')
 
 perEachTestConfig(({ outputDTsFiles, outputFile }) => {
+    describe(`Named Struct Type Declarations (using output **/*/${outputFile} files)`, () => {
+        // Regression tests for https://github.com/cap-js/cds-typer/issues/347
+        // Named struct types used as entity elements must be flattened in flat mode because
+        // the CDS runtime (OData/SQL layer) exposes them as flat properties (e.g. author_firstName).
+        // In structured mode they are referenced by their type name.
+
+        it('should reference named struct type by name in structured mode', async () => {
+            configuration.outputDTsFiles = outputDTsFiles
+            const astw = (await prepareUnitTest(
+                'inline/named-struct-model.cds',
+                locations.testOutput('inline_named_struct_structured')
+            )).astw
+            // structured mode: author: Author  →  author?: Author | null
+            assert.ok(astw.exists('_BookAspect', 'author', node =>
+                (outputDTsFiles || check.hasDeclareModifier(node))
+                && check.isNullable(node.type, [t => check.isTypeReference(t, 'Author')])
+            ))
+            // structured mode must not emit flat sub-properties
+            assert.throws(() => astw.exists('_BookAspect', 'author_firstName'), /does not feature a property/)
+            assert.throws(() => astw.exists('_BookAspect', 'author_lastName'), /does not feature a property/)
+            // structured mode: ContentVersion: ContentVersionType  →  ContentVersion?: ContentVersionType | null
+            assert.ok(astw.exists('_ContentItemAspect', 'ContentVersion', node =>
+                (outputDTsFiles || check.hasDeclareModifier(node))
+                && check.isNullable(node.type, [t => check.isTypeReference(t, 'ContentVersionType')])
+            ))
+            assert.throws(() => astw.exists('_ContentItemAspect', 'ContentVersion_Development'), /does not feature a property/)
+            assert.throws(() => astw.exists('_ContentItemAspect', 'ContentVersion_Production'), /does not feature a property/)
+        })
+
+        it('should flatten named struct type in flat mode (issue #347)', async () => {
+            configuration.outputDTsFiles = outputDTsFiles
+            const astw = (await prepareUnitTest(
+                'inline/named-struct-model.cds',
+                locations.testOutput('inline_named_struct_flat'),
+                { typerOptions: { inlineDeclarations: 'flat' } }
+            )).astw
+            // flat mode: author: Author  →  author_firstName, author_lastName (matching OData/SQL runtime)
+            assert.ok(astw.exists('_BookAspect', 'author_firstName', node =>
+                (outputDTsFiles || check.hasDeclareModifier(node))
+                && check.isNullable(node.type, [check.isString])
+            ))
+            assert.ok(astw.exists('_BookAspect', 'author_lastName', node =>
+                (outputDTsFiles || check.hasDeclareModifier(node))
+                && check.isNullable(node.type, [check.isString])
+            ))
+            // flat mode must not emit the parent property pointing to the named type
+            assert.throws(() => astw.exists('_BookAspect', 'author'), /does not feature a property/)
+            // flat mode: ContentVersion: ContentVersionType  →  ContentVersion_Development, ContentVersion_Production
+            assert.ok(astw.exists('_ContentItemAspect', 'ContentVersion_Development', node =>
+                (outputDTsFiles || check.hasDeclareModifier(node))
+                && check.isNullable(node.type, [check.isString])
+            ))
+            assert.ok(astw.exists('_ContentItemAspect', 'ContentVersion_Production', node =>
+                (outputDTsFiles || check.hasDeclareModifier(node))
+                && check.isNullable(node.type, [check.isString])
+            ))
+            assert.throws(() => astw.exists('_ContentItemAspect', 'ContentVersion'), /does not feature a property/)
+        })
+
+        it('should flatten named struct type in aspect in flat mode', async () => {
+            configuration.outputDTsFiles = outputDTsFiles
+            const astw = (await prepareUnitTest(
+                'inline/named-struct-model.cds',
+                locations.testOutput('inline_named_struct_aspect_flat'),
+                { typerOptions: { inlineDeclarations: 'flat' } }
+            )).astw
+            // flat mode: ContentVersion: ContentVersionType inside an aspect must also flatten
+            assert.ok(astw.exists('_ContentAspectAspect', 'ContentVersion_Development', node =>
+                (outputDTsFiles || check.hasDeclareModifier(node))
+                && check.isNullable(node.type, [check.isString])
+            ))
+            assert.ok(astw.exists('_ContentAspectAspect', 'ContentVersion_Production', node =>
+                (outputDTsFiles || check.hasDeclareModifier(node))
+                && check.isNullable(node.type, [check.isString])
+            ))
+            assert.throws(() => astw.exists('_ContentAspectAspect', 'ContentVersion'), /does not feature a property/)
+        })
+    })
+
     describe(`Inline Type Declarations (using output **/*/${outputFile} files)`, () => {
         it('should verify structured inline type declarations', async () => {
             configuration.outputDTsFiles = outputDTsFiles
