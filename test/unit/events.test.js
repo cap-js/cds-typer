@@ -35,7 +35,7 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
             it('should have a top-level event with correct members', async () => {
                 assert.ok(astw.tree.find(cls => cls.name === 'Bar'
                     && cls.members.length === 4
-                    && cls.members[0].name === 'kind' && check.isReadonlyMember(cls.members[0])
+                    && cls.members[0].name === 'kind' && check.isReadonlyMember(cls.members[0]) && check.isStaticMember(cls.members[0])
                     && cls.members[1].name === 'id' && check.isNullable(cls.members[1].type, [check.isNumber])
                     && cls.members[2].name === 'name' && check.isNullable(cls.members[2].type, [check.isIndexedAccessType])
                     && cls.members[3].name === 'createdOn' && check.isNullable(cls.members[3].type, [check.isTypeReference])
@@ -46,7 +46,7 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
                 assert.ok(serviceAstw, 'service namespace file should exist')
                 assert.ok(serviceAstw.tree.find(cls => cls.name === 'OrderPlaced'
                     && cls.members.length === 2
-                    && cls.members[0].name === 'kind' && check.isReadonlyMember(cls.members[0])
+                    && cls.members[0].name === 'kind' && check.isReadonlyMember(cls.members[0]) && check.isStaticMember(cls.members[0])
                     && cls.members[1].name === 'id' && check.isNullable(cls.members[1].type, [check.isNumber])
                 ))
             })
@@ -57,7 +57,7 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
                 assert.ok(ns, 'namespace Scoped should exist')
                 assert.ok(ns.body.find(cls => cls.name === 'OrderPlaced'
                     && cls.members.length === 2
-                    && cls.members[0].name === 'kind' && check.isReadonlyMember(cls.members[0])
+                    && cls.members[0].name === 'kind' && check.isReadonlyMember(cls.members[0]) && check.isStaticMember(cls.members[0])
                     && cls.members[1].name === 'id' && check.isNullable(cls.members[1].type, [check.isNumber])
                 ))
             })
@@ -87,7 +87,7 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
                 assert.ok(innerNs, 'namespace Deeply.Scoped should exist')
                 assert.ok(innerNs.body.find(cls => cls.name === 'OrderPlaced'
                     && cls.members.length === 2
-                    && cls.members[0].name === 'kind' && check.isReadonlyMember(cls.members[0])
+                    && cls.members[0].name === 'kind' && check.isReadonlyMember(cls.members[0]) && check.isStaticMember(cls.members[0])
                     && cls.members[1].name === 'id' && check.isNullable(cls.members[1].type, [check.isNumber])
                 ))
             })
