@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Deprecated
 ### Removed
 ### Fixed
+- emit `kind` property on events as static member to be properly consumed by `cds-types`.
 ### Security
 
 ## [0.40.1] - 2026-07-21
