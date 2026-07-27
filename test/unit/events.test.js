@@ -11,18 +11,28 @@ const { configuration } = require('../../lib/config')
 perEachTestConfig(({ outputDTsFiles, outputFile }) => {
     describe(`Events Tests (using output **/*/${outputFile} files)`, () => {
         let astw
+        let topLevelJsw
         let serviceAstw
         let serviceJsw
+        let contextAstw
+        let contextJsw
 
         before(async () => {
             configuration.outputDTsFiles = outputDTsFiles
             const result = await prepareUnitTest('events/model.cds', locations.testOutput('events_test'))
             astw = result.astw
+            const topLevelPath = result.paths.find(p => p.endsWith('events') && !p.endsWith(path.join('events', 'MyService')) && !p.endsWith(path.join('events', 'ExplicitContext')))
+            assert.ok(topLevelPath, 'top-level events namespace path should exist in output')
             const servicePath = result.paths.find(p => p.endsWith(path.join('events', 'MyService')))
             assert.ok(servicePath, 'MyService namespace path should exist in output')
+            const contextPath = result.paths.find(p => p.endsWith(path.join('events', 'ExplicitContext')))
+            assert.ok(contextPath, 'ExplicitContext namespace path should exist in output')
             const { ASTWrapper } = require('../ast')
+            topLevelJsw = await JSASTWrapper.initialise(path.join(topLevelPath, 'index.js'))
             serviceAstw = new ASTWrapper(path.join(servicePath, outputFile))
             serviceJsw = await JSASTWrapper.initialise(path.join(servicePath, 'index.js'))
+            contextAstw = new ASTWrapper(path.join(contextPath, outputFile))
+            contextJsw = await JSASTWrapper.initialise(path.join(contextPath, 'index.js'))
         })
 
         describe('Builtin Imports Generation', () => {
@@ -42,6 +52,17 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
                 ))
             })
 
+            it('should retain the namespace prefix in the JS string value for top-level events', async () => {
+                // `Bar` is defined directly in `namespace events` — no service ancestor, so the
+                // full FQ `events.Bar` must be used as the string value.
+                const assignNode = topLevelJsw.program.body.find(n =>
+                    n.type === 'ExpressionStatement' &&
+                    n.expression.left?.property?.name === 'Bar'
+                )
+                assert.ok(assignNode, 'module.exports.Bar assignment should exist in index.js')
+                assert.strictEqual(assignNode.expression.right?.value, 'events.Bar')
+            })
+
             it('should generate event defined inside a service in the service namespace file', async () => {
                 assert.ok(serviceAstw, 'service namespace file should exist')
                 assert.ok(serviceAstw.tree.find(cls => cls.name === 'OrderPlaced'
@@ -49,6 +70,19 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
                     && cls.members[0].name === 'kind' && check.isReadonlyMember(cls.members[0]) && check.isStaticMember(cls.members[0])
                     && cls.members[1].name === 'id' && check.isNullable(cls.members[1].type, [check.isNumber])
                 ))
+            })
+
+            it('should strip the service prefix from the JS string value for service events', async () => {
+                // The CDS runtime strips the service prefix when registering/emitting events, so
+                // `events.MyService.OrderPlaced` must emit 'OrderPlaced', not 'events.MyService.OrderPlaced'.
+                const assignNode = serviceJsw.program.body.find(n =>
+                    n.type === 'ExpressionStatement' &&
+                    n.expression.left?.property?.name === 'OrderPlaced' &&
+                    n.expression.left?.object?.type === 'MemberExpression' && // module.exports, not a nested path
+                    n.expression.left?.object?.property?.name === 'exports'
+                )
+                assert.ok(assignNode, 'module.exports.OrderPlaced assignment should exist in index.js')
+                assert.strictEqual(assignNode.expression.right?.value, 'OrderPlaced')
             })
 
             it('should use dot-separated prefix as namespace for dotted event names', async () => {
@@ -116,6 +150,29 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
                 )
                 assert.ok(assignNode, 'module.exports.Deeply.Scoped.OrderPlaced assignment should exist')
                 assert.strictEqual(assignNode.expression.right?.value, 'Deeply.Scoped.OrderPlaced')
+            })
+        })
+
+        describe('Explicit Context Namespace', () => {
+            it('should generate event defined inside a context in the context namespace file', async () => {
+                assert.ok(contextAstw, 'context namespace file should exist')
+                assert.ok(contextAstw.tree.find(cls => cls.name === 'ContextEvent'
+                    && cls.members.length === 2
+                    && cls.members[0].name === 'kind' && check.isReadonlyMember(cls.members[0]) && check.isStaticMember(cls.members[0])
+                    && cls.members[1].name === 'id' && check.isNullable(cls.members[1].type, [check.isNumber])
+                ))
+            })
+
+            it('should retain the context name in the JS string value', async () => {
+                // The CDS runtime does NOT strip context names — only service names.
+                // So `events.ExplicitContext.ContextEvent` must emit 'events.ExplicitContext.ContextEvent',
+                // not just 'ContextEvent'.
+                const assignNode = contextJsw.program.body.find(n =>
+                    n.type === 'ExpressionStatement' &&
+                    n.expression.left?.property?.name === 'ContextEvent'
+                )
+                assert.ok(assignNode, 'module.exports.ContextEvent assignment should exist in index.js')
+                assert.strictEqual(assignNode.expression.right?.value, 'events.ExplicitContext.ContextEvent')
             })
         })
     })
