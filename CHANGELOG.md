@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 ### Removed
 ### Fixed
 - emit `kind` property on events as static member to be properly consumed by `cds-types`.
+- do not cut off leading namespaces from top-level events, but only leading service names from events nested therein.
 ### Security
 
 ## [0.40.1] - 2026-07-21
