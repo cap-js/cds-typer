@@ -22,3 +22,9 @@ service MyService {
   };
 }
 
+context ExplicitContext {
+  event ContextEvent : {
+    id : Integer;
+  };
+}
+

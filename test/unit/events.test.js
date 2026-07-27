@@ -13,6 +13,8 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
         let astw
         let serviceAstw
         let serviceJsw
+        let contextAstw
+        let contextJsw
 
         before(async () => {
             configuration.outputDTsFiles = outputDTsFiles
@@ -20,9 +22,13 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
             astw = result.astw
             const servicePath = result.paths.find(p => p.endsWith(path.join('events', 'MyService')))
             assert.ok(servicePath, 'MyService namespace path should exist in output')
+            const contextPath = result.paths.find(p => p.endsWith(path.join('events', 'ExplicitContext')))
+            assert.ok(contextPath, 'ExplicitContext namespace path should exist in output')
             const { ASTWrapper } = require('../ast')
             serviceAstw = new ASTWrapper(path.join(servicePath, outputFile))
             serviceJsw = await JSASTWrapper.initialise(path.join(servicePath, 'index.js'))
+            contextAstw = new ASTWrapper(path.join(contextPath, outputFile))
+            contextJsw = await JSASTWrapper.initialise(path.join(contextPath, 'index.js'))
         })
 
         describe('Builtin Imports Generation', () => {
@@ -116,6 +122,29 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
                 )
                 assert.ok(assignNode, 'module.exports.Deeply.Scoped.OrderPlaced assignment should exist')
                 assert.strictEqual(assignNode.expression.right?.value, 'Deeply.Scoped.OrderPlaced')
+            })
+        })
+
+        describe('Explicit Context Namespace', () => {
+            it('should generate event defined inside a context in the context namespace file', async () => {
+                assert.ok(contextAstw, 'context namespace file should exist')
+                assert.ok(contextAstw.tree.find(cls => cls.name === 'ContextEvent'
+                    && cls.members.length === 2
+                    && cls.members[0].name === 'kind' && check.isReadonlyMember(cls.members[0]) && check.isStaticMember(cls.members[0])
+                    && cls.members[1].name === 'id' && check.isNullable(cls.members[1].type, [check.isNumber])
+                ))
+            })
+
+            it('should retain the context name in the JS string value', async () => {
+                // The CDS runtime does NOT strip context names — only service names.
+                // So `events.ExplicitContext.ContextEvent` must emit 'events.ExplicitContext.ContextEvent',
+                // not just 'ContextEvent'.
+                const assignNode = contextJsw.program.body.find(n =>
+                    n.type === 'ExpressionStatement' &&
+                    n.expression.left?.property?.name === 'ContextEvent'
+                )
+                assert.ok(assignNode, 'module.exports.ContextEvent assignment should exist in index.js')
+                assert.strictEqual(assignNode.expression.right?.value, 'events.ExplicitContext.ContextEvent')
             })
         })
     })
