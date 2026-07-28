@@ -1,0 +1,47 @@
+name: Issue Management
+
+permissions:
+  issues: write
+
+on:
+  issues:
+    types:
+      - opened
+      - labeled
+
+jobs:
+  label_new_issues:
+    if: github.event.action == 'opened'
+    runs-on: ubuntu-latest
+    steps:
+      - run: gh issue edit "$NUMBER" --add-label "$LABELS"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+          LABELS: New
+
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `👋 Hello @${context.payload.issue.user.login}, thank you for submitting this issue. Our team is reviewing your report and will follow up with you as soon as possible.`
+            })
+
+  remove_manual_new_label:
+    if: |
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'New' &&
+      github.event.sender.login != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove "New" label if applied by non-bot user
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          gh issue edit "$ISSUE_NUMBER" --remove-label "New"
