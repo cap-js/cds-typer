@@ -77,7 +77,14 @@ export const createEntityProxy = function (fqParts: any, opts = {}) {
     return new Proxy(target, {
         get: function (target:any, prop:any) {
             if (cds.entities) {
-                target.__proto__ = cds.entities(fqParts[0])[fqParts[1]]
+                const ns = cds.entities(fqParts[0])
+                let entity = ns[fqParts[1]]
+                if (!entity && fqParts[1]?.endsWith('.texts')) {
+                    // compat_texts_entities=false (CAP v10 default): texts entities are not
+                    // registered as top-level entries, access them via the parent entity instead
+                    entity = ns[fqParts[1].slice(0, -'.texts'.length)]?.texts
+                }
+                target.__proto__ = entity
                 // overwrite/simplify getter after cds.entities is accessible
                 this.get = (target, prop) => target[prop]
                 return target[prop]
