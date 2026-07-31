@@ -1,5 +1,5 @@
 import cds from '@sap/cds'
-import { type } from '@sap/cds'
+import { type, entity } from '@sap/cds'
 
 export type ElementsOf<T> = {[name in keyof Required<T>]: type }
 
@@ -78,7 +78,7 @@ export const createEntityProxy = function (fqParts: any, opts = {}) {
         get: function (target:any, prop:any) {
             if (cds.entities) {
                 const ns = cds.entities(fqParts[0])
-                let entity: any = ns[fqParts[1]]
+                let entity: entity | undefined = ns[fqParts[1]]
                 if (!entity && fqParts[1]?.endsWith('.texts')) {
                     // compat_texts_entities=false (CAP v10 default): texts entities are not
                     // registered as top-level entries, access them via the parent entity instead
