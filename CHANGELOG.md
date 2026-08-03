@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Deprecated
 ### Removed
 ### Fixed
+- properly handle `.texts` properties in combination with `compat_texts_entities=false` (default in cds10) during runtime.
 ### Security
 
 ## [0.40.2] - 2026-07-27
