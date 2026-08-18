@@ -31,9 +31,17 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
                 await runTyperAndTsCheck(modelPath, tsFile, out, outputFile)
 
                 // serve the services in a minimal way (no db, no express)
+                // cds10 serve() runs the minifier which strips LinkedDefinitions from definitions,
+                // breaking cds.entities iteration used by the entity proxy. Disable it for this test.
+                cds.env.features.skip_unused = false
                 cds.root = base
                 cds.model = cds.linked(await cds.load(join(base, modelFile)))
-                await cds.serve('all').with(join(out, 'model.js')) // as service impl. the tsc-emitted js file is used
+                try {
+                    await cds.serve('all').with(join(out, 'model.js')) // as service impl. the tsc-emitted js file is used
+                } finally {
+                    delete cds.env.features.skip_unused
+                    cds.model = undefined
+                }
             })
         })
     })
