@@ -1,4 +1,11 @@
+const path = require('node:path')
 const ts = require('typescript')
+
+// @cap-js/cds-types 0.18+ no longer creates a @types/sap__cds symlink on install.
+// Provide the path mapping explicitly so ts.createProgram can resolve @sap/cds types
+// without relying on that symlink.
+const cdsTypesDir = path.resolve(require.resolve('@cap-js/cds-types/package.json'), '..')
+const cdsTypesDts = path.join(cdsTypesDir, require('@cap-js/cds-types/package.json').typings ?? 'dist/cds-types.d.ts')
 
 const defaultTranspilationOptions = {
     noEmit: true,
@@ -6,6 +13,7 @@ const defaultTranspilationOptions = {
     strict: true,
     noImplicitOverride: true,
     lib: ['es2022'],  // to allow Object.hasOwn
+    paths: { '@sap/cds': [cdsTypesDts] },
 }
 
 /**
