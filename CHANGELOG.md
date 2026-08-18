@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 ### Removed
 ### Fixed
 - properly handle `.texts` properties in combination with `compat_texts_entities=false` (default in cds10) during runtime.
+- emit correct import and namespace-qualified type reference for inline enum companion types when the parent type is defined in a different namespace.
 ### Security
 
 ## [0.40.2] - 2026-07-27

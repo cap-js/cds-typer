@@ -236,6 +236,67 @@ describe('Inline Enum in Association Key referenced from Service', () => {
     })
 })
 
+describe('Inline Enum from cross-namespace type reference', () => {
+    const fs = require('node:fs')
+    let serviceAstw
+    let schemaNsSource
+    let serviceSource
+
+    before(async () => {
+        const paths = (await prepareUnitTest('enums/inline-in-type/service.cds', locations.testOutput('enums_inline_in_type'), { typerOptions: { outputDTsFiles: false, inlineDeclarations: 'flat' } })).paths
+        // paths[0] = _, paths[1] = TestService, paths[2] = inline_enum_type_schema
+        const schemaNsFile = path.join(paths[2], 'index.ts')
+        const serviceFile  = path.join(paths[1], 'index.ts')
+        serviceAstw   = new ASTWrapper(serviceFile)
+        schemaNsSource = fs.readFileSync(schemaNsFile, 'utf-8')
+        serviceSource  = fs.readFileSync(serviceFile, 'utf-8')
+    })
+
+    it('should export first inline enum companion from the schema namespace', () => {
+        assert.ok(
+            schemaNsSource.includes('export const NumberRestriction_restrictionType'),
+            'NumberRestriction_restrictionType const must be exported from schema namespace'
+        )
+        assert.ok(
+            schemaNsSource.includes('export type NumberRestriction_restrictionType'),
+            'NumberRestriction_restrictionType type must be exported from schema namespace'
+        )
+    })
+
+    it('should export second inline enum companion from the schema namespace', () => {
+        assert.ok(
+            schemaNsSource.includes('export const NumberRestriction_unit'),
+            'NumberRestriction_unit const must be exported from schema namespace'
+        )
+        assert.ok(
+            schemaNsSource.includes('export type NumberRestriction_unit'),
+            'NumberRestriction_unit type must be exported from schema namespace'
+        )
+    })
+
+    it('should import the schema namespace in the service namespace', () => {
+        assert.ok(
+            serviceSource.includes('inline_enum_type_schema'),
+            'service index.ts must import the schema namespace'
+        )
+    })
+
+    it('should reference inline enum companion types with namespace prefix in service', () => {
+        assert.ok(
+            serviceAstw.exists('_QuestionAspect', 'numberRestriction_restrictionType',
+                ({type}) => check.isNullable(type, [t => check.isTypeReference(t, '_inline_enum_type_schema.NumberRestriction_restrictionType')])
+            ),
+            '_QuestionAspect.numberRestriction_restrictionType should be typed as _inline_enum_type_schema.NumberRestriction_restrictionType | null'
+        )
+        assert.ok(
+            serviceAstw.exists('_QuestionAspect', 'numberRestriction_unit',
+                ({type}) => check.isNullable(type, [t => check.isTypeReference(t, '_inline_enum_type_schema.NumberRestriction_unit')])
+            ),
+            '_QuestionAspect.numberRestriction_unit should be typed as _inline_enum_type_schema.NumberRestriction_unit | null'
+        )
+    })
+})
+
 perEachTestConfig(({ outputDTsFiles, outputFile }) => {
     describe(`Enums of typeof (using output **/*/${outputFile} files)`, () => {
         /* FIXME: these should actually be inline-defined enums of the referenced type with explicit values
