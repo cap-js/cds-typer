@@ -238,7 +238,6 @@ describe('Inline Enum in Association Key referenced from Service', () => {
 
 describe('Inline Enum from cross-namespace type reference', () => {
     const fs = require('node:fs')
-    let schemaNsAstw
     let serviceAstw
     let schemaNsSource
     let serviceSource
@@ -248,7 +247,6 @@ describe('Inline Enum from cross-namespace type reference', () => {
         // paths[0] = _, paths[1] = TestService, paths[2] = inline_enum_type_schema
         const schemaNsFile = path.join(paths[2], 'index.ts')
         const serviceFile  = path.join(paths[1], 'index.ts')
-        schemaNsAstw  = new ASTWrapper(schemaNsFile)
         serviceAstw   = new ASTWrapper(serviceFile)
         schemaNsSource = fs.readFileSync(schemaNsFile, 'utf-8')
         serviceSource  = fs.readFileSync(serviceFile, 'utf-8')
