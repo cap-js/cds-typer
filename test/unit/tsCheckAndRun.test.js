@@ -30,9 +30,9 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
                 const out = join(base, '_out')
                 await runTyperAndTsCheck(modelPath, tsFile, out, outputFile)
 
-                // serve the services in a minimal way (no db, no express)
-                // cds10 serve() runs the minifier which strips LinkedDefinitions from definitions,
-                // breaking cds.entities iteration used by the entity proxy. Disable it for this test.
+                // cds10's serve() minifier replaces model.definitions with a plain object, stripping
+                // the Symbol.iterator that cds.entities iterates. The proxy checks `if (cds.entities)`
+                // which triggers that iteration, so we disable minification for these runtime tests.
                 cds.env.features.skip_unused = false
                 cds.root = base
                 cds.model = cds.linked(await cds.load(join(base, modelFile)))

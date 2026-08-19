@@ -78,8 +78,9 @@ describe('Compilation/Runtime - with Entities Proxies', () => {
         })
 
         before(() => {
-            // cds10 serve() runs the minifier which replaces definitions with a plain object,
-            // breaking the LinkedDefinitions iteration required by cds.entities. Disable it.
+            // cds10's serve() minifier replaces model.definitions with a plain object, stripping
+            // the Symbol.iterator that cds.entities iterates. The proxy checks `if (cds.entities)`
+            // which triggers that iteration, so we disable minification for these runtime tests.
             cds.env.features.skip_unused = false
         })
 
