@@ -7,12 +7,16 @@ const ts = require('typescript')
 const cdsTypesDir = path.resolve(require.resolve('@cap-js/cds-types/package.json'), '..')
 const cdsTypesDts = path.join(cdsTypesDir, require('@cap-js/cds-types/package.json').typings ?? 'dist/cds-types.d.ts')
 
+// baseUrl is required for paths mappings to take effect in ts.createProgram.
+const projectRoot = path.resolve(__dirname, '..')
+
 const defaultTranspilationOptions = {
     noEmit: true,
     esModuleInterop: true,
     strict: true,
     noImplicitOverride: true,
     lib: ['es2022'],  // to allow Object.hasOwn
+    baseUrl: projectRoot,
     paths: { '@sap/cds': [cdsTypesDts] },
 }
 
@@ -48,7 +52,7 @@ function checkProgram (program) {
  * @param {import('typescript').CompilerOptions} opts - the options to pass to the TS compiler
  */
 async function checkTranspilation (apiFiles, opts = {}) {
-    const options = {...defaultTranspilationOptions, ...opts}
+    const options = {...defaultTranspilationOptions, ...opts, paths: {...defaultTranspilationOptions.paths, ...opts.paths}}
     const program = ts.createProgram({ rootNames: apiFiles, options })
     checkProgram(program)
 }
