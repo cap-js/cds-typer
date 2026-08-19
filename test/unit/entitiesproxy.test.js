@@ -2,7 +2,7 @@
 
 const path = require('path')
 const cds = require('@sap/cds')
-const { describe, before, afterEach, it } = require('node:test')
+const { describe, before, after, afterEach, it } = require('node:test')
 const assert = require('assert')
 const { JSASTWrapper } = require('../ast')
 const { locations, prepareUnitTest } = require('../util')
@@ -77,9 +77,20 @@ describe('Compilation/Runtime - with Entities Proxies', () => {
             ))
         })
 
+        before(() => {
+            // cds10's serve() minifier replaces model.definitions with a plain object, stripping
+            // the Symbol.iterator that cds.entities iterates. The proxy checks `if (cds.entities)`
+            // which triggers that iteration, so we disable minification for these runtime tests.
+            cds.env.features.skip_unused = false
+        })
+
         afterEach(() => {
             // tear down loaded cds model
             cds.model = undefined
+        })
+
+        after(() => {
+            delete cds.env.features.skip_unused
         })
 
         it('should throw error for invalid "elements" access via proxy before cds is loaded', async () => {
