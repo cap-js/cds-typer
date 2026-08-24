@@ -9,6 +9,15 @@ All notable changes to this project will be documented in this file.
 ### Deprecated
 ### Removed
 ### Fixed
+### Security
+
+## [0.41.0] - 2026-08-24
+
+### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
 - properly handle `.texts` properties in combination with `compat_texts_entities=false` (default in cds10) during runtime.
 - emit correct import and namespace-qualified type reference for inline enum companion types when the parent type is defined in a different namespace.
 - inline enum JS assignments (e.g. `Entity.prop ??= {...}`) are no longer emitted using the aspect's singular name as the left-hand side. Aspects have no runtime JS value, so such assignments caused a `ReferenceError` at startup. The assignments are now correctly emitted on the concrete entity that includes the aspect.
