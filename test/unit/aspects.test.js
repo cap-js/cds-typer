@@ -65,15 +65,16 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
         })
 
         it('should not emit JS assignments using the aspect singular name as LHS', async () => {
-            // paths[1] is the namespace file (aspect_test), paths[0] is the _ boilerplate file
-            const jsw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'))
+            const nsPath = paths.find(p => p.endsWith('aspect_test'))
+            const jsw = await JSASTWrapper.initialise(path.join(nsPath, 'index.js'))
             const allEnumExports = jsw.getExports().filter(e => e.type === 'enum')
             const brokenRefs = allEnumExports.filter(e => e.lhs.startsWith('Statu.') || e.lhs.startsWith('InlineStatu.'))
             assert.strictEqual(brokenRefs.length, 0, `Found broken aspect-name enum assignments: ${brokenRefs.map(e => e.lhs).join(', ')}`)
         })
 
         it('should emit JS enum assignments on the concrete entity', async () => {
-            const jsw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'))
+            const nsPath = paths.find(p => p.endsWith('aspect_test'))
+            const jsw = await JSASTWrapper.initialise(path.join(nsPath, 'index.js'))
             assert.deepStrictEqual(jsw.getExport('Application.status')?.rhs, { Started: 'Started', Done: 'Done' })
             assert.deepStrictEqual(jsw.getExport('Application.inlineStatus')?.rhs, { Active: 'Active' })
         })
