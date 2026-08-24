@@ -1,13 +1,13 @@
 'use strict'
 
+const path = require('path')
 const { before, describe, it } = require('node:test')
 const assert = require('assert')
 const { locations, prepareUnitTest } = require('../util')
-const { checkInheritance, checkDtsInheritance } = require('../ast')
+const { checkInheritance, checkDtsInheritance, JSASTWrapper } = require('../ast')
 const { perEachTestConfig } = require('../config')
 const { configuration } = require('../../lib/config')
 
-// FIXME: missing: inline enums (entity Foo { bar: String enum { ... }})
 perEachTestConfig(({ outputDTsFiles, outputFile }) => {
     describe(`CDS Aspects (using output **/*/${outputFile} files)`, () => {
         let astw
@@ -50,6 +50,32 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) => {
                 assert.ok(checkInheritance(eAspect, ['_BooksAspect']))
                 assert.ok(!checkInheritance(eAspect, ['_BookAspect']), 'should not reference _BookAspect (premature inflection)')
             }
+        })
+    })
+
+    // https://github.com/cap-js/cds-typer/issues/19670
+    describe(`Aspect inline enum JS output (using output **/*/${outputFile} files)`, () => {
+        let paths
+
+        before(async () => {
+            configuration.outputDTsFiles = outputDTsFiles
+            paths = (await prepareUnitTest('aspects/model_with_inline_enum.cds', locations.testOutput('aspect_inline_enum_test'), {
+                typerOptions: { useEntitiesProxy: true }
+            })).paths
+        })
+
+        it('should not emit JS assignments using the aspect singular name as LHS', async () => {
+            // paths[1] is the namespace file (aspect_test), paths[0] is the _ boilerplate file
+            const jsw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'))
+            const allEnumExports = jsw.getExports().filter(e => e.type === 'enum')
+            const brokenRefs = allEnumExports.filter(e => e.lhs.startsWith('Statu.') || e.lhs.startsWith('InlineStatu.'))
+            assert.strictEqual(brokenRefs.length, 0, `Found broken aspect-name enum assignments: ${brokenRefs.map(e => e.lhs).join(', ')}`)
+        })
+
+        it('should emit JS enum assignments on the concrete entity', async () => {
+            const jsw = await JSASTWrapper.initialise(path.join(paths[1], 'index.js'))
+            assert.deepStrictEqual(jsw.getExport('Application.status')?.rhs, { Started: 'Started', Done: 'Done' })
+            assert.deepStrictEqual(jsw.getExport('Application.inlineStatus')?.rhs, { Active: 'Active' })
         })
     })
 })
