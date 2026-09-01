@@ -54,7 +54,7 @@
     "acorn": "^8.16.0",
     "eslint": "^10",
     "eslint-plugin-jsdoc": "^63.0.2",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "cds": {
     "typer": {
