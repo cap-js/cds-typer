@@ -9,6 +9,15 @@ All notable changes to this project will be documented in this file.
 ### Deprecated
 ### Removed
 ### Fixed
+### Security
+
+## [0.41.1] - 2026-09-08
+
+### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
 - inline enum JS assignments (e.g. `Entity.prop ??= {...}`) are no longer emitted using the aspect's singular name as the left-hand side. Aspects have no runtime JS value, so such assignments caused a `ReferenceError` at startup. The assignments are now correctly emitted on the concrete entity that includes the aspect.
 ### Security
 
