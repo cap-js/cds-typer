@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Deprecated
 ### Removed
 ### Fixed
+- composition fields on draft-enabled entities now use `DraftEntity<T>[]` as the element type, so draft fields (`IsActiveEntity`, `HasDraftEntity`, etc.) are present on composition children in `req.data`
 ### Security
 
 ## [0.41.1] - 2026-09-08

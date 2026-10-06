@@ -35,6 +35,19 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) =>{
             assert.ok(!draftable('Author', model, () => 'Authors'))
         })
 
+        it('should use DraftEntity wrapper for composition fields on draft-enabled entities', async () => {
+            const paths = (await prepareUnitTest('draft/catalog-service.cds', locations.testOutput('bookshop_projection'))).paths
+            const ast = new ASTWrapper(path.join(paths[1], outputFile))
+            // publishers is a Composition.of.many on Books (draft-enabled), target Publisher is also draft-enabled
+            // expected: Composition.of.many<__.DraftEntity<Publisher>[]>
+            const prop = ast.getAspectProperty('_BookAspect', 'publishers')
+            assert.strictEqual(prop.type.args[0].elementType.name, 'DraftEntity')
+            assert.strictEqual(prop.type.args[0].elementType.args[0].name, 'Publisher')
+            // author is an Association, not a Composition — should NOT be wrapped with DraftEntity
+            const authorProp = ast.getAspectProperty('_BookAspect', 'author')
+            assert.notStrictEqual(authorProp.type.name, 'DraftEntity')
+        })
+
         it('should produce compiler error for draft-enabled composition', async () => {
             // eslint-disable-next-line no-console
             const spyOnConsole = createSpy(console.error)
