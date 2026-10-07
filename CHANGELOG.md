@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Deprecated
 ### Removed
 ### Fixed
+- draft fields (`IsActiveEntity`, `HasActiveEntity`, `HasDraftEntity`, `DraftAdministrativeData_DraftUUID`) are now emitted as direct properties on draft-enabled entities and their composition children
 ### Security
 
 ## [0.41.1] - 2026-09-08
