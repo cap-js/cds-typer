@@ -3,7 +3,7 @@
 const path = require('path')
 const { describe, it, before } = require('node:test')
 const assert = require('assert')
-const { ASTWrapper } = require('../ast')
+const { ASTWrapper, check } = require('../ast')
 const { locations, prepareUnitTest, createSpy } = require('../util')
 const { perEachTestConfig } = require('../config')
 const { configuration } = require('../../lib/config')
@@ -35,17 +35,31 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) =>{
             assert.ok(!draftable('Author', model, () => 'Authors'))
         })
 
-        it('should use DraftEntity wrapper for composition fields on draft-enabled entities', async () => {
+        it('should include draft fields on draft-enabled entities and their composition children', async () => {
             const paths = (await prepareUnitTest('draft/catalog-service.cds', locations.testOutput('bookshop_projection'))).paths
             const ast = new ASTWrapper(path.join(paths[1], outputFile))
-            // publishers is a Composition.of.many on Books (draft-enabled), target Publisher is also draft-enabled
-            // expected: Composition.of.many<__.DraftEntity<Publisher>[]>
-            const prop = ast.getAspectProperty('_BookAspect', 'publishers')
-            assert.strictEqual(prop.type.args[0].elementType.name, 'DraftEntity')
-            assert.strictEqual(prop.type.args[0].elementType.args[0].name, 'Publisher')
-            // author is an Association, not a Composition — should NOT be wrapped with DraftEntity
-            const authorProp = ast.getAspectProperty('_BookAspect', 'author')
-            assert.notStrictEqual(authorProp.type.name, 'DraftEntity')
+            for (const aspect of ['_BookAspect', '_PublisherAspect']) {
+                // IsActiveEntity is a key field: __.Key<boolean>
+                const isActive = ast.getAspectProperty(aspect, 'IsActiveEntity')
+                assert.ok(isActive, `${aspect} should have IsActiveEntity`)
+                assert.ok(check.isKeyOf(isActive.type, check.isBoolean), `${aspect}.IsActiveEntity should be __.Key<boolean>`)
+
+                // HasActiveEntity / HasDraftEntity are plain boolean
+                const hasActive = ast.getAspectProperty(aspect, 'HasActiveEntity')
+                assert.ok(hasActive, `${aspect} should have HasActiveEntity`)
+                assert.ok(check.isBoolean(hasActive.type), `${aspect}.HasActiveEntity should be boolean`)
+
+                const hasDraft = ast.getAspectProperty(aspect, 'HasDraftEntity')
+                assert.ok(hasDraft, `${aspect} should have HasDraftEntity`)
+                assert.ok(check.isBoolean(hasDraft.type), `${aspect}.HasDraftEntity should be boolean`)
+
+                // DraftAdministrativeData_DraftUUID is string | null
+                const draftUUID = ast.getAspectProperty(aspect, 'DraftAdministrativeData_DraftUUID')
+                assert.ok(draftUUID, `${aspect} should have DraftAdministrativeData_DraftUUID`)
+                assert.ok(check.isNullable(draftUUID.type, [check.isString]), `${aspect}.DraftAdministrativeData_DraftUUID should be string | null`)
+            }
+            // associated entity (not a composition) should NOT get draft fields
+            assert.ok(!ast.getAspectProperty('_AuthorAspect', 'IsActiveEntity'), '_AuthorAspect should not have IsActiveEntity')
         })
 
         it('should produce compiler error for draft-enabled composition', async () => {
