@@ -23,6 +23,7 @@ export module resolver {
         includes?: string[]
         items?: EntityCSN
         notNull?: boolean,  // custom!
+        virtual?: boolean,
         on?: string,
         parent?: EntityCSN
         projection?: { from: ref, columns: (ref | '*')[]}
