@@ -1,12 +1,14 @@
 'use strict'
 
 const path = require('path')
+const cds = require('@sap/cds')
 const { describe, it, before } = require('node:test')
 const assert = require('assert')
 const { ASTWrapper, check } = require('../ast')
 const { locations, prepareUnitTest, createSpy } = require('../util')
 const { perEachTestConfig } = require('../config')
 const { configuration } = require('../../lib/config')
+const { DRAFT_FIELDS } = require('../../lib/visitor')
 
 const draftable_ = (entity, ast) => ast.find(n => n.name === entity && n.members.find(({name}) => name === 'drafts'))
 const draftable = (entity, ast, plural = e => `${e}_`) => draftable_(entity, ast) && draftable_(plural(entity), ast)
@@ -80,5 +82,48 @@ perEachTestConfig(({ outputDTsFiles, outputFile }) =>{
                 'Composition in draft-enabled entity can\'t lead to another entity with "@odata.draft.enabled" (in entity: "bookshop.service.CatalogService.Books"/element: publishers)!'
             ))
         })
+    })
+})
+
+// Guards the hardcoded DRAFT_FIELDS in lib/visitor.js against the actual CAP runtime.
+// We synthesise these fields instead of running `cds.compile.for.odata` during generation;
+// this test runs the real OData transformation and asserts our set + types still match it,
+// so a future @sap/cds change to the draft contract is caught here rather than silently drifting.
+describe('Draft fields match the CAP runtime', () => {
+    // field name -> normalised shape {type, key?, notNull?}, derived from DRAFT_FIELDS
+    const ours = Object.fromEntries(Object.entries(DRAFT_FIELDS).map(([name, el]) => [
+        name,
+        { type: el.type, ...(el.key ? { key: true } : {}), ...(el.notNull ? { notNull: true } : {}) },
+    ]))
+
+    const shapeOf = el => ({ type: el.type, ...(el.key ? { key: true } : {}), ...(el.notNull ? { notNull: true } : {}) })
+
+    it('synthesised DRAFT_FIELDS equal the fields the OData transformation emits (root + composition child)', async () => {
+        const model = path.join(locations.unit.files('draft'), 'catalog-service.cds')
+        const odata = cds.linked(cds.compile.for.odata(await cds.load(model)))
+        const prefix = 'bookshop.service.CatalogService.'
+
+        const draftEntities = Object.entries(odata.definitions).filter(
+            ([name, def]) => name.startsWith(prefix) && def.elements?.IsActiveEntity
+        )
+        // Books (root) + Publishers (composition child) carry draft fields; Authors (association) must not
+        assert.ok(draftEntities.some(([n]) => n === `${prefix}Books`), 'root should carry draft fields')
+        assert.ok(draftEntities.some(([n]) => n === `${prefix}Publishers`), 'composition child should carry draft fields')
+        assert.ok(!odata.definitions[`${prefix}Authors`]?.elements?.IsActiveEntity, 'association target must not carry draft fields')
+
+        for (const [name, def] of draftEntities) {
+            // every field we synthesise exists in the runtime with the same shape
+            for (const [field, shape] of Object.entries(ours)) {
+                const real = def.elements[field]
+                assert.ok(real, `runtime ${name} is missing field we synthesise: ${field}`)
+                assert.deepStrictEqual(shapeOf(real), shape, `shape drift for ${name}.${field}`)
+            }
+            // and the runtime has no scalar draft field we are NOT synthesising
+            // (DraftAdministrativeData is the association itself, flattened into _DraftUUID which we do cover)
+            for (const field of Object.keys(def.elements)) {
+                if (!/^(IsActiveEntity|HasActiveEntity|HasDraftEntity|DraftAdministrativeData_)/.test(field)) continue
+                assert.ok(field in ours, `runtime ${name} has draft field we do not synthesise: ${field}`)
+            }
+        }
     })
 })
