@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Deprecated
 ### Removed
 ### Fixed
+- identify standalone CLI compilation before loading plugins so runtime integrations do not require service credentials during type generation
 - draft fields (`IsActiveEntity`, `HasActiveEntity`, `HasDraftEntity`, `DraftAdministrativeData_DraftUUID`) are now emitted as direct properties on draft-enabled entities and their composition children
 ### Security
 
