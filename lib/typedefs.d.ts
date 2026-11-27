@@ -1,65 +1,77 @@
+import '@cap-js/cds-types'
+import type { csn, linked, ref as CdsRef, val as CdsVal } from '@sap/cds'
 import type { Identifier } from './components/identifier'
-import type { EntityCSN } from './csn'
-import type { Buffer } from './file'
+import type { Buffer, Path } from './file'
 
-export module resolver {
-    type ref = {
+export namespace resolver {
+    /** Typer resolves CSN references with string path segments, not CQN filters. */
+    export type ref = Omit<CdsRef, 'ref'> & {
         ref: string[],
         as?: string
     }
 
     export type PropertyModifier = 'override' | 'declare'
 
-    export type EntityCSN = {
-        actions?: OperationCSN[],
-        operations?: OperationCSN[],
-        cardinality?: { max?: '*' | string }
-        compositions?: { target: string }[]
-        doc?: string,
-        elements?: { [key: string]: EntityCSN }
-        key?: boolean // custom!!
-        keys?: { [key:string]: any }
-        kind: string,
-        includes?: string[]
+    /**
+     * Central adapter for the linked, inferred and xtended models consumed by typer.
+     * cds-types describes all definition kinds as an intersection; most of those
+     * properties only exist on some kinds, so they must be optional here.
+     * Recursive properties point back to this adapter to retain typer's metadata.
+     * Do not augment cds-types globally or add per-consumer CSN overrides.
+     */
+    export type EntityCSN = Omit<Partial<csn.Definition>,
+        'elements' | 'items' | 'keys' | 'type' | 'query' | 'cardinality' | 'kind' | 'on'>
+        & Pick<linked.classes.any_, 'name'> & {
+        elements?: Record<string, EntityCSN>
         items?: EntityCSN
-        notNull?: boolean,  // custom!
-        on?: string,
+        /** propagateForeignKeys replaces linked keys with a dictionary. */
+        keys?: Record<string, EntityCSN>
+        type?: csn.type['type'] | ref
+        /** Linked action parameters have kind 'param', missing from csn.kinds. */
+        kind?: csn.kinds | 'param'
+        cardinality?: Omit<NonNullable<csn.Association['cardinality']>, 'max'> & { max?: number | string }
+        /** Older cds-types predicates intersect strings with expression objects. */
+        on?: csn.Association['on'] | (ref | CdsVal | string)[]
+        key?: csn.EntityElements[string]['key']
+        notNull?: csn.EntityElements[string]['notNull']
         parent?: EntityCSN
-        projection?: { from: ref, columns: (ref | '*')[]}
-        target?: string,
-        type: string | ref,
-        name: string,
+        actions?: Record<string, OperationCSN>
+        operations?: Record<string, OperationCSN>
+        compositions?: Record<string, EntityCSN>
+        params?: Record<string, EntityCSN>
+        returns?: EntityCSN
+        /** Added upstream after cds-types 0.9, which is still a supported peer. */
+        doc?: string
+        /** Projection shorthand and linked queries are not fully covered upstream. */
+        projection?: Select
+        query?: Omit<NonNullable<csn.entity['query']>, 'SELECT'> & { SELECT?: Select, from?: ref }
+        /** CSN enum entries wrap explicit values in { val }; absent values use the name. */
+        enum?: Record<string, { val?: string | number | boolean, doc?: EntityCSN['doc'] }>
         '@singular'?: string,
         '@plural'?: string,
         '@mandatory'?: boolean,
-        '@odata.draft.enabled'?: boolean // custom!
+        '@odata.draft.enabled'?: boolean
+        '@cds.external'?: boolean
+        /** Typer-owned metadata, never added to the shared cds-types definitions. */
         _unresolved?: boolean
-        isRefNotNull?: boolean // custom!
-        _targetEntity?: string // custom! Name of the target entity when this element is a composition or association
+        isRefNotNull?: boolean
+        _targetEntity?: string
+        resolvedType?: string
     }
 
-    export type OperationCSN = EntityCSN & {
-        params: {[key:string]: EntityCSN},
-        returns?: any,
-        kind: 'action' | 'function'
+    /** Only reference sources/columns are inspected by typer. */
+    type Select = Omit<NonNullable<csn.entity['query']>['SELECT'], 'from' | 'columns'> & {
+        from?: ref
+        columns?: (ref | '*')[]
     }
 
-    export type ProjectionCSN = EntityCSN & {
-        projection: any
-    }
+    export type OperationCSN = EntityCSN & { kind: Extract<csn.kinds, 'action' | 'function'> }
+    export type ProjectionCSN = EntityCSN & Required<Pick<EntityCSN, 'projection'>>
+    export type ViewCSN = EntityCSN & Required<Pick<EntityCSN, 'query'>>
+    export type EnumCSN = EntityCSN & Required<Pick<EntityCSN, 'enum'>>
 
-    export type ViewCSN = EntityCSN & {
-        query?: any
-    }
-
-
-    export type EnumCSN = EntityCSN & {
-        enum: {[key:name]: string},
-        resolvedType?: string  // custom property! When .type points to a ref, the visitor will resolve the ref into this property
-    }
-
-    export type CSN = {
-        definitions: { [key: string]: EntityCSN },
+    export type CSN = Omit<csn.CSN, 'definitions'> & {
+        definitions: Record<string, EntityCSN>
     }
 
     /**
@@ -82,7 +94,7 @@ export module resolver {
         isArray?: boolean,
         type?: string,
         path?: Path,
-        csn?: EntityCSNCSN,
+        csn?: EntityCSN,
         imports?: Path[]
         inner?: TypeResolveInfo,
         structuredType?: {[key: string]: {typeName: string, typeInfo: TypeResolveInfo}}  // FIXME: same as inner?
@@ -90,6 +102,9 @@ export module resolver {
         typeName?: string // FIXME: same as plainName?
         inflection?: visitor.Inflection
     }
+
+    /** Invariant after resolving a named model/library type, rather than a builtin or inline type. */
+    export type NamedTypeResolveInfo = TypeResolveInfo & { csn: EntityCSN, path: Path }
 
     /**
      * Custom options to be used during type resolvement
@@ -139,15 +154,11 @@ export module resolver {
     }
 }
 
-export module util {
-    export type Annotations = {
-        name: string,
-        '@singular'?: string,
-        '@plural'?: string
-    }
+export namespace util {
+    export type Annotations = Pick<resolver.EntityCSN, 'name' | '@singular' | '@plural'>
 }
 
-export module visitor {
+export namespace visitor {
     export type Inflection = {
         typeName?: string,
         singular: Identifier,
@@ -166,14 +177,14 @@ export module visitor {
     }
 }
 
-export module traverser {
+export namespace traverser {
     export type EventPayload = {
-        entity: EntityCSN,
-        operation: OperationCSN,
-        aspect: EntityCSN,
-        type: EntityCSN,
-        event: EntityCSN,
-        service: EntityCSN
+        entity: resolver.EntityCSN,
+        operation: resolver.OperationCSN,
+        aspect: resolver.EntityCSN,
+        type: resolver.EntityCSN,
+        event: resolver.EntityCSN,
+        service: resolver.EntityCSN
     }
 
     export type TraversalEvent = keyof EventPayload
@@ -186,8 +197,8 @@ export module traverser {
         (fq: string, definition: EventPayload[T], options?: HandlerOptions) => void
 }
 
-export module config {
-    export module cli {
+export namespace config {
+    export namespace cli {
         export type CLIFlags = 'version' | 'help'
         export type ParameterSchema = {
             [key: string]: {
@@ -206,7 +217,7 @@ export module config {
 
         export type ParsedParameters = {
             positional: string[],
-            named: { [key: keyof RuntimeParameters]: {
+            named: { [key: string]: {
                 value: any,
                 isDefault: boolean,
             } }
@@ -244,11 +255,11 @@ export module config {
     }
 }
 
-export module file {
-    export type Namespace = Object<string, Buffer>
+export namespace file {
+    export type Namespace = Record<string, Buffer>
 }
 
-export module printer {
+export namespace printer {
     /**
      * Context object containing all data that may be needed for printing TypeScript output.
      * Different printers can use different subsets of this context.
@@ -260,9 +271,9 @@ export module printer {
         /** The cleaned name of the aspect */
         clean?: string
         /** Entity CSN definition */
-        entity?: EntityCSN
+        entity?: resolver.EntityCSN
         /** List of ancestor entity infos */
-        ancestorInfos?: EntityInfo[]
+        ancestorInfos?: resolver.EntityInfo[]
         /** Function to derive the aspect function identifier from a name */
         identAspect?: (name: string) => string
         /** The file path, used for qualifying relative references */

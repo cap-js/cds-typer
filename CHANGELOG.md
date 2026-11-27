@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 ### Changed
+- Reuse CSN types from `@cap-js/cds-types` for internal JSDoc annotations, with centralized adaptations for typer-specific metadata.
 ### Deprecated
 ### Removed
 ### Fixed
